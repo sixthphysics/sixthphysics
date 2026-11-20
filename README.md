@@ -149,6 +149,17 @@ npm run lint && npm run type-check && npm test
 | `training/qwen35/` | Modal H100 LoRA training, Modal CPU GGUF quantizer, local NF4 bridge, and report pipeline |
 | `docs/QWEN35_MODEL_CARD.md`, `docs/UCAS_AND_BENCHMARK_REPORT.md` | Full Hugging Face model card, stratified CIs, ablation tables, and qualitative audit |
 
+## Sponsored Free AI Grading
+
+<p>
+  <a href="https://apicuts.ai">
+    <img src="public/apicuts-logo.svg" alt="APIcuts.ai logo" width="24" height="24" align="absmiddle" />
+  </a>
+  &nbsp;<strong>We thank <a href="https://apicuts.ai">APIcuts.ai</a> for providing us with a sponsored inference account for free Paper 2 AI grading on <a href="https://sixthphysics.github.io">sixthphysics.github.io</a>.</strong>
+</p>
+
+Students practising Paper 2 structured questions or reviewing Timed Mocks on [sixthphysics.github.io](https://sixthphysics.github.io) can auto-grade their written working against the official `M1`/`A1` mark schemes with zero API keys or sign-up required — with instant manual self-marking always available as an offline/quota fallback.
+
 ## License
 
 Code is released under the [MIT License](LICENSE.md). The `Qwen/Qwen3.5-9B` LoRA adapter inherits Apache-2.0 licensing from the base model.

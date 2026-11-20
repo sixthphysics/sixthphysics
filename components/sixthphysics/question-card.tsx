@@ -17,6 +17,7 @@ import {
   IB_PHYSICS_SYLLABUS,
   NCUK_PHYSICS_SYLLABUS,
 } from '@/lib/constants/syllabi';
+import type { AiGradeSuccessResponse } from '@/lib/sixthphysics-web/ai-grader';
 import type {
   MockQuestionResponse,
   PublicBankItem,
@@ -57,6 +58,9 @@ export interface QuestionCardProps {
     earnedMarks: number;
     totalMarks: number;
   }) => void;
+  aiGradeResult?: AiGradeSuccessResponse | null;
+  onAiGradeResult?: (result: AiGradeSuccessResponse) => void;
+  enableAiGrader?: boolean;
   enableKeyboardShortcuts?: boolean;
   className?: string;
 }
@@ -265,6 +269,9 @@ export function QuestionCard({
   onChangePartNotes,
   checkedCriterionKeys,
   onChangeSelfMark,
+  aiGradeResult,
+  onAiGradeResult,
+  enableAiGrader,
   enableKeyboardShortcuts = true,
   className,
 }: QuestionCardProps) {
@@ -437,6 +444,7 @@ export function QuestionCard({
             key={`${item.id}-${mode}`}
             item={item}
             mode={mode}
+            activeSyllabus={activeSyllabus}
             partNotes={effectivePartNotes}
             onChangePartNotes={onChangePartNotes}
             defaultRevealed={defaultRevealed}
@@ -444,6 +452,9 @@ export function QuestionCard({
             onChangeSelfMark={onChangeSelfMark}
             onRecordSelfMark={handleStructuredSelfMark}
             onNextQuestion={onNextQuestion}
+            aiGradeResult={aiGradeResult}
+            onAiGradeResult={onAiGradeResult}
+            enableAiGrader={enableAiGrader}
           />
         )}
       </div>

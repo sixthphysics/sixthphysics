@@ -1,19 +1,32 @@
 'use client';
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  AlertCircle,
   BookOpen,
   Check,
   ChevronDown,
   ChevronRight,
+  Loader2,
   RotateCcw,
+  Sparkles,
+  X,
 } from 'lucide-react';
 import { MathText } from '@/components/sixthphysics/math-text';
+import {
+  APICUTS_SPONSOR,
+  formatGraderModelLabel,
+  gradeStructuredAnswer,
+  hasGradableWorking,
+  type AiGraderCriterionVerdict,
+  type AiGradeSuccessResponse,
+} from '@/lib/sixthphysics-web/ai-grader';
 import type {
   MarkSchemePoint,
   PublicBankItem,
   QuestionCardMode,
   StructuredQuestionPart,
+  SyllabusId,
 } from '@/lib/sixthphysics-web/types';
 import { cn } from '@/lib/utils';
 
@@ -28,6 +41,7 @@ export interface StructuredSelfMarkResult {
 export interface StructuredInteractionProps {
   item: PublicBankItem;
   mode?: QuestionCardMode;
+  activeSyllabus?: SyllabusId;
   partNotes?: Record<string, string>;
   defaultPartNotes?: Record<string, string>;
   onChangePartNotes?: (partNotes: Record<string, string>) => void;
@@ -42,8 +56,45 @@ export interface StructuredInteractionProps {
   }) => void;
   onRecordSelfMark?: (result: StructuredSelfMarkResult) => void;
   onNextQuestion?: () => void;
+  aiGradeResult?: AiGradeSuccessResponse | null;
+  onAiGradeResult?: (result: AiGradeSuccessResponse) => void;
+  enableAiGrader?: boolean;
   showScratchpad?: boolean;
   className?: string;
+}
+
+export function isAiGraderEnabledForMode(
+  mode: QuestionCardMode,
+  enableAiGrader?: boolean
+): boolean {
+  if (mode === 'mock-live') {
+    return false;
+  }
+  return enableAiGrader ?? true;
+}
+
+export function resolveGradingSyllabus(
+  item: Pick<PublicBankItem, 'syllabi'>,
+  activeSyllabus?: SyllabusId
+): SyllabusId {
+  return activeSyllabus ?? item.syllabi[0]?.syllabus ?? 'ib';
+}
+
+export function haveMarksDivergedFromAi(
+  checkedKeys: readonly string[],
+  aiAwardedKeys: readonly string[]
+): boolean {
+  const checkedSet = new Set(checkedKeys);
+  const aiSet = new Set(aiAwardedKeys);
+  if (checkedSet.size !== aiSet.size) {
+    return true;
+  }
+  for (const key of checkedSet) {
+    if (!aiSet.has(key)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 export function getMarkSchemeCriterionKey(
@@ -108,6 +159,8 @@ interface InternalStructuredState {
   checkedKeys: string[];
   workedSolutionOpen: boolean;
   recordedZeroExplicitly: boolean;
+  localAiGrade: AiGradeSuccessResponse | null;
+  aiError: { code: string; message: string } | null;
 }
 
 function createInitialStructuredState(
@@ -123,12 +176,15 @@ function createInitialStructuredState(
     checkedKeys: defaultCheckedKeys ? [...defaultCheckedKeys] : [],
     workedSolutionOpen: false,
     recordedZeroExplicitly: false,
+    localAiGrade: null,
+    aiError: null,
   };
 }
 
 export function StructuredInteraction({
   item,
   mode = 'practice',
+  activeSyllabus,
   partNotes: controlledPartNotes,
   defaultPartNotes,
   onChangePartNotes,
@@ -139,6 +195,9 @@ export function StructuredInteraction({
   onChangeSelfMark,
   onRecordSelfMark,
   onNextQuestion,
+  aiGradeResult,
+  onAiGradeResult,
+  enableAiGrader,
   showScratchpad = true,
   className,
 }: StructuredInteractionProps) {
@@ -160,6 +219,15 @@ export function StructuredInteraction({
         controlledCheckedKeys ?? defaultCheckedCriterionKeys
       )
   );
+  const [gradingItemId, setGradingItemId] = useState<string | null>(null);
+  const graderAbortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    return () => {
+      graderAbortRef.current?.abort();
+      graderAbortRef.current = null;
+    };
+  }, [item.id]);
 
   const currentState =
     internalState.itemId === item.id
@@ -187,6 +255,31 @@ export function StructuredInteraction({
           ? controlledRevealed
           : currentState.revealed;
 
+  const aiGraderEnabled = isAiGraderEnabledForMode(mode, enableAiGrader);
+  const isGrading = gradingItemId === item.id;
+  const hasWorking = hasGradableWorking(activePartNotes);
+  const propAiGrade =
+    aiGradeResult && aiGradeResult.questionId === item.id
+      ? aiGradeResult
+      : null;
+  const effectiveAiGrade = aiGraderEnabled
+    ? currentState.localAiGrade ?? propAiGrade
+    : null;
+
+  const verdictByKey = useMemo(() => {
+    const map = new Map<string, AiGraderCriterionVerdict>();
+    if (effectiveAiGrade) {
+      for (const criterion of effectiveAiGrade.criteria) {
+        map.set(criterion.key, criterion);
+      }
+    }
+    return map;
+  }, [effectiveAiGrade]);
+
+  const isManuallyEdited = effectiveAiGrade
+    ? haveMarksDivergedFromAi(activeCheckedKeys, effectiveAiGrade.awardedKeys)
+    : false;
+
   const tally = calculateRubricTally(
     markScheme,
     activeCheckedKeys,
@@ -212,6 +305,8 @@ export function StructuredInteraction({
         return {
           ...base,
           partNotes: nextNotes,
+          aiError:
+            base.aiError?.code === 'empty_answer' ? null : base.aiError,
         };
       });
       onChangePartNotes?.(nextNotes);
@@ -315,12 +410,123 @@ export function StructuredInteraction({
       return {
         ...base,
         revealed: true,
+        aiError:
+          base.aiError?.code === 'empty_answer' ? null : base.aiError,
       };
     });
   }, [mode, item.id, activePartNotes, activeCheckedKeys]);
 
+  const handleAiGrade = useCallback(async () => {
+    if (!aiGraderEnabled || isGrading || markScheme.length === 0) return;
+
+    const requestItemId = item.id;
+    graderAbortRef.current?.abort();
+    const controller = new AbortController();
+    graderAbortRef.current = controller;
+
+    setInternalState((prev) => {
+      const base =
+        prev.itemId === requestItemId
+          ? prev
+          : createInitialStructuredState(
+              requestItemId,
+              effectiveRevealed,
+              activePartNotes,
+              activeCheckedKeys
+            );
+      return {
+        ...base,
+        aiError: null,
+      };
+    });
+    setGradingItemId(requestItemId);
+
+    try {
+      const result = await gradeStructuredAnswer({
+        questionId: requestItemId,
+        syllabus: resolveGradingSyllabus(item, activeSyllabus),
+        partNotes: activePartNotes,
+        markScheme,
+        signal: controller.signal,
+      });
+
+      if (controller.signal.aborted) {
+        return;
+      }
+
+      if (result.ok) {
+        commitCheckedKeys(
+          result.data.awardedKeys,
+          result.data.awardedKeys.length === 0
+        );
+        setInternalState((prev) => {
+          const base =
+            prev.itemId === requestItemId
+              ? prev
+              : createInitialStructuredState(
+                  requestItemId,
+                  true,
+                  activePartNotes,
+                  result.data.awardedKeys
+                );
+          return {
+            ...base,
+            revealed: true,
+            localAiGrade: result.data,
+            aiError: null,
+          };
+        });
+        onAiGradeResult?.(result.data);
+        return;
+      }
+
+      if (result.code === 'aborted') {
+        return;
+      }
+
+      setInternalState((prev) => {
+        const base =
+          prev.itemId === requestItemId
+            ? prev
+            : createInitialStructuredState(
+                requestItemId,
+                effectiveRevealed,
+                activePartNotes,
+                activeCheckedKeys
+              );
+        return {
+          ...base,
+          revealed: result.fallbackToManual ? true : base.revealed,
+          aiError: {
+            code: result.code,
+            message: result.message,
+          },
+        };
+      });
+    } finally {
+      if (graderAbortRef.current === controller) {
+        graderAbortRef.current = null;
+      }
+      setGradingItemId((prev) => (prev === requestItemId ? null : prev));
+    }
+  }, [
+    aiGraderEnabled,
+    isGrading,
+    markScheme,
+    item,
+    activeSyllabus,
+    activePartNotes,
+    activeCheckedKeys,
+    effectiveRevealed,
+    commitCheckedKeys,
+    onAiGradeResult,
+  ]);
+
   const handleResetPractice = useCallback(() => {
     if (mode !== 'practice') return;
+    graderAbortRef.current?.abort();
+    graderAbortRef.current = null;
+    setGradingItemId((prev) => (prev === item.id ? null : prev));
     setInternalState({
       itemId: item.id,
       revealed: false,
@@ -328,6 +534,8 @@ export function StructuredInteraction({
       checkedKeys: [],
       workedSolutionOpen: false,
       recordedZeroExplicitly: false,
+      localAiGrade: null,
+      aiError: null,
     });
   }, [mode, item.id]);
 
@@ -358,6 +566,11 @@ export function StructuredInteraction({
   const isFullMarks =
     tally.totalMarks > 0 && tally.earnedMarks === tally.totalMarks;
   const hasScored = tally.earnedMarks > 0 || currentState.recordedZeroExplicitly;
+
+  const disabledAiTooltip =
+    mode === 'mock-review'
+      ? 'No written working to AI-grade'
+      : 'Write your working above first';
 
   return (
     <div className={cn('mt-5 space-y-5', className)}>
@@ -457,25 +670,85 @@ export function StructuredInteraction({
       )}
 
       {mode === 'practice' && !effectiveRevealed && (
-        <div className="flex items-center justify-between gap-3 border-t-2 border-[var(--sp-border)] pt-4">
-          {onNextQuestion ? (
-            <button
-              type="button"
-              onClick={onNextQuestion}
-              className="sp-key sp-key--neutral sp-key--sm inline-flex h-12 items-center rounded-2xl px-5 text-[15px] font-bold text-[var(--sp-muted)]"
+        <div className="space-y-3 border-t-2 border-[var(--sp-border)] pt-4">
+          <div className="flex flex-wrap items-center justify-between gap-2.5">
+            {onNextQuestion ? (
+              <button
+                type="button"
+                onClick={onNextQuestion}
+                className="sp-key sp-key--neutral sp-key--sm inline-flex h-12 items-center rounded-2xl px-5 text-[15px] font-bold text-[var(--sp-muted)]"
+              >
+                Skip
+              </button>
+            ) : (
+              <span />
+            )}
+
+            <div className="flex flex-1 flex-wrap items-center justify-end gap-2.5 sm:flex-initial">
+              {aiGraderEnabled && markScheme.length > 0 && (
+                <button
+                  type="button"
+                  data-testid="ai-grade-button"
+                  disabled={isGrading}
+                  aria-disabled={!hasWorking || isGrading}
+                  title={
+                    hasWorking
+                      ? 'Grade your written working against the examiner mark scheme'
+                      : disabledAiTooltip
+                  }
+                  onClick={() => void handleAiGrade()}
+                  className={cn(
+                    'sp-key inline-flex h-12 items-center justify-center gap-2 rounded-2xl px-5 text-[15.5px] font-extrabold',
+                    hasWorking || isGrading
+                      ? 'sp-key--primary min-w-[10rem] flex-1 sm:flex-initial'
+                      : 'sp-key--idle'
+                  )}
+                >
+                  {isGrading ? (
+                    <>
+                      <Loader2
+                        className="h-4 w-4 animate-spin"
+                        aria-hidden="true"
+                      />
+                      <span>Grading with AI…</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4" aria-hidden="true" />
+                      <span>AI Grade</span>
+                    </>
+                  )}
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={handleReveal}
+                className={cn(
+                  'sp-key inline-flex h-12 items-center justify-center rounded-2xl px-6 text-[15.5px] font-extrabold',
+                  aiGraderEnabled && hasWorking && markScheme.length > 0
+                    ? 'sp-key--neutral'
+                    : 'sp-key--primary min-w-[11rem] flex-1 sm:flex-initial'
+                )}
+              >
+                Mark my answer
+              </button>
+            </div>
+          </div>
+
+          {currentState.aiError && (
+            <div
+              role="status"
+              data-testid="ai-grader-hint"
+              className="flex items-start gap-2 rounded-xl border-2 border-[var(--sp-warn)]/45 bg-[var(--sp-warn-tint)] px-3.5 py-2.5 text-[13.5px] font-semibold text-[var(--sp-warn-ink)]"
             >
-              Skip
-            </button>
-          ) : (
-            <span />
+              <AlertCircle
+                className="mt-0.5 h-4 w-4 shrink-0"
+                aria-hidden="true"
+              />
+              <span>{currentState.aiError.message}</span>
+            </div>
           )}
-          <button
-            type="button"
-            onClick={handleReveal}
-            className="sp-key sp-key--primary inline-flex h-12 min-w-[11rem] flex-1 items-center justify-center rounded-2xl px-7 text-[16px] font-extrabold sm:flex-initial"
-          >
-            Mark my answer
-          </button>
         </div>
       )}
 
@@ -488,25 +761,70 @@ export function StructuredInteraction({
                   Examiner mark scheme
                 </h3>
                 <p className="text-[13.5px] text-[var(--sp-muted)]">
-                  Tap each point your working earns.
+                  {effectiveAiGrade
+                    ? 'AI pre-marked your working — tap any point to adjust.'
+                    : 'Tap each point your working earns.'}
                 </p>
               </div>
 
-              <span
-                key={`score-${tally.earnedMarks}`}
-                data-testid="rubric-score-pill"
-                className={cn(
-                  'sp-anim-bump inline-flex h-10 items-center rounded-xl border-2 px-3.5 text-[15px] font-extrabold tabular-nums',
-                  isFullMarks
-                    ? 'border-[#059669] bg-[#059669] text-white shadow-[0_3px_0_#047857]'
-                    : hasScored
-                      ? 'border-[var(--sp-accent)] bg-[var(--sp-accent-tint)] text-[var(--sp-accent-ink)] shadow-[0_3px_0_var(--sp-accent-lip)]'
-                      : 'border-[var(--sp-border)] bg-[var(--sp-raised)] text-[var(--sp-ink)] shadow-[0_3px_0_var(--sp-lip)]'
+              <div className="flex flex-wrap items-center gap-2">
+                {aiGraderEnabled && (
+                  <button
+                    type="button"
+                    data-testid="rubric-ai-grade-button"
+                    disabled={!hasWorking || isGrading}
+                    title={
+                      hasWorking
+                        ? effectiveAiGrade
+                          ? 'Re-grade your written working with AI'
+                          : 'Grade your written working with AI'
+                        : disabledAiTooltip
+                    }
+                    onClick={() => void handleAiGrade()}
+                    className={cn(
+                      'sp-key sp-key--sm inline-flex h-10 items-center gap-1.5 rounded-xl px-3 text-[13px] font-extrabold',
+                      !hasWorking
+                        ? 'sp-key--idle'
+                        : effectiveAiGrade
+                          ? 'sp-key--neutral text-[var(--sp-accent-ink)]'
+                          : 'sp-key--primary'
+                    )}
+                  >
+                    {isGrading ? (
+                      <>
+                        <Loader2
+                          className="h-3.5 w-3.5 animate-spin"
+                          aria-hidden="true"
+                        />
+                        <span>Grading with AI…</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+                        <span>
+                          {effectiveAiGrade ? 'Re-grade with AI' : 'AI Grade'}
+                        </span>
+                      </>
+                    )}
+                  </button>
                 )}
-              >
-                {tally.earnedMarks} / {tally.totalMarks}{' '}
-                {tally.totalMarks === 1 ? 'mark' : 'marks'}
-              </span>
+
+                <span
+                  key={`score-${tally.earnedMarks}`}
+                  data-testid="rubric-score-pill"
+                  className={cn(
+                    'sp-anim-bump inline-flex h-10 items-center rounded-xl border-2 px-3.5 text-[15px] font-extrabold tabular-nums',
+                    isFullMarks
+                      ? 'border-[#059669] bg-[#059669] text-white shadow-[0_3px_0_#047857]'
+                      : hasScored
+                        ? 'border-[var(--sp-accent)] bg-[var(--sp-accent-tint)] text-[var(--sp-accent-ink)] shadow-[0_3px_0_var(--sp-accent-lip)]'
+                        : 'border-[var(--sp-border)] bg-[var(--sp-raised)] text-[var(--sp-ink)] shadow-[0_3px_0_var(--sp-lip)]'
+                  )}
+                >
+                  {tally.earnedMarks} / {tally.totalMarks}{' '}
+                  {tally.totalMarks === 1 ? 'mark' : 'marks'}
+                </span>
+              </div>
             </div>
 
             <div className="sp-progress sp-progress--sm" aria-hidden="true">
@@ -518,6 +836,100 @@ export function StructuredInteraction({
                 }}
               />
             </div>
+
+            {currentState.aiError && (
+              <div
+                role="status"
+                data-testid="ai-grader-fallback-notice"
+                className="flex items-start gap-2 rounded-xl border-2 border-[var(--sp-warn)]/45 bg-[var(--sp-warn-tint)] px-3.5 py-2.5 text-[13.5px] font-semibold text-[var(--sp-warn-ink)]"
+              >
+                <AlertCircle
+                  className="mt-0.5 h-4 w-4 shrink-0"
+                  aria-hidden="true"
+                />
+                <span>{currentState.aiError.message}</span>
+              </div>
+            )}
+
+            {effectiveAiGrade && (
+              <div
+                data-testid="ai-examiner-feedback"
+                className="rounded-xl border-2 border-[var(--sp-accent)]/35 bg-[var(--sp-surface)] p-3.5"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 text-[13.5px] font-extrabold text-[var(--sp-accent-ink)]">
+                      <Sparkles
+                        className="h-4 w-4 text-[var(--sp-accent)]"
+                        aria-hidden="true"
+                      />
+                      AI Examiner Feedback
+                    </span>
+
+                    <span
+                      data-testid="ai-grader-model-chip"
+                      className="sp-chip sp-chip--accent text-[11.5px]"
+                    >
+                      <span>{formatGraderModelLabel(effectiveAiGrade.model)}</span>
+                      {effectiveAiGrade.cached && (
+                        <>
+                          <span aria-hidden="true">·</span>
+                          <span className="inline-flex items-center gap-1">
+                            <span
+                              className="h-1.5 w-1.5 rounded-full bg-[var(--sp-success)]"
+                              aria-hidden="true"
+                            />
+                            Cached
+                          </span>
+                        </>
+                      )}
+                    </span>
+
+                    {isManuallyEdited && (
+                      <span
+                        data-testid="ai-edited-manually-badge"
+                        className="sp-chip sp-chip--warn text-[11.5px]"
+                      >
+                        Edited manually
+                      </span>
+                    )}
+                  </div>
+
+                  <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-[var(--sp-muted)]">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={APICUTS_SPONSOR.logoPath}
+                      alt=""
+                      width={14}
+                      height={14}
+                      aria-hidden="true"
+                      className="h-3.5 w-3.5 shrink-0 rounded-[3px]"
+                    />
+                    <span>
+                      Free AI grading via{' '}
+                      <a
+                        href={
+                          effectiveAiGrade.poweredBy?.url || APICUTS_SPONSOR.url
+                        }
+                        target="_blank"
+                        rel="noopener"
+                        className="font-bold text-[var(--sp-ink)] underline decoration-[var(--sp-border)] underline-offset-2 transition-colors hover:text-[var(--sp-accent)] hover:decoration-[var(--sp-accent)]"
+                      >
+                        {effectiveAiGrade.poweredBy?.name ||
+                          APICUTS_SPONSOR.name}
+                      </a>
+                    </span>
+                  </span>
+                </div>
+
+                {effectiveAiGrade.overallFeedback && (
+                  <MathText
+                    text={effectiveAiGrade.overallFeedback}
+                    className="mt-2 block text-[14px] leading-[1.55] text-[var(--sp-ink)]"
+                  />
+                )}
+              </div>
+            )}
           </div>
 
           <div
@@ -529,6 +941,7 @@ export function StructuredInteraction({
               const key = getMarkSchemeCriterionKey(point, idx);
               const isAwarded = checkedSet.has(key);
               const pointMarks = point.marks > 0 ? point.marks : 1;
+              const verdict = verdictByKey.get(key);
 
               return (
                 <button
@@ -542,7 +955,7 @@ export function StructuredInteraction({
                     isAwarded ? 'sp-key--correct' : 'sp-key--neutral'
                   )}
                 >
-                  <span className="flex min-w-0 items-start gap-3">
+                  <span className="flex min-w-0 flex-1 items-start gap-3">
                     <span
                       aria-hidden="true"
                       className={cn(
@@ -557,26 +970,55 @@ export function StructuredInteraction({
                       )}
                     </span>
 
-                    <span className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
-                      <span
-                        className={cn(
-                          'inline-flex h-6 min-w-8 shrink-0 items-center justify-center rounded-md px-1.5 text-[12.5px] font-extrabold',
-                          getCriterionBadgeStyle(point.code)
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <span className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
+                        <span
+                          className={cn(
+                            'inline-flex h-6 min-w-8 shrink-0 items-center justify-center rounded-md px-1.5 text-[12.5px] font-extrabold',
+                            getCriterionBadgeStyle(point.code)
+                          )}
+                        >
+                          {point.code}
+                        </span>
+
+                        {point.partId && (
+                          <span className="shrink-0 text-[13px] font-semibold text-[var(--sp-muted)]">
+                            ({point.partId})
+                          </span>
                         )}
-                      >
-                        {point.code}
+
+                        <MathText
+                          text={point.criterion}
+                          className="max-w-[66ch] text-[14.5px] leading-[1.55] text-[var(--sp-ink)]"
+                        />
                       </span>
 
-                      {point.partId && (
-                        <span className="shrink-0 text-[13px] font-semibold text-[var(--sp-muted)]">
-                          ({point.partId})
+                      {verdict && verdict.reason && (
+                        <span
+                          data-testid={`ai-criterion-reason-${idx}`}
+                          className={cn(
+                            'mt-1.5 inline-flex items-start gap-1.5 text-[13px] leading-[1.45]',
+                            verdict.awarded
+                              ? 'text-[var(--sp-success-ink)]'
+                              : 'text-[var(--sp-muted)]'
+                          )}
+                        >
+                          {verdict.awarded ? (
+                            <Check
+                              className="mt-0.5 h-3.5 w-3.5 shrink-0"
+                              strokeWidth={3}
+                              aria-hidden="true"
+                            />
+                          ) : (
+                            <X
+                              className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--sp-danger)]"
+                              strokeWidth={2.75}
+                              aria-hidden="true"
+                            />
+                          )}
+                          <MathText text={verdict.reason} />
                         </span>
                       )}
-
-                      <MathText
-                        text={point.criterion}
-                        className="max-w-[66ch] text-[14.5px] leading-[1.55] text-[var(--sp-ink)]"
-                      />
                     </span>
                   </span>
 

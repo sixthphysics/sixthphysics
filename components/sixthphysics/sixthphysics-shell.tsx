@@ -9,6 +9,7 @@ import {
   Search,
   X,
 } from 'lucide-react';
+import { ApicutsLogoMark } from '@/components/sixthphysics/apicuts-logo';
 import { FormulaDrawer } from '@/components/sixthphysics/formula-drawer';
 import { MockExamView } from '@/components/sixthphysics/mock-exam-view';
 import { PdfPaperStudio } from '@/components/sixthphysics/pdf-paper-studio';
@@ -918,6 +919,20 @@ export function SixthPhysicsShell() {
             ))}
           </nav>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+            <a
+              href={SIXTHPHYSICS_EXTERNAL_LINKS.apicutsSponsor}
+              target="_blank"
+              rel="noopener"
+              className="inline-flex items-center gap-1.5 font-semibold text-[var(--sp-muted)] transition-colors hover:text-[var(--sp-ink)]"
+            >
+              <ApicutsLogoMark className="h-3.5 w-3.5 shrink-0" />
+              <span>
+                Free AI grading via{' '}
+                <span className="font-bold text-[var(--sp-ink)]">
+                  APIcuts.ai
+                </span>
+              </span>
+            </a>
             <a
               href={SIXTHPHYSICS_EXTERNAL_LINKS.githubRepo}
               target="_blank"

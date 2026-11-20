@@ -293,3 +293,12 @@ step2_json = generate_turn(messages, max_new_tokens=1400)
 - **Independent 15-Question Qualitative Audit:** Manual inspection of 15 verified champion outputs (`5` IB 2025, `5` UK A-Level, `5` NCUK IFY across all 11 domains, mixing MCQ and Structured from locked `test.jsonl` and `Novel-1500`) found **12/15** fully sound in prose, physics, distractor rationales, and mark schemes, and **3/15** with subtle prose-to-quantity semantic misalignments that passed numeric 3-sf solver matching (e.g., framing a linear gradient solver receipt as a `log10 A` plot in `sp-graphs-0024-mcq`, asking for cable force components while quoting `accelerationMs2` in `novel-ncuk-0036` part (a), and quoting liquid-heating energy alone for a combined melt+heat prompt in `sp-thermal-struct-0011` part (b)).
 - **Residual Failure Concentrations:** Unseen-family Step 1 failures concentrate in schema-strict domains (`quantum-nuclear` transition level-ID formatting and `thermal` phase/heat-capacity validation), while Step 2 failures concentrate in `graphs` and multi-part `structured` items (`ground-truth-mismatch` and `mark-sum-mismatch`).
 - **Verification Environment Note:** All weights and rollouts were verified on Modal H100 (`vLLM` + `bfloat16`); local adapter safetensors integrity (`256` tensors, `0` NaN/Inf) and all `22/22` benchmark reports were independently verified on CPU while the local workstation operated in iGPU (`uni-battery`) mode.
+
+## Acknowledgements & Sponsored Grading Inference
+
+<p>
+  <a href="https://apicuts.ai">
+    <img src="https://sixthphysics.github.io/apicuts-logo.svg" alt="APIcuts.ai logo" width="22" height="22" align="absmiddle" />
+  </a>
+  &nbsp;We thank <a href="https://apicuts.ai"><strong>APIcuts.ai</strong></a> for providing us with a sponsored inference account powering free Paper 2 AI grading for all students on <a href="https://sixthphysics.github.io"><strong>sixthphysics.github.io</strong></a>, allowing written working to be automatically checked against official <code>M1</code>/<code>A1</code> examiner mark schemes with zero sign-up or API keys required.
+</p>

@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  AlertCircle,
   Check,
   ChevronRight,
   Clock,
@@ -12,21 +13,28 @@ import {
   Play,
   Printer,
   RotateCcw,
+  Sparkles,
+  X,
 } from 'lucide-react';
 import { MathText } from '@/components/sixthphysics/math-text';
 import { QuestionCard } from '@/components/sixthphysics/question-card';
+import { calculateRubricTally } from '@/components/sixthphysics/structured-interaction';
 import {
   formatCompactTopicCode,
   formatCompactTopicTitle,
 } from '@/components/sixthphysics/topic-rail';
 import {
+  APICUTS_SPONSOR,
   buildMockPaperSession,
   createConfigFromPreset,
   filterIndexRows,
   getMockPresetsForSyllabus,
+  gradeStructuredAnswer,
+  hasGradableWorking,
   loadQuestionById,
   loadQuestionsByIds,
   scoreMockPaperSession,
+  type AiGradeSuccessResponse,
   type MockPaperConfig,
   type MockPaperFormatMode,
   type MockPaperPreset,
@@ -167,6 +175,279 @@ function buildMockAttemptsPayload(
   return attempts;
 }
 
+export interface BatchAiGradeQueueItem {
+  questionId: string;
+  questionNumber: number;
+  item: PublicBankItem;
+  partNotes: Record<string, string>;
+}
+
+export interface BatchAiGradeQueuePlan {
+  gradable: BatchAiGradeQueueItem[];
+  blankQuestionIds: string[];
+  missingItemIds: string[];
+}
+
+export type BatchAiGradeStopReason =
+  | 'completed'
+  | 'cancelled'
+  | 'quota_exhausted'
+  | 'rate_limited'
+  | 'grader_unavailable'
+  | 'network_error';
+
+export interface BatchAiGradeProgressState {
+  status: 'idle' | 'running' | 'done';
+  totalGradable: number;
+  completedCount: number;
+  currentQuestionNumber: number | null;
+  blankSkippedCount: number;
+  failedCount: number;
+  stopReason?: BatchAiGradeStopReason;
+  noticeMessage?: string;
+}
+
+const INITIAL_BATCH_GRADE_STATE: BatchAiGradeProgressState = {
+  status: 'idle',
+  totalGradable: 0,
+  completedCount: 0,
+  currentQuestionNumber: null,
+  blankSkippedCount: 0,
+  failedCount: 0,
+};
+
+export const BATCH_AI_GRADE_SPACING_MS = 250;
+
+export function planBatchAiGradeQueue(
+  session: MockPaperSession,
+  itemsById: Readonly<Record<string, PublicBankItem>>
+): BatchAiGradeQueuePlan {
+  const gradable: BatchAiGradeQueueItem[] = [];
+  const blankQuestionIds: string[] = [];
+  const missingItemIds: string[] = [];
+
+  session.questionRows.forEach((row, idx) => {
+    if (row.format !== 'structured') {
+      return;
+    }
+    const resp = session.responses[row.id];
+    if (resp?.isSelfMarked || typeof resp?.selfMarkedEarnedMarks === 'number') {
+      return;
+    }
+
+    if (!hasGradableWorking(resp?.partNotes)) {
+      blankQuestionIds.push(row.id);
+      return;
+    }
+
+    const item = itemsById[row.id];
+    if (!item || item.markScheme.length === 0) {
+      missingItemIds.push(row.id);
+      return;
+    }
+
+    gradable.push({
+      questionId: row.id,
+      questionNumber: idx + 1,
+      item,
+      partNotes: resp?.partNotes ?? {},
+    });
+  });
+
+  return { gradable, blankQuestionIds, missingItemIds };
+}
+
+function waitWithAbort(ms: number, signal: AbortSignal): Promise<void> {
+  if (ms <= 0 || signal.aborted) {
+    return Promise.resolve();
+  }
+  return new Promise((resolve) => {
+    const onAbort = () => {
+      clearTimeout(timer);
+      resolve();
+    };
+    const timer = setTimeout(() => {
+      signal.removeEventListener('abort', onAbort);
+      resolve();
+    }, ms);
+    signal.addEventListener('abort', onAbort, { once: true });
+  });
+}
+
+export interface RunBatchAiGradingOptions {
+  queue: BatchAiGradeQueueItem[];
+  blankSkippedCount: number;
+  syllabus: SyllabusId;
+  signal: AbortSignal;
+  delayMs?: number;
+  gradeFn?: typeof gradeStructuredAnswer;
+  onQuestionStart?: (info: {
+    index: number;
+    total: number;
+    questionId: string;
+    questionNumber: number;
+  }) => void;
+  onQuestionGraded: (info: {
+    questionId: string;
+    result: AiGradeSuccessResponse;
+    earnedMarks: number;
+    totalMarks: number;
+  }) => void;
+}
+
+export async function runBatchAiGrading({
+  queue,
+  blankSkippedCount,
+  syllabus,
+  signal,
+  delayMs = BATCH_AI_GRADE_SPACING_MS,
+  gradeFn = gradeStructuredAnswer,
+  onQuestionStart,
+  onQuestionGraded,
+}: RunBatchAiGradingOptions): Promise<BatchAiGradeProgressState> {
+  let completedCount = 0;
+  let failedCount = 0;
+
+  for (let i = 0; i < queue.length; i += 1) {
+    if (signal.aborted) {
+      return {
+        status: 'done',
+        totalGradable: queue.length,
+        completedCount,
+        currentQuestionNumber: null,
+        blankSkippedCount,
+        failedCount,
+        stopReason: 'cancelled',
+      };
+    }
+
+    const entry = queue[i];
+    onQuestionStart?.({
+      index: i,
+      total: queue.length,
+      questionId: entry.questionId,
+      questionNumber: entry.questionNumber,
+    });
+
+    const result = await gradeFn({
+      questionId: entry.questionId,
+      syllabus,
+      partNotes: entry.partNotes,
+      markScheme: entry.item.markScheme,
+      signal,
+    });
+
+    if (result.ok) {
+      const tally = calculateRubricTally(
+        entry.item.markScheme,
+        result.data.awardedKeys,
+        entry.item.totalMarks
+      );
+      completedCount += 1;
+      onQuestionGraded({
+        questionId: entry.questionId,
+        result: result.data,
+        earnedMarks: tally.earnedMarks,
+        totalMarks: tally.totalMarks,
+      });
+    } else if (result.code === 'aborted' || signal.aborted) {
+      return {
+        status: 'done',
+        totalGradable: queue.length,
+        completedCount,
+        currentQuestionNumber: null,
+        blankSkippedCount,
+        failedCount,
+        stopReason: 'cancelled',
+      };
+    } else if (
+      result.code === 'quota_exhausted' ||
+      result.code === 'rate_limited' ||
+      result.code === 'grader_unavailable' ||
+      result.code === 'network_error'
+    ) {
+      return {
+        status: 'done',
+        totalGradable: queue.length,
+        completedCount,
+        currentQuestionNumber: null,
+        blankSkippedCount,
+        failedCount: Math.max(1, queue.length - completedCount),
+        stopReason: result.code,
+        noticeMessage: result.message,
+      };
+    } else {
+      failedCount += 1;
+    }
+
+    if (i < queue.length - 1 && !signal.aborted && delayMs > 0) {
+      await waitWithAbort(delayMs, signal);
+    }
+  }
+
+  return {
+    status: 'done',
+    totalGradable: queue.length,
+    completedCount,
+    currentQuestionNumber: null,
+    blankSkippedCount,
+    failedCount,
+    stopReason: signal.aborted ? 'cancelled' : 'completed',
+  };
+}
+
+export function formatBatchAiGradeSummary(
+  state: BatchAiGradeProgressState
+): string {
+  const {
+    completedCount,
+    totalGradable,
+    blankSkippedCount,
+    failedCount,
+    stopReason,
+  } = state;
+  const remainingCount = Math.max(0, totalGradable - completedCount);
+  const blankSuffix =
+    blankSkippedCount > 0
+      ? ` · ${blankSkippedCount} blank ${blankSkippedCount === 1 ? 'question' : 'questions'} left for paper self-marking`
+      : '';
+
+  if (stopReason === 'quota_exhausted') {
+    if (completedCount === 0) {
+      return 'Free daily AI grading quota has been reached — mark your written answers manually below.';
+    }
+    return `AI graded ${completedCount} of ${totalGradable} written ${totalGradable === 1 ? 'answer' : 'answers'} before daily quota was reached — mark the remaining ${remainingCount} manually below.`;
+  }
+
+  if (stopReason === 'rate_limited') {
+    if (completedCount === 0) {
+      return 'Too many AI grading requests right now — wait a moment or mark your written answers manually below.';
+    }
+    return `AI graded ${completedCount} of ${totalGradable} written ${totalGradable === 1 ? 'answer' : 'answers'} before hitting the rate limit — mark the remaining ${remainingCount} manually below.`;
+  }
+
+  if (stopReason === 'grader_unavailable' || stopReason === 'network_error') {
+    if (completedCount === 0) {
+      return 'Free AI grader is temporarily unavailable — mark your written answers manually below.';
+    }
+    return `AI graded ${completedCount} of ${totalGradable} written ${totalGradable === 1 ? 'answer' : 'answers'} before the grader became unavailable — mark the remaining ${remainingCount} manually below.`;
+  }
+
+  if (stopReason === 'cancelled') {
+    return `Stopped after AI grading ${completedCount} of ${totalGradable} written ${totalGradable === 1 ? 'answer' : 'answers'} — mark the remaining ${remainingCount} manually or run AI grading again.`;
+  }
+
+  if (failedCount > 0) {
+    return `AI graded ${completedCount} of ${totalGradable} written ${totalGradable === 1 ? 'answer' : 'answers'} (${failedCount} could not be auto-graded — mark manually below)${blankSuffix}.`;
+  }
+
+  if (blankSkippedCount > 0) {
+    return `AI graded ${completedCount} written ${completedCount === 1 ? 'answer' : 'answers'}${blankSuffix}.`;
+  }
+
+  return `AI graded ${completedCount === 1 ? '1 written answer' : `all ${completedCount} written answers`} — review any mark scheme below to adjust.`;
+}
+
 export function MockExamView({
   manifest,
   activeSyllabus,
@@ -187,6 +468,11 @@ export function MockExamView({
   const [loadingPaper, setLoadingPaper] = useState(false);
   const [confirmExitOpen, setConfirmExitOpen] = useState(false);
   const [reviewTab, setReviewTab] = useState<ReviewFilterTab>('all');
+  const [aiGradesByQuestionId, setAiGradesByQuestionId] = useState<
+    Record<string, AiGradeSuccessResponse>
+  >({});
+  const [batchGradeState, setBatchGradeState] =
+    useState<BatchAiGradeProgressState>(INITIAL_BATCH_GRADE_STATE);
 
   // Custom paper builder state
   const [customFormat, setCustomFormat] =
@@ -199,6 +485,14 @@ export function MockExamView({
   const [customTopicIds, setCustomTopicIds] = useState<string[]>([]);
 
   const recordedSessionIdRef = useRef<string | null>(null);
+  const batchAbortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    return () => {
+      batchAbortRef.current?.abort();
+      batchAbortRef.current = null;
+    };
+  }, []);
 
   const validTopicIdSet = useMemo(
     () => new Set(topics.map((t) => t.id)),
@@ -323,6 +617,13 @@ export function MockExamView({
     return () => window.clearInterval(timer);
   }, [session, finalizeSessionToReview]);
 
+  const resetMockAiGraderState = useCallback(() => {
+    batchAbortRef.current?.abort();
+    batchAbortRef.current = null;
+    setAiGradesByQuestionId({});
+    setBatchGradeState(INITIAL_BATCH_GRADE_STATE);
+  }, []);
+
   const startPaperWithConfig = useCallback(
     async (config: MockPaperConfig) => {
       const built = buildMockPaperSession(manifest, config);
@@ -330,6 +631,7 @@ export function MockExamView({
         return;
       }
 
+      resetMockAiGraderState();
       setConfirmExitOpen(false);
       setReviewTab('all');
       setSession(built);
@@ -353,7 +655,7 @@ export function MockExamView({
         setItemsById((prev) => ({ ...prev, ...batch }));
       });
     },
-    [manifest]
+    [manifest, resetMockAiGraderState]
   );
 
   const handleStartPreset = useCallback(
@@ -572,6 +874,83 @@ export function MockExamView({
     },
     [onRecordQuestionAttempt]
   );
+
+  const handleSingleQuestionAiGrade = useCallback(
+    (questionId: string, result: AiGradeSuccessResponse) => {
+      setAiGradesByQuestionId((prev) => ({
+        ...prev,
+        [questionId]: result,
+      }));
+    },
+    []
+  );
+
+  const handleCancelBatchAiGrade = useCallback(() => {
+    batchAbortRef.current?.abort();
+  }, []);
+
+  const handleBatchAiGrade = useCallback(async () => {
+    const activeSession = sessionRef.current;
+    if (!activeSession || batchGradeState.status === 'running') {
+      return;
+    }
+
+    const plan = planBatchAiGradeQueue(activeSession, itemsById);
+    if (plan.gradable.length === 0) {
+      return;
+    }
+
+    batchAbortRef.current?.abort();
+    const controller = new AbortController();
+    batchAbortRef.current = controller;
+
+    setBatchGradeState({
+      status: 'running',
+      totalGradable: plan.gradable.length,
+      completedCount: 0,
+      currentQuestionNumber: plan.gradable[0].questionNumber,
+      blankSkippedCount: plan.blankQuestionIds.length,
+      failedCount: 0,
+    });
+
+    try {
+      const finalState = await runBatchAiGrading({
+        queue: plan.gradable,
+        blankSkippedCount: plan.blankQuestionIds.length,
+        syllabus: activeSession.config.syllabus,
+        signal: controller.signal,
+        onQuestionStart: ({ total, questionNumber }) => {
+          setBatchGradeState((prev) => ({
+            ...prev,
+            status: 'running',
+            totalGradable: total,
+            currentQuestionNumber: questionNumber,
+          }));
+        },
+        onQuestionGraded: ({ questionId, result, earnedMarks, totalMarks }) => {
+          setAiGradesByQuestionId((prev) => ({
+            ...prev,
+            [questionId]: result,
+          }));
+          handleReviewSelfMark(questionId, {
+            checkedCriterionKeys: result.awardedKeys,
+            earnedMarks,
+            totalMarks,
+          });
+          setBatchGradeState((prev) => ({
+            ...prev,
+            completedCount: prev.completedCount + 1,
+          }));
+        },
+      });
+
+      setBatchGradeState(finalState);
+    } finally {
+      if (batchAbortRef.current === controller) {
+        batchAbortRef.current = null;
+      }
+    }
+  }, [batchGradeState.status, itemsById, handleReviewSelfMark]);
 
   const resultSummary = useMemo(() => {
     if (
@@ -1239,6 +1618,7 @@ export function MockExamView({
                     <button
                       type="button"
                       onClick={() => {
+                        resetMockAiGraderState();
                         setSession(null);
                         setConfirmExitOpen(false);
                       }}
@@ -1340,6 +1720,33 @@ export function MockExamView({
   );
 
   const isStrongResult = summary.percentage >= 70;
+  const batchQueuePlan = planBatchAiGradeQueue(session, itemsById);
+  const gradableCount = batchQueuePlan.gradable.length;
+  const blankUnmarkedCount = batchQueuePlan.blankQuestionIds.length;
+  const isBatchGrading = batchGradeState.status === 'running';
+  const batchProgressPct =
+    batchGradeState.totalGradable > 0
+      ? Math.min(
+          100,
+          Math.round(
+            (batchGradeState.completedCount / batchGradeState.totalGradable) *
+              100
+          )
+        )
+      : 0;
+  const batchSummaryText =
+    batchGradeState.status === 'done'
+      ? formatBatchAiGradeSummary(batchGradeState)
+      : null;
+  const isBatchCleanCompletion =
+    batchGradeState.status === 'done' &&
+    batchGradeState.stopReason === 'completed' &&
+    batchGradeState.failedCount === 0;
+  const showBatchGraderCard =
+    summary.structuredTotalMarks > 0 &&
+    (summary.unmarkedStructuredCount > 0 ||
+      isBatchGrading ||
+      batchGradeState.status === 'done');
 
   return (
     <div className="mx-auto max-w-[1160px] space-y-6">
@@ -1431,6 +1838,7 @@ export function MockExamView({
             <button
               type="button"
               onClick={() => {
+                resetMockAiGraderState();
                 setSession(null);
                 setConfirmExitOpen(false);
               }}
@@ -1484,32 +1892,180 @@ export function MockExamView({
           </div>
         </div>
 
-        {summary.unmarkedStructuredCount > 0 && (
-          <div className="sp-card mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl px-4 py-3.5">
-            <p className="flex items-center gap-2 text-[14px] font-semibold text-[var(--sp-ink)]">
-              <span className="sp-chip sp-chip--warn tabular-nums">
-                {summary.unmarkedStructuredCount}
-              </span>
+        {showBatchGraderCard && (
+          <div
+            data-testid="mock-batch-ai-grader-card"
+            className="sp-card mt-4 space-y-3 rounded-2xl px-4 py-3.5"
+          >
+            {summary.unmarkedStructuredCount > 0 && (
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="min-w-0 space-y-1">
+                  <p className="flex flex-wrap items-center gap-2 text-[14px] font-semibold text-[var(--sp-ink)]">
+                    <span className="sp-chip sp-chip--warn tabular-nums">
+                      {summary.unmarkedStructuredCount}
+                    </span>
+                    <span>
+                      written{' '}
+                      {summary.unmarkedStructuredCount === 1
+                        ? 'answer needs'
+                        : 'answers need'}{' '}
+                      marking against the mark scheme to finish your score.
+                    </span>
+                  </p>
+
+                  {!isBatchGrading && gradableCount === 0 && blankUnmarkedCount > 0 && (
+                    <p className="text-[13px] font-medium text-[var(--sp-muted)]">
+                      No typed working to AI-grade — mark manually below if you
+                      wrote on paper.
+                    </p>
+                  )}
+
+                  {!isBatchGrading && gradableCount > 0 && blankUnmarkedCount > 0 && (
+                    <p className="text-[13px] font-medium text-[var(--sp-muted)]">
+                      {gradableCount} with typed working ready for AI ·{' '}
+                      {blankUnmarkedCount} blank left for paper self-marking.
+                    </p>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  {isBatchGrading ? (
+                    <>
+                      <span
+                        data-testid="batch-ai-grade-status"
+                        className="sp-chip sp-chip--accent tabular-nums"
+                      >
+                        <Loader2
+                          className="h-3.5 w-3.5 animate-spin"
+                          aria-hidden="true"
+                        />
+                        <span>
+                          Grading Q
+                          {batchGradeState.currentQuestionNumber ??
+                            Math.min(
+                              batchGradeState.completedCount + 1,
+                              batchGradeState.totalGradable
+                            )}{' '}
+                          ({Math.min(
+                            batchGradeState.completedCount + 1,
+                            batchGradeState.totalGradable
+                          )}{' '}
+                          of {batchGradeState.totalGradable})…
+                        </span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleCancelBatchAiGrade}
+                        className="sp-key sp-key--sm sp-key--neutral inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-[13.5px] font-extrabold"
+                      >
+                        <X
+                          className="h-3.5 w-3.5"
+                          strokeWidth={2.75}
+                          aria-hidden="true"
+                        />
+                        <span>Stop</span>
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      {gradableCount > 0 && (
+                        <button
+                          type="button"
+                          data-testid="batch-ai-grade-button"
+                          onClick={() => void handleBatchAiGrade()}
+                          className="sp-key sp-key--primary inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-[14px] font-extrabold"
+                        >
+                          <Sparkles className="h-4 w-4" aria-hidden="true" />
+                          <span>AI Grade all written</span>
+                        </button>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setReviewTab('unmarked');
+                          if (unmarkedEntries[0]) {
+                            handleJumpToIndex(unmarkedEntries[0].idx);
+                          }
+                        }}
+                        className={cn(
+                          'sp-key rounded-2xl px-4 py-2.5 text-[14px] font-extrabold',
+                          gradableCount > 0 ? 'sp-key--neutral' : 'sp-key--warn'
+                        )}
+                      >
+                        Mark my answers
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {isBatchGrading && (
+              <div
+                className="sp-progress sp-progress--sm"
+                role="progressbar"
+                aria-label="AI batch grading progress"
+                aria-valuemin={0}
+                aria-valuemax={batchGradeState.totalGradable}
+                aria-valuenow={batchGradeState.completedCount}
+              >
+                <div
+                  className="sp-progress-fill"
+                  style={{ width: `${batchProgressPct}%` }}
+                />
+              </div>
+            )}
+
+            {batchSummaryText && (
+              <div
+                role="status"
+                data-testid="batch-ai-grade-summary"
+                className={cn(
+                  'flex items-start gap-2 rounded-xl border-2 px-3.5 py-2.5 text-[13.5px] font-semibold',
+                  isBatchCleanCompletion
+                    ? 'border-[var(--sp-success)]/35 bg-[var(--sp-success-tint)] text-[var(--sp-success-ink)]'
+                    : 'border-[var(--sp-warn)]/45 bg-[var(--sp-warn-tint)] text-[var(--sp-warn-ink)]'
+                )}
+              >
+                {isBatchCleanCompletion ? (
+                  <Check
+                    className="mt-0.5 h-4 w-4 shrink-0"
+                    strokeWidth={3}
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <AlertCircle
+                    className="mt-0.5 h-4 w-4 shrink-0"
+                    aria-hidden="true"
+                  />
+                )}
+                <span>{batchSummaryText}</span>
+              </div>
+            )}
+
+            <div className="flex items-center justify-end gap-1.5 border-t border-[var(--sp-border)]/70 pt-2 text-[12px] font-medium text-[var(--sp-muted)]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={APICUTS_SPONSOR.logoPath}
+                alt=""
+                width={14}
+                height={14}
+                aria-hidden="true"
+                className="h-3.5 w-3.5 shrink-0 rounded-[3px]"
+              />
               <span>
-                written{' '}
-                {summary.unmarkedStructuredCount === 1
-                  ? 'answer needs'
-                  : 'answers need'}{' '}
-                marking against the mark scheme to finish your score.
+                Free AI grading powered by{' '}
+                <a
+                  href={APICUTS_SPONSOR.url}
+                  target="_blank"
+                  rel="noopener"
+                  className="font-bold text-[var(--sp-ink)] underline decoration-[var(--sp-border)] underline-offset-2 transition-colors hover:text-[var(--sp-accent)] hover:decoration-[var(--sp-accent)]"
+                >
+                  {APICUTS_SPONSOR.name}
+                </a>
               </span>
-            </p>
-            <button
-              type="button"
-              onClick={() => {
-                setReviewTab('unmarked');
-                if (unmarkedEntries[0]) {
-                  handleJumpToIndex(unmarkedEntries[0].idx);
-                }
-              }}
-              className="sp-key sp-key--warn rounded-2xl px-4 py-2.5 text-[14px] font-extrabold"
-            >
-              Mark my answers
-            </button>
+            </div>
           </div>
         )}
       </section>
@@ -1706,6 +2262,10 @@ export function MockExamView({
               checkedCriterionKeys={activeReviewResponse?.checkedCriterionKeys}
               onChangeSelfMark={(update) =>
                 handleReviewSelfMark(activeReviewItem.id, update)
+              }
+              aiGradeResult={aiGradesByQuestionId[activeReviewItem.id] ?? null}
+              onAiGradeResult={(result) =>
+                handleSingleQuestionAiGrade(activeReviewItem.id, result)
               }
             />
 

@@ -8,6 +8,7 @@ import {
   List,
   Target,
 } from 'lucide-react';
+import { ApicutsLogoMark } from '@/components/sixthphysics/apicuts-logo';
 import {
   SIXTHPHYSICS_EXTERNAL_LINKS,
   SYLLABUS_SEO_CONFIGS,
@@ -436,6 +437,20 @@ export function SyllabusLandingPage({
             ))}
           </div>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <a
+              href={SIXTHPHYSICS_EXTERNAL_LINKS.apicutsSponsor}
+              target="_blank"
+              rel="noopener"
+              className="inline-flex items-center gap-1.5 font-semibold text-[var(--sp-muted)] transition-colors hover:text-[var(--sp-ink)]"
+            >
+              <ApicutsLogoMark className="h-3.5 w-3.5 shrink-0" />
+              <span>
+                Free AI grading via{' '}
+                <span className="font-bold text-[var(--sp-ink)]">
+                  APIcuts.ai
+                </span>
+              </span>
+            </a>
             <a
               href={SIXTHPHYSICS_EXTERNAL_LINKS.githubRepo}
               target="_blank"

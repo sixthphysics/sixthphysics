@@ -94,6 +94,8 @@ describe('SixthPhysics SEO metadata, routes, and structured data', () => {
       expect(html).toContain(`/?syllabus=${cfg.syllabus}`);
       expect(html).toContain(`/?mode=mock&amp;syllabus=${cfg.syllabus}`);
       expect(html).toContain(`/?mode=pdf&amp;syllabus=${cfg.syllabus}`);
+      expect(html).toContain('https://apicuts.ai');
+      expect(html).toContain('APIcuts.ai');
       for (const topic of cfg.catalogue.topics) {
         expect(html).toContain(topic.title);
       }

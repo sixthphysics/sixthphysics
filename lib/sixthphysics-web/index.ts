@@ -6,3 +6,4 @@ export * from "./mock-builder";
 export * from "./formula-reference";
 export * from "./pdf-paper";
 export * from "./seo";
+export * from "./ai-grader";
