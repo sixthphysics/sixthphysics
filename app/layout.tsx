@@ -1,8 +1,13 @@
 import type React from 'react';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import 'katex/dist/katex.min.css';
 import './globals.css';
+import {
+  SIXTHPHYSICS_OG_IMAGE_PATH,
+  SIXTHPHYSICS_SITE_NAME,
+  SIXTHPHYSICS_SITE_URL,
+} from '@/lib/sixthphysics-web/seo';
 
 const plusJakartaSans = localFont({
   src: './fonts/PlusJakartaSans-Variable.woff2',
@@ -18,10 +23,81 @@ const jetBrainsMono = localFont({
   display: 'swap',
 });
 
+const GOOGLE_SITE_VERIFICATION =
+  process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim() ||
+  'a997HG73eOQgA1nnNDURa54ag3BrtqOsbhcPJybAvZs';
+
+const ROOT_DESCRIPTION =
+  'Free pre-university physics practice bank with 7,643 solver-verified Paper 1 MCQ and Paper 2 structured questions, deterministic SVG diagrams, worked solutions, examiner mark schemes, timed mock exams, and PDF mock papers for IB Physics (2025 SL & HL), UK A-Level Physics (AQA 7408), and NCUK IFY Physics (IFYPH005).';
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#F4F6FB' },
+    { media: '(prefers-color-scheme: dark)', color: '#0F1420' },
+  ],
+};
+
 export const metadata: Metadata = {
-  title: 'SixthPhysics · IB, UK A-Level & NCUK IFY Physics Practice',
-  description:
-    'Verified Paper 1 multiple-choice and Paper 2 structured physics questions, deterministic diagrams, examiner mark schemes, and timed mock papers for IB Physics, UK A-Level, and NCUK IFY.',
+  metadataBase: new URL(SIXTHPHYSICS_SITE_URL),
+  title: {
+    default: 'SixthPhysics · IB, UK A-Level & NCUK IFY Physics Practice Bank',
+    template: '%s · SixthPhysics',
+  },
+  description: ROOT_DESCRIPTION,
+  applicationName: SIXTHPHYSICS_SITE_NAME,
+  keywords: [
+    'SixthPhysics',
+    'IB Physics 2025 practice questions',
+    'IB Physics SL HL question bank',
+    'IB Physics Paper 1 MCQ',
+    'IB Physics Paper 2 structured questions',
+    'UK A-Level Physics practice questions',
+    'AQA 7408 Physics question bank',
+    'NCUK IFY Physics IFYPH005',
+    'physics mock paper generator',
+    'physics examiner mark schemes',
+    'free physics revision questions',
+  ],
+  alternates: {
+    canonical: '/',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_GB',
+    url: `${SIXTHPHYSICS_SITE_URL}/`,
+    siteName: SIXTHPHYSICS_SITE_NAME,
+    title: 'SixthPhysics · IB, UK A-Level & NCUK IFY Physics Practice Bank',
+    description: ROOT_DESCRIPTION,
+    images: [
+      {
+        url: SIXTHPHYSICS_OG_IMAGE_PATH,
+        width: 1440,
+        height: 900,
+        alt: 'SixthPhysics interactive physics practice desk with deterministic diagrams and mark schemes',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'SixthPhysics · IB, UK A-Level & NCUK IFY Physics Practice Bank',
+    description: ROOT_DESCRIPTION,
+    images: [SIXTHPHYSICS_OG_IMAGE_PATH],
+  },
+  manifest: '/manifest.webmanifest',
+  verification: {
+    google: GOOGLE_SITE_VERIFICATION,
+  },
 };
 
 const THEME_INIT_SCRIPT = `try{if(localStorage.getItem('sixthphysics.theme')==='dark'){document.documentElement.classList.add('dark');}else{document.documentElement.classList.remove('dark');}}catch(e){}`;

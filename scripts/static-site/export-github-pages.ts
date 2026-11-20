@@ -19,7 +19,7 @@ const ROOT_CONFIG_FILES = [
 
 const ROOT_SOURCE_DIRS = ["components", "lib", "types"] as const;
 
-const EXCLUDED_APP_SEGMENTS = new Set(["api", "review"]);
+const EXCLUDED_APP_SEGMENTS = new Set(["api", "review", "demo", "settings"]);
 
 function renderStaticExportNextConfig(): string {
   return [
@@ -32,6 +32,7 @@ function renderStaticExportNextConfig(): string {
     "",
     "const nextConfig: NextConfig = {",
     '  output: "export",',
+    "  trailingSlash: true,",
     "  ...(normalizedBasePath",
     "    ? { basePath: normalizedBasePath, assetPrefix: normalizedBasePath }",
     "    : {}),",
@@ -98,6 +99,8 @@ export interface ExportGithubPagesResult {
   totalCompiledItems: number;
   hasIndexHtml: boolean;
   hasNoJekyll: boolean;
+  hasRobotsTxt: boolean;
+  hasSitemapXml: boolean;
   hasManifestJson: boolean;
   exportedChunkFiles: number;
 }
@@ -226,6 +229,8 @@ export async function exportGithubPagesBundle(
       totalCompiledItems,
       hasIndexHtml: fs.existsSync(path.join(distPagesDir, "index.html")),
       hasNoJekyll: fs.existsSync(path.join(distPagesDir, ".nojekyll")),
+      hasRobotsTxt: fs.existsSync(path.join(distPagesDir, "robots.txt")),
+      hasSitemapXml: fs.existsSync(path.join(distPagesDir, "sitemap.xml")),
       hasManifestJson: fs.existsSync(
         path.join(distPagesDir, "sixthphysics-data", "manifest.json"),
       ),

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
 import {
   ChevronRight,
   Loader2,
@@ -18,6 +19,10 @@ import {
   type WorkspaceMode,
 } from '@/components/sixthphysics/top-nav';
 import { TopicRail } from '@/components/sixthphysics/topic-rail';
+import {
+  SIXTHPHYSICS_EXTERNAL_LINKS,
+  SYLLABUS_SEO_LIST,
+} from '@/lib/sixthphysics-web/seo';
 import {
   computeOverallSyllabusMastery,
   computeTopicMasteryStats,
@@ -892,6 +897,54 @@ export function SixthPhysicsShell() {
         activeSyllabus={activeSyllabus}
         activeLevel={activeFilters.level}
       />
+
+      <footer className="mt-10 border-t border-[var(--sp-border)] bg-[var(--sp-surface)]/70 print:hidden">
+        <div className="mx-auto flex max-w-[1400px] flex-col gap-3 px-4 py-4 text-[12.5px] text-[var(--sp-muted)] sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <nav
+            aria-label="Syllabus topic guides"
+            className="flex flex-wrap items-center gap-x-4 gap-y-1.5"
+          >
+            <span className="font-bold text-[var(--sp-ink)]">
+              Syllabus guides:
+            </span>
+            {SYLLABUS_SEO_LIST.map((item) => (
+              <Link
+                key={item.syllabus}
+                href={item.path}
+                className="font-semibold transition-colors hover:text-[var(--sp-accent)]"
+              >
+                {item.navLabel}
+              </Link>
+            ))}
+          </nav>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+            <a
+              href={SIXTHPHYSICS_EXTERNAL_LINKS.githubRepo}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold transition-colors hover:text-[var(--sp-ink)]"
+            >
+              GitHub
+            </a>
+            <a
+              href={SIXTHPHYSICS_EXTERNAL_LINKS.huggingFaceGguf}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold transition-colors hover:text-[var(--sp-ink)]"
+            >
+              Qwen3.5-9B GGUF
+            </a>
+            <a
+              href={SIXTHPHYSICS_EXTERNAL_LINKS.huggingFaceDataset}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold transition-colors hover:text-[var(--sp-ink)]"
+            >
+              Dataset
+            </a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
