@@ -155,10 +155,10 @@ npm run lint && npm run type-check && npm test
   <a href="https://apicuts.ai">
     <img src="public/apicuts-logo.svg" alt="APIcuts.ai logo" width="24" height="24" align="absmiddle" />
   </a>
-  &nbsp;<strong>We thank <a href="https://apicuts.ai">APIcuts.ai</a> for providing us with a sponsored inference account for free Paper 2 AI grading on <a href="https://sixthphysics.github.io">sixthphysics.github.io</a>.</strong>
+  &nbsp;<strong>We thank <a href="https://apicuts.ai">APIcuts.ai</a> for providing us with a sponsored inference account for free AI grading of long-answer questions on <a href="https://sixthphysics.github.io">sixthphysics.github.io</a>.</strong>
 </p>
 
-Students practising Paper 2 structured questions or reviewing Timed Mocks on [sixthphysics.github.io](https://sixthphysics.github.io) can auto-grade their written working against the official `M1`/`A1` mark schemes with zero API keys or sign-up required — with instant manual self-marking always available as an offline/quota fallback.
+Students practising long-answer structured questions or reviewing Timed Mocks on [sixthphysics.github.io](https://sixthphysics.github.io) can auto-grade their written working against the official `M1`/`A1` mark schemes with zero API keys or sign-up required — with instant manual self-marking always available as an offline/quota fallback.
 
 ## License
 

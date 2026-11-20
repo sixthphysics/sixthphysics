@@ -300,5 +300,5 @@ step2_json = generate_turn(messages, max_new_tokens=1400)
   <a href="https://apicuts.ai">
     <img src="https://sixthphysics.github.io/apicuts-logo.svg" alt="APIcuts.ai logo" width="22" height="22" align="absmiddle" />
   </a>
-  &nbsp;We thank <a href="https://apicuts.ai"><strong>APIcuts.ai</strong></a> for providing us with a sponsored inference account powering free Paper 2 AI grading for all students on <a href="https://sixthphysics.github.io"><strong>sixthphysics.github.io</strong></a>, allowing written working to be automatically checked against official <code>M1</code>/<code>A1</code> examiner mark schemes with zero sign-up or API keys required.
+  &nbsp;We thank <a href="https://apicuts.ai"><strong>APIcuts.ai</strong></a> for providing us with a sponsored inference account powering free AI grading for long-answer questions on <a href="https://sixthphysics.github.io"><strong>sixthphysics.github.io</strong></a>, allowing written working to be automatically checked against official <code>M1</code>/<code>A1</code> examiner mark schemes with zero sign-up or API keys required.
 </p>

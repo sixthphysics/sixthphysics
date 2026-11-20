@@ -182,7 +182,7 @@ export function SyllabusLandingPage({
             </div>
             <div className="rounded-2xl border-2 border-[var(--sp-border)] bg-[var(--sp-surface-subtle)] p-4">
               <dt className="text-[12px] font-bold tracking-wide text-[var(--sp-muted)] uppercase">
-                Paper 1 MCQs
+                Multiple Choice
               </dt>
               <dd className="mt-1 text-[24px] font-extrabold tabular-nums text-[var(--sp-ink)]">
                 {counts.mcqCount.toLocaleString('en-US')}
@@ -190,7 +190,7 @@ export function SyllabusLandingPage({
             </div>
             <div className="rounded-2xl border-2 border-[var(--sp-border)] bg-[var(--sp-surface-subtle)] p-4">
               <dt className="text-[12px] font-bold tracking-wide text-[var(--sp-muted)] uppercase">
-                Paper 2 Structured
+                Long-Answer
               </dt>
               <dd className="mt-1 text-[24px] font-extrabold tabular-nums text-[var(--sp-ink)]">
                 {counts.structuredCount.toLocaleString('en-US')}
@@ -233,9 +233,9 @@ export function SyllabusLandingPage({
                 Syllabus Topics &amp; Subtopics
               </h2>
               <p className="mt-1 text-[14.5px] text-[var(--sp-muted)]">
-                Jump straight into solver-verified Paper 1 MCQ and Paper 2
-                structured questions for any {cfg.catalogue.specificationCode}{' '}
-                topic.
+                Jump straight into solver-verified multiple-choice and
+                long-answer structured questions for any{' '}
+                {cfg.catalogue.specificationCode} topic.
               </p>
             </div>
             <div className="flex items-center gap-2 text-[13px] font-bold">
