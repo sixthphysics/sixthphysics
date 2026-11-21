@@ -18,6 +18,7 @@ import {
   type SyllabusLevel,
   type SyllabusSpecificationCatalogue,
 } from "../../lib/constants/syllabi";
+import { resolveEffectiveAlevelLevels } from "../../lib/sixthphysics-web/alevel-levels";
 import { resolveEffectiveNcukLevels } from "../../lib/sixthphysics-web/ncuk-levels";
 import {
   PUBLIC_BANK_CHUNK_SCHEMA_VERSION,
@@ -435,6 +436,10 @@ function collectEffectiveLevelsForRow(
   for (const tag of tags) {
     if (syllabusId === "ncuk") {
       for (const lvl of resolveEffectiveNcukLevels(tag)) {
+        levels.add(lvl);
+      }
+    } else if (syllabusId === "alevel") {
+      for (const lvl of resolveEffectiveAlevelLevels(tag)) {
         levels.add(lvl);
       }
     } else if (tag.level) {

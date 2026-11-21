@@ -101,6 +101,11 @@ import {
   WAVES_SCENARIO_KINDS,
   WavesScenarioKind,
 } from "@/lib/visuals/waves";
+import { ALEVEL_CORE_A2_PLUGINS } from "@/lib/visuals/alevel-core-a2";
+import { ALEVEL_CORE_AS_PLUGINS } from "@/lib/visuals/alevel-core-as";
+import { ALEVEL_OPTIONS_ASTROMED_PLUGINS } from "@/lib/visuals/alevel-options-astromed";
+import { ALEVEL_OPTIONS_ENG_ELEC_PLUGINS } from "@/lib/visuals/alevel-options-eng-elec";
+import { ALEVEL_PRACTICALS_PLUGINS } from "@/lib/visuals/alevel-practicals";
 import { NCUK_AC4_PLUGINS } from "@/lib/visuals/ncuk-ac4";
 import { NCUK_QUAL_EXAM_PLUGINS } from "@/lib/visuals/ncuk-conceptual";
 import { NCUK_STATICS_FLUIDS_PLUGINS } from "@/lib/visuals/ncuk-statics-fluids";
@@ -2054,6 +2059,14 @@ export const NCUK_V3_DOMAIN_PLUGINS: readonly DomainKindPlugin[] = [
   ...NCUK_QUAL_EXAM_PLUGINS,
 ];
 
+export const ALEVEL_V3_DOMAIN_PLUGINS: readonly DomainKindPlugin[] = [
+  ...ALEVEL_PRACTICALS_PLUGINS,
+  ...ALEVEL_CORE_AS_PLUGINS,
+  ...ALEVEL_CORE_A2_PLUGINS,
+  ...ALEVEL_OPTIONS_ASTROMED_PLUGINS,
+  ...ALEVEL_OPTIONS_ENG_ELEC_PLUGINS,
+];
+
 /**
  * Attaches deterministic per-kind scenario plugins onto their corresponding
  * registered domain adapters without adding new top-level domains.
@@ -2268,6 +2281,7 @@ export function resetDomainRegistryToDefaults(): void {
   });
   registerDomainAdapter(buildPureCalculationAdapter());
   registerDomainKindPlugins(NCUK_V3_DOMAIN_PLUGINS);
+  registerDomainKindPlugins(ALEVEL_V3_DOMAIN_PLUGINS);
 }
 
 export function hasDomainAdapter(domain: string): domain is PhysicsDomainId {

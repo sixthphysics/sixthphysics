@@ -1,7 +1,11 @@
+import { ALEVEL_OPTION_SUBTOPIC_IDS } from './alevel-levels';
 import { filterIndexRows } from './client-loader';
 import {
+  assembleOfficialAlevelBlueprint,
   assembleOfficialNcukBlueprint,
+  isOfficialAlevelBlueprintId,
   isOfficialNcukBlueprintId,
+  type OfficialAlevelBlueprintId,
   type OfficialNcukBlueprintId,
 } from './mock-builder';
 import type {
@@ -166,7 +170,7 @@ export const EXAM_PAPER_PRESETS: readonly ExamPaperPreset[] = [
     durationMinutes: 25,
   },
 
-  // UK A-Level Physics (DfE Core + AQA 7408)
+  // UK A-Level Physics (DfE Core + AQA 7407/7408)
   {
     id: 'alevel-pdf-paper1',
     syllabus: 'alevel',
@@ -180,6 +184,81 @@ export const EXAM_PAPER_PRESETS: readonly ExamPaperPreset[] = [
     structuredCount: 4,
     durationMinutes: 50,
     recommended: true,
+  },
+  {
+    id: 'alevel-as-paper1-official',
+    syllabus: 'alevel',
+    shortTitle: 'AQA AS Paper 1 (7407/1)',
+    paperLabel: 'AS Paper 1 (7407/1) · 70 marks',
+    description:
+      'Official AQA 7407/1 AS blueprint (Sections 1–5, Year 12): short and long structured questions totalling ~70 marks.',
+    badgeLabel: '70 marks · 90 min',
+    formatMode: 'structured',
+    level: 'Y12',
+    mcqCount: 0,
+    structuredCount: 12,
+    targetTotalMarks: 70,
+    durationMinutes: 90,
+  },
+  {
+    id: 'alevel-as-paper2-official',
+    syllabus: 'alevel',
+    shortTitle: 'AQA AS Paper 2 (7407/2)',
+    paperLabel: 'AS Paper 2 (7407/2) · 70 marks',
+    description:
+      'Official AQA 7407/2 AS blueprint (Sections 1–5, Year 12): Practical/Data Analysis (~20m), Synoptic Structured (~20m), and 30×1m MCQs.',
+    badgeLabel: '70 marks · 90 min',
+    formatMode: 'mixed',
+    level: 'Y12',
+    mcqCount: 30,
+    structuredCount: 8,
+    targetTotalMarks: 70,
+    durationMinutes: 90,
+  },
+  {
+    id: 'alevel-a2-paper1-official',
+    syllabus: 'alevel',
+    shortTitle: 'AQA A-Level Paper 1 (7408/1)',
+    paperLabel: 'Paper 1 (7408/1) · 85 marks',
+    description:
+      'Official AQA 7408/1 blueprint (Sections 1–5 & 6.1 Periodic Motion): ~60m structured questions plus 25×1m MCQs.',
+    badgeLabel: '85 marks · 120 min',
+    formatMode: 'mixed',
+    level: 'Y13',
+    mcqCount: 25,
+    structuredCount: 10,
+    targetTotalMarks: 85,
+    durationMinutes: 120,
+  },
+  {
+    id: 'alevel-a2-paper2-official',
+    syllabus: 'alevel',
+    shortTitle: 'AQA A-Level Paper 2 (7408/2)',
+    paperLabel: 'Paper 2 (7408/2) · 85 marks',
+    description:
+      'Official AQA 7408/2 blueprint (Sections 6.2 Thermal, 7 Fields & 8 Nuclear): ~60m structured questions plus 25×1m MCQs.',
+    badgeLabel: '85 marks · 120 min',
+    formatMode: 'mixed',
+    level: 'Y13',
+    mcqCount: 25,
+    structuredCount: 10,
+    targetTotalMarks: 85,
+    durationMinutes: 120,
+  },
+  {
+    id: 'alevel-a2-paper3-official',
+    syllabus: 'alevel',
+    shortTitle: 'AQA A-Level Paper 3 (7408/3)',
+    paperLabel: 'Paper 3 (7408/3) · 80 marks',
+    description:
+      'Official AQA 7408/3 blueprint: Section A Practical Skills & Data Analysis (~45m) plus Section B single Option topic (3.9–3.13, ~35m).',
+    badgeLabel: '80 marks · 120 min',
+    formatMode: 'structured',
+    level: 'Y13',
+    mcqCount: 0,
+    structuredCount: 14,
+    targetTotalMarks: 80,
+    durationMinutes: 120,
   },
   {
     id: 'alevel-pdf-structured',
@@ -709,19 +788,34 @@ export function buildExamPaperDraft(
       : (now.getTime() ^ 0x9e3779b9) >>> 0;
   const rng = createMulberry32(seed);
 
-  const officialBlueprintId: OfficialNcukBlueprintId | null =
+  const officialNcukBlueprintId: OfficialNcukBlueprintId | null =
     request.syllabus === 'ncuk' && isOfficialNcukBlueprintId(request.presetId)
       ? request.presetId
       : null;
+  const officialAlevelBlueprintId: OfficialAlevelBlueprintId | null =
+    request.syllabus === 'alevel' && isOfficialAlevelBlueprintId(request.presetId)
+      ? request.presetId
+      : null;
+
+  const optionSubtopicSet = new Set<string>(ALEVEL_OPTION_SUBTOPIC_IDS);
+  const requestedPaper3OptionId =
+    officialAlevelBlueprintId === 'alevel-a2-paper3-official'
+      ? request.topicIds?.find((id) => optionSubtopicSet.has(id))
+      : undefined;
 
   const normalizedLevel =
-    officialBlueprintId === 'ncuk-eos1-official'
+    officialNcukBlueprintId === 'ncuk-eos1-official'
       ? 'IFY-S1'
-      : officialBlueprintId === 'ncuk-final-official'
+      : officialNcukBlueprintId === 'ncuk-final-official'
         ? 'all'
-        : request.level && request.level.trim() !== ''
-          ? request.level
-          : 'all';
+        : officialAlevelBlueprintId === 'alevel-as-paper1-official' ||
+            officialAlevelBlueprintId === 'alevel-as-paper2-official'
+          ? 'Y12'
+          : officialAlevelBlueprintId !== null
+            ? 'Y13'
+            : request.level && request.level.trim() !== ''
+              ? request.level
+              : 'all';
 
   const baseFiltered = filterIndexRows(manifest.items, {
     syllabus: request.syllabus,
@@ -731,10 +825,11 @@ export function buildExamPaperDraft(
   });
 
   const excludedSet = new Set(request.excludeQuestionIds ?? []);
+  const nonOptionTopics = (request.topicIds ?? []).filter(
+    (id) => !optionSubtopicSet.has(id)
+  );
   const allowedTopics =
-    request.topicIds && request.topicIds.length > 0
-      ? new Set(request.topicIds)
-      : null;
+    nonOptionTopics.length > 0 ? new Set(nonOptionTopics) : null;
 
   const eligibleRows = baseFiltered.filter((row) => {
     if (excludedSet.has(row.id)) return false;
@@ -748,23 +843,43 @@ export function buildExamPaperDraft(
     return true;
   });
 
-  const officialPresetSpec = officialBlueprintId
-    ? EXAM_PAPER_PRESETS.find((p) => p.id === officialBlueprintId)
+  const officialNcukPresetSpec = officialNcukBlueprintId
+    ? EXAM_PAPER_PRESETS.find((p) => p.id === officialNcukBlueprintId)
     : undefined;
-  const useOfficialBlueprint =
-    officialBlueprintId !== null &&
-    officialPresetSpec !== undefined &&
+  const useOfficialNcukBlueprint =
+    officialNcukBlueprintId !== null &&
+    officialNcukPresetSpec !== undefined &&
     request.formatMode === 'mixed' &&
-    Math.round(request.mcqCount) === officialPresetSpec.mcqCount &&
-    Math.round(request.structuredCount) === officialPresetSpec.structuredCount;
+    Math.round(request.mcqCount) === officialNcukPresetSpec.mcqCount &&
+    Math.round(request.structuredCount) ===
+      officialNcukPresetSpec.structuredCount;
+
+  const officialAlevelPresetSpec = officialAlevelBlueprintId
+    ? EXAM_PAPER_PRESETS.find((p) => p.id === officialAlevelBlueprintId)
+    : undefined;
+  const useOfficialAlevelBlueprint =
+    officialAlevelBlueprintId !== null &&
+    officialAlevelPresetSpec !== undefined &&
+    request.formatMode === officialAlevelPresetSpec.formatMode &&
+    Math.round(request.mcqCount) === officialAlevelPresetSpec.mcqCount &&
+    Math.round(request.structuredCount) ===
+      officialAlevelPresetSpec.structuredCount;
 
   let orderedRows: PublicQuestionIndexRow[];
 
-  if (useOfficialBlueprint && officialBlueprintId) {
+  if (useOfficialNcukBlueprint && officialNcukBlueprintId) {
     const assembled = assembleOfficialNcukBlueprint(
       eligibleRows,
-      officialBlueprintId,
+      officialNcukBlueprintId,
       rng
+    );
+    orderedRows = assembled.orderedRows;
+  } else if (useOfficialAlevelBlueprint && officialAlevelBlueprintId) {
+    const assembled = assembleOfficialAlevelBlueprint(
+      eligibleRows,
+      officialAlevelBlueprintId,
+      rng,
+      { optionSubtopicId: requestedPaper3OptionId }
     );
     orderedRows = assembled.orderedRows;
   } else {
@@ -812,9 +927,11 @@ export function buildExamPaperDraft(
   const durationMinutes =
     !autoDuration && typeof request.durationMinutes === 'number'
       ? Math.max(5, Math.min(240, Math.round(request.durationMinutes)))
-      : useOfficialBlueprint && officialPresetSpec
-        ? officialPresetSpec.durationMinutes
-        : calculateRecommendedMinutes(orderedRows);
+      : useOfficialNcukBlueprint && officialNcukPresetSpec
+        ? officialNcukPresetSpec.durationMinutes
+        : useOfficialAlevelBlueprint && officialAlevelPresetSpec
+          ? officialAlevelPresetSpec.durationMinutes
+          : calculateRecommendedMinutes(orderedRows);
 
   const paperCode = generatePaperCode(request.syllabus, seed);
 
@@ -1108,6 +1225,226 @@ export function getSyllabusExamMetadata(
   }
 
   if (syllabus === 'alevel') {
+    const normLevel = (level ?? 'all').trim().toUpperCase();
+    const isAsLevel = normLevel === 'Y12' || normLevel === 'AS';
+    const baseMaterials = [
+      'A pencil and a ruler',
+      'A scientific calculator',
+      includeFormulaSheet
+        ? 'AQA Data and Formulae Sheet (included in this booklet)'
+        : 'A Data and Formulae Booklet',
+    ];
+    const formatMarkTag = (marks: number) =>
+      marks === 1 ? '[1 mark]' : `[${marks} marks]`;
+
+    const isAsPaper1 =
+      presetId === 'alevel-as-paper1-official' ||
+      (isAsLevel && counts.mcqCount === 0 && counts.structuredCount === 12);
+    const isAsPaper2 =
+      presetId === 'alevel-as-paper2-official' ||
+      (isAsLevel && counts.mcqCount === 30 && counts.structuredCount === 8);
+    const isA2Paper1 = presetId === 'alevel-a2-paper1-official';
+    const isA2Paper2 = presetId === 'alevel-a2-paper2-official';
+    const isA2Paper3 =
+      presetId === 'alevel-a2-paper3-official' ||
+      (normLevel === 'Y13' &&
+        counts.mcqCount === 0 &&
+        counts.structuredCount === 14);
+
+    if (isAsPaper1) {
+      const officialSections: OfficialExamSectionHeader[] = [
+        {
+          title: 'Short and Long Structured Questions (Sections 1–5)',
+          questionRange: 'Q1–Q12',
+          marks: 70,
+        },
+      ];
+      return {
+        syllabus,
+        boardMasthead: 'AQA GCE AS PHYSICS (7407/1) · PAPER 1',
+        subjectTitle: 'AS PHYSICS — PAPER 1',
+        levelBadge: formatLevelDisplay('alevel', 'Y12'),
+        specSubtitle:
+          'AQA AS Physics 7407/1 · Sections 1–5 (90 minutes · 70 marks)',
+        gravityText: 'g = 9.81 m s⁻²',
+        dataBookletName: 'AQA Physics Data and Formulae Sheet (7407/7408)',
+        sectionATitle: 'Multiple-Choice Questions',
+        sectionBTitle:
+          'Short and Long Structured Questions — Sections 1–5 (70 marks)',
+        officialSections,
+        materials: baseMaterials,
+        instructions: [
+          'Use black ink or black ball-point pen. Use pencil for diagrams and graphs.',
+          'Answer all structured questions in the spaces provided across Sections 1–5 (Measurements, Particles & Radiation, Waves, Mechanics & Materials, Electricity).',
+          'Time allowed: 1 hour 30 minutes (90 minutes). Take g = 9.81 N kg⁻¹ (m s⁻²).',
+          'Show full working and quote numerical answers to an appropriate number of significant figures with SI units.',
+          `The maximum mark for this paper is ${counts.totalMarks}.`,
+        ],
+        formatMarkTag,
+      };
+    }
+
+    if (isAsPaper2) {
+      const officialSections: OfficialExamSectionHeader[] = [
+        {
+          title: 'Section A — Practical Skills and Data Analysis',
+          questionRange: 'Q1–Q4',
+          marks: 20,
+        },
+        {
+          title: 'Section B — Synoptic Structured Questions (Sections 1–5)',
+          questionRange: 'Q5–Q8',
+          marks: 20,
+        },
+        {
+          title: 'Section C — Multiple-Choice Questions (Sections 1–5)',
+          questionRange: 'Q9–Q38',
+          marks: 30,
+        },
+      ];
+      return {
+        syllabus,
+        boardMasthead: 'AQA GCE AS PHYSICS (7407/2) · PAPER 2',
+        subjectTitle: 'AS PHYSICS — PAPER 2',
+        levelBadge: formatLevelDisplay('alevel', 'Y12'),
+        specSubtitle:
+          'AQA AS Physics 7407/2 · Practical Skills, Data Analysis & Sections 1–5 (90 minutes · 70 marks)',
+        gravityText: 'g = 9.81 m s⁻²',
+        dataBookletName: 'AQA Physics Data and Formulae Sheet (7407/7408)',
+        sectionATitle: 'Section C — Multiple-Choice Questions (30 marks)',
+        sectionBTitle:
+          'Sections A & B — Practical Skills, Data Analysis & Synoptic Structured Questions (40 marks)',
+        officialSections,
+        materials: baseMaterials,
+        instructions: [
+          'Use black ink or black ball-point pen. Use pencil for diagrams and graphs.',
+          'This paper comprises Section A (Practical Skills & Data Analysis, ~20 marks), Section B (Synoptic Structured Questions, ~20 marks), and Section C (30 Multiple-Choice Questions, 30 marks). Answer all questions.',
+          'Time allowed: 1 hour 30 minutes (90 minutes). Take g = 9.81 N kg⁻¹ (m s⁻²).',
+          'Give final numerical answers to an appropriate number of significant figures with correct SI units.',
+          `The maximum mark for this paper is ${counts.totalMarks}.`,
+        ],
+        formatMarkTag,
+      };
+    }
+
+    if (isA2Paper1) {
+      const officialSections: OfficialExamSectionHeader[] = [
+        {
+          title:
+            'Section A — Short & Long Structured Questions (Sections 1–5 & 6.1 Periodic Motion)',
+          questionRange: 'Q1–Q10',
+          marks: 60,
+        },
+        {
+          title:
+            'Section B — Multiple-Choice Questions (Sections 1–5 & 6.1 Periodic Motion)',
+          questionRange: 'Q11–Q35',
+          marks: 25,
+        },
+      ];
+      return {
+        syllabus,
+        boardMasthead: 'AQA GCE A-LEVEL PHYSICS (7408/1) · PAPER 1',
+        subjectTitle: 'A-LEVEL PHYSICS — PAPER 1',
+        levelBadge: formatLevelDisplay('alevel', 'Y13'),
+        specSubtitle:
+          'AQA A-Level Physics 7408/1 · Sections 1–5 & 6.1 Periodic Motion (120 minutes · 85 marks)',
+        gravityText: 'g = 9.81 m s⁻²',
+        dataBookletName: 'AQA Physics Data and Formulae Sheet (7407/7408)',
+        sectionATitle: 'Section B — Multiple-Choice Questions (25 marks)',
+        sectionBTitle:
+          'Section A — Short & Long Structured Questions: Sections 1–5 & 6.1 (60 marks)',
+        officialSections,
+        materials: baseMaterials,
+        instructions: [
+          'Use black ink or black ball-point pen. Use pencil for diagrams and graphs.',
+          'This paper assesses Sections 1–5 and Section 6.1 (Periodic Motion): Section A (~60 marks structured questions) and Section B (25 multiple-choice questions, 25 marks). Answer all questions.',
+          'Time allowed: 2 hours (120 minutes). Take g = 9.81 N kg⁻¹ (m s⁻²).',
+          'Give final numerical answers to an appropriate number of significant figures with correct SI units.',
+          `The maximum mark for this paper is ${counts.totalMarks}.`,
+        ],
+        formatMarkTag,
+      };
+    }
+
+    if (isA2Paper2) {
+      const officialSections: OfficialExamSectionHeader[] = [
+        {
+          title:
+            'Section A — Short & Long Structured Questions (Sections 6.2 Thermal, 7 Fields & 8 Nuclear)',
+          questionRange: 'Q1–Q10',
+          marks: 60,
+        },
+        {
+          title:
+            'Section B — Multiple-Choice Questions (Sections 6.2 Thermal, 7 Fields & 8 Nuclear)',
+          questionRange: 'Q11–Q35',
+          marks: 25,
+        },
+      ];
+      return {
+        syllabus,
+        boardMasthead: 'AQA GCE A-LEVEL PHYSICS (7408/2) · PAPER 2',
+        subjectTitle: 'A-LEVEL PHYSICS — PAPER 2',
+        levelBadge: formatLevelDisplay('alevel', 'Y13'),
+        specSubtitle:
+          'AQA A-Level Physics 7408/2 · Sections 6.2 Thermal, 7 Fields & 8 Nuclear (120 minutes · 85 marks)',
+        gravityText: 'g = 9.81 m s⁻²',
+        dataBookletName: 'AQA Physics Data and Formulae Sheet (7407/7408)',
+        sectionATitle: 'Section B — Multiple-Choice Questions (25 marks)',
+        sectionBTitle:
+          'Section A — Short & Long Structured Questions: Sections 6.2, 7 & 8 (60 marks)',
+        officialSections,
+        materials: baseMaterials,
+        instructions: [
+          'Use black ink or black ball-point pen. Use pencil for diagrams and graphs.',
+          'This paper assesses Section 6.2 (Thermal Physics), Section 7 (Fields), and Section 8 (Nuclear Physics): Section A (~60 marks structured questions) and Section B (25 multiple-choice questions, 25 marks). Answer all questions.',
+          'Time allowed: 2 hours (120 minutes). Take g = 9.81 N kg⁻¹ (m s⁻²).',
+          'Give final numerical answers to an appropriate number of significant figures with correct SI units.',
+          `The maximum mark for this paper is ${counts.totalMarks}.`,
+        ],
+        formatMarkTag,
+      };
+    }
+
+    if (isA2Paper3) {
+      const officialSections: OfficialExamSectionHeader[] = [
+        {
+          title: 'Section A — Practical Skills and Data Analysis',
+          questionRange: 'Q1–Q8',
+          marks: 45,
+        },
+        {
+          title: 'Section B — Optional Topic (One Option from Sections 9–13)',
+          questionRange: 'Q9–Q14',
+          marks: 35,
+        },
+      ];
+      return {
+        syllabus,
+        boardMasthead: 'AQA GCE A-LEVEL PHYSICS (7408/3) · PAPER 3',
+        subjectTitle: 'A-LEVEL PHYSICS — PAPER 3',
+        levelBadge: formatLevelDisplay('alevel', 'Y13'),
+        specSubtitle:
+          'AQA A-Level Physics 7408/3 · Practical Skills, Data Analysis & Option Topic (120 minutes · 80 marks)',
+        gravityText: 'g = 9.81 m s⁻²',
+        dataBookletName: 'AQA Physics Data and Formulae Sheet (7407/7408)',
+        sectionATitle: 'Multiple-Choice Questions',
+        sectionBTitle:
+          'Section A (Practical Skills & Data Analysis · 45 marks) & Section B (Optional Topic · 35 marks)',
+        officialSections,
+        materials: baseMaterials,
+        instructions: [
+          'Use black ink or black ball-point pen. Use pencil for diagrams and graphs.',
+          'Answer all questions in Section A (Practical Skills & Data Analysis, ~45 marks) and all questions for your single chosen Optional Topic in Section B (~35 marks).',
+          'Time allowed: 2 hours (120 minutes). Take g = 9.81 N kg⁻¹ (m s⁻²).',
+          'Give final numerical answers to an appropriate number of significant figures with correct SI units.',
+          `The maximum mark for this paper is ${counts.totalMarks}.`,
+        ],
+        formatMarkTag,
+      };
+    }
+
     const instructions = [
       'Use black ink or black ball-point pen. Use pencil for diagrams and graphs.',
       hasMcq && hasStructured
@@ -1142,8 +1479,7 @@ export function getSyllabusExamMetadata(
           : 'A Data and Formulae Booklet',
       ],
       instructions,
-      formatMarkTag: (marks: number) =>
-        marks === 1 ? '[1 mark]' : `[${marks} marks]`,
+      formatMarkTag,
     };
   }
 

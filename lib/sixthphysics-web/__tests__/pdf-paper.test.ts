@@ -1,4 +1,7 @@
 import {
+  ALEVEL_OPTION_SUBTOPIC_IDS,
+  ALEVEL_PAPER1_SUBTOPIC_IDS,
+  ALEVEL_PAPER2_SUBTOPIC_IDS,
   buildDefaultPaperTitle,
   buildExamPaperDraft,
   buildExamPaperDraftFromSession,
@@ -16,8 +19,11 @@ import {
   removeQuestionFromDraft,
   selectBookletEquationsForPaper,
   swapQuestionInDraft,
+  type PublicBankManifest,
+  type PublicQuestionIndexRow,
   type SyllabusId,
 } from '@/lib/sixthphysics-web';
+import { buildPublicBankManifest } from '../../../scripts/static-site/compile-public-bank';
 
 describe('pdf-paper generator logic', () => {
   const manifest = getFallbackManifest();
@@ -306,5 +312,239 @@ describe('pdf-paper generator logic', () => {
         expect(eq.level).toBe('SL');
       }
     }
+  });
+
+  it('exposes all 5 official AQA 7407/7408 PDF presets, exam metadata, section headers, and subtopic-isolated drafts', () => {
+    const alevelPresets = getExamPaperPresetsForSyllabus('alevel');
+    const as1 = alevelPresets.find((p) => p.id === 'alevel-as-paper1-official');
+    const as2 = alevelPresets.find((p) => p.id === 'alevel-as-paper2-official');
+    const a2p1 = alevelPresets.find((p) => p.id === 'alevel-a2-paper1-official');
+    const a2p2 = alevelPresets.find((p) => p.id === 'alevel-a2-paper2-official');
+    const a2p3 = alevelPresets.find((p) => p.id === 'alevel-a2-paper3-official');
+
+    expect(as1).toMatchObject({
+      shortTitle: 'AQA AS Paper 1 (7407/1)',
+      formatMode: 'structured',
+      level: 'Y12',
+      durationMinutes: 90,
+      targetTotalMarks: 70,
+      mcqCount: 0,
+      structuredCount: 12,
+    });
+    expect(as2).toMatchObject({
+      shortTitle: 'AQA AS Paper 2 (7407/2)',
+      formatMode: 'mixed',
+      level: 'Y12',
+      durationMinutes: 90,
+      targetTotalMarks: 70,
+      mcqCount: 30,
+      structuredCount: 8,
+    });
+    expect(a2p1).toMatchObject({
+      shortTitle: 'AQA A-Level Paper 1 (7408/1)',
+      formatMode: 'mixed',
+      level: 'Y13',
+      durationMinutes: 120,
+      targetTotalMarks: 85,
+      mcqCount: 25,
+      structuredCount: 10,
+    });
+    expect(a2p2).toMatchObject({
+      shortTitle: 'AQA A-Level Paper 2 (7408/2)',
+      formatMode: 'mixed',
+      level: 'Y13',
+      durationMinutes: 120,
+      targetTotalMarks: 85,
+      mcqCount: 25,
+      structuredCount: 10,
+    });
+    expect(a2p3).toMatchObject({
+      shortTitle: 'AQA A-Level Paper 3 (7408/3)',
+      formatMode: 'structured',
+      level: 'Y13',
+      durationMinutes: 120,
+      targetTotalMarks: 80,
+      mcqCount: 0,
+      structuredCount: 14,
+    });
+
+    // Metadata & official section headers for all 5 official AQA papers
+    const as1Meta = getSyllabusExamMetadata(
+      'alevel',
+      'Y12',
+      { mcqCount: 0, structuredCount: 12, totalMarks: 70 },
+      true,
+      'alevel-as-paper1-official'
+    );
+    expect(as1Meta.boardMasthead).toContain('7407/1');
+    expect(as1Meta.officialSections).toHaveLength(1);
+    expect(as1Meta.officialSections?.[0].marks).toBe(70);
+
+    const as2Meta = getSyllabusExamMetadata(
+      'alevel',
+      'Y12',
+      { mcqCount: 30, structuredCount: 8, totalMarks: 70 },
+      true,
+      'alevel-as-paper2-official'
+    );
+    expect(as2Meta.boardMasthead).toContain('7407/2');
+    expect(as2Meta.officialSections).toHaveLength(3);
+
+    const a2p1Meta = getSyllabusExamMetadata(
+      'alevel',
+      'Y13',
+      { mcqCount: 25, structuredCount: 10, totalMarks: 85 },
+      true,
+      'alevel-a2-paper1-official'
+    );
+    expect(a2p1Meta.boardMasthead).toContain('7408/1');
+    expect(a2p1Meta.specSubtitle).toContain('6.1 Periodic Motion');
+    expect(a2p1Meta.officialSections).toHaveLength(2);
+
+    const a2p2Meta = getSyllabusExamMetadata(
+      'alevel',
+      'Y13',
+      { mcqCount: 25, structuredCount: 10, totalMarks: 85 },
+      true,
+      'alevel-a2-paper2-official'
+    );
+    expect(a2p2Meta.boardMasthead).toContain('7408/2');
+    expect(a2p2Meta.specSubtitle).toContain('6.2 Thermal');
+    expect(a2p2Meta.officialSections).toHaveLength(2);
+
+    const a2p3Meta = getSyllabusExamMetadata(
+      'alevel',
+      'Y13',
+      { mcqCount: 0, structuredCount: 14, totalMarks: 80 },
+      true,
+      'alevel-a2-paper3-official'
+    );
+    expect(a2p3Meta.boardMasthead).toContain('7408/3');
+    expect(a2p3Meta.officialSections).toHaveLength(2);
+    expect(a2p3Meta.officialSections?.[0].marks).toBe(45);
+    expect(a2p3Meta.officialSections?.[1].marks).toBe(35);
+
+    // Build synthetic full A-Level bank to verify PDF draft subtopic isolation
+    const rows: PublicQuestionIndexRow[] = [];
+    const specs: Array<{
+      topicId: string;
+      subtopicId: string;
+      level: string;
+      chunkKey: PublicQuestionIndexRow['chunkKey'];
+    }> = [
+      { topicId: 'alevel-sec1-measurements-errors', subtopicId: 'alevel-3-1-si-uncertainties-estimation', level: 'Y12', chunkKey: 'graphs' },
+      { topicId: 'alevel-sec2-particles-radiation', subtopicId: 'alevel-3-2-1-particles-quarks', level: 'Y12', chunkKey: 'quantum-nuclear' },
+      { topicId: 'alevel-sec3-waves', subtopicId: 'alevel-3-3-1-progressive-stationary-waves', level: 'Y12', chunkKey: 'waves' },
+      { topicId: 'alevel-sec4-mechanics-materials', subtopicId: 'alevel-3-4-1-force-energy-momentum', level: 'Y12', chunkKey: 'mechanics' },
+      { topicId: 'alevel-sec5-electricity', subtopicId: 'alevel-3-5-1-current-electricity', level: 'Y12', chunkKey: 'circuits' },
+      { topicId: 'alevel-sec6-further-mechanics-thermal', subtopicId: 'alevel-3-6-1-periodic-motion-shm', level: 'Y13', chunkKey: 'optics-shm' },
+      { topicId: 'alevel-sec6-further-mechanics-thermal', subtopicId: 'alevel-3-6-2-thermal-physics', level: 'Y13', chunkKey: 'thermal' },
+      { topicId: 'alevel-sec7-fields-consequences', subtopicId: 'alevel-3-7-3-electric-fields', level: 'Y13', chunkKey: 'fields' },
+      { topicId: 'alevel-sec7-fields-consequences', subtopicId: 'alevel-3-7-5-magnetic-fields-induction-ac', level: 'Y13', chunkKey: 'em-induction' },
+      { topicId: 'alevel-sec8-nuclear-physics', subtopicId: 'alevel-3-8-nuclear-decay-energy', level: 'Y13', chunkKey: 'quantum-nuclear' },
+      { topicId: 'alevel-options-9-13', subtopicId: 'alevel-3-9-astrophysics', level: 'Y13', chunkKey: 'grav-astro' },
+      { topicId: 'alevel-options-9-13', subtopicId: 'alevel-3-11-engineering-physics', level: 'Y13', chunkKey: 'mechanics' },
+    ];
+    let seq = 0;
+    for (const spec of specs) {
+      for (let i = 0; i < 8; i += 1) {
+        seq += 1;
+        rows.push({
+          id: `pdf-al-m-${seq}`,
+          syllabi: [{ syllabus: 'alevel', level: spec.level, topicId: spec.topicId, subtopicId: spec.subtopicId }],
+          format: 'mcq',
+          difficulty: 'standard',
+          visualFamily: spec.chunkKey,
+          totalMarks: 1,
+          hasSvg: true,
+          chunkKey: spec.chunkKey,
+          conceptId: spec.subtopicId,
+          familyGroupKey: `pdf-fam-m-${spec.subtopicId}-${seq}`,
+          questionStyle: i % 2 === 0 ? 'qualitative' : 'calculation',
+        });
+      }
+      for (let i = 0; i < 6; i += 1) {
+        seq += 1;
+        rows.push({
+          id: `pdf-al-s-${seq}`,
+          syllabi: [{ syllabus: 'alevel', level: spec.level, topicId: spec.topicId, subtopicId: spec.subtopicId }],
+          format: 'structured',
+          difficulty: 'standard',
+          visualFamily: spec.chunkKey,
+          totalMarks: i === 5 ? 5 : 6,
+          hasSvg: true,
+          chunkKey: spec.chunkKey,
+          conceptId: spec.subtopicId,
+          familyGroupKey: `pdf-fam-s-${spec.subtopicId}-${seq}`,
+          questionStyle:
+            (i === 0 || i === 5) && spec.topicId !== 'alevel-options-9-13'
+              ? 'experimental'
+              : 'calculation',
+        });
+      }
+    }
+
+    const fullManifest: PublicBankManifest = buildPublicBankManifest(
+      rows,
+      '2026-11-21T00:00:00.000Z'
+    );
+    const getSub = (row: PublicQuestionIndexRow) =>
+      row.syllabi.find((t) => t.syllabus === 'alevel')!.subtopicId!;
+
+    const p1Draft = buildExamPaperDraft(fullManifest, {
+      syllabus: 'alevel',
+      level: 'Y12',
+      presetId: 'alevel-a2-paper1-official',
+      formatMode: 'mixed',
+      mcqCount: 25,
+      structuredCount: 10,
+      difficultyMix: 'exam-mix',
+      seed: 2026,
+    });
+    expect(p1Draft.durationMinutes).toBe(120);
+    expect(p1Draft.level).toBe('Y13');
+    expect(p1Draft.totalMarks).toBe(85);
+    expect(new Set(p1Draft.questionRows.map((r) => r.familyGroupKey)).size).toBe(35);
+    expect(p1Draft.questionRows.some((r) => getSub(r) === 'alevel-3-6-1-periodic-motion-shm')).toBe(true);
+    expect(p1Draft.questionRows.every((r) => ALEVEL_PAPER1_SUBTOPIC_IDS.includes(getSub(r)))).toBe(true);
+
+    const p2Draft = buildExamPaperDraft(fullManifest, {
+      syllabus: 'alevel',
+      level: 'Y12',
+      presetId: 'alevel-a2-paper2-official',
+      formatMode: 'mixed',
+      mcqCount: 25,
+      structuredCount: 10,
+      difficultyMix: 'exam-mix',
+      seed: 2026,
+    });
+    expect(p2Draft.durationMinutes).toBe(120);
+    expect(p2Draft.level).toBe('Y13');
+    expect(p2Draft.totalMarks).toBe(85);
+    expect(new Set(p2Draft.questionRows.map((r) => r.familyGroupKey)).size).toBe(35);
+    expect(p2Draft.questionRows.some((r) => getSub(r) === 'alevel-3-6-2-thermal-physics')).toBe(true);
+    expect(p2Draft.questionRows.every((r) => ALEVEL_PAPER2_SUBTOPIC_IDS.includes(getSub(r)))).toBe(true);
+
+    const p3Draft = buildExamPaperDraft(fullManifest, {
+      syllabus: 'alevel',
+      level: 'Y13',
+      presetId: 'alevel-a2-paper3-official',
+      formatMode: 'structured',
+      mcqCount: 0,
+      structuredCount: 14,
+      difficultyMix: 'exam-mix',
+      topicIds: ['alevel-3-11-engineering-physics'],
+      seed: 2026,
+    });
+    expect(p3Draft.durationMinutes).toBe(120);
+    expect(p3Draft.mcqRows).toHaveLength(0);
+    expect(p3Draft.structuredRows).toHaveLength(14);
+    expect(p3Draft.totalMarks).toBe(80);
+    expect(new Set(p3Draft.questionRows.map((r) => r.familyGroupKey)).size).toBe(14);
+    const p3OptionRows = p3Draft.structuredRows.filter((r) =>
+      ALEVEL_OPTION_SUBTOPIC_IDS.includes(getSub(r))
+    );
+    expect(p3OptionRows).toHaveLength(6);
+    expect(p3OptionRows.every((r) => getSub(r) === 'alevel-3-11-engineering-physics')).toBe(true);
   });
 });

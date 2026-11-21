@@ -2123,8 +2123,8 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
       "mcqCount": 9,
       "structuredCount": 9,
       "countsByLevel": {
-        "Y12": 5,
-        "Y13": 13
+        "Y12": 9,
+        "Y13": 18
       },
       "topics": [
         {
@@ -2140,7 +2140,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
           "mcqCount": 1,
           "structuredCount": 0,
           "countsByLevel": {
-            "Y12": 0,
+            "Y12": 1,
             "Y13": 1
           },
           "subtopics": [
@@ -2157,7 +2157,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
               "mcqCount": 1,
               "structuredCount": 0,
               "countsByLevel": {
-                "Y12": 0,
+                "Y12": 1,
                 "Y13": 1
               }
             }
@@ -2229,8 +2229,8 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
           "mcqCount": 1,
           "structuredCount": 1,
           "countsByLevel": {
-            "Y12": 1,
-            "Y13": 1
+            "Y12": 2,
+            "Y13": 2
           },
           "subtopics": [
             {
@@ -2247,7 +2247,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
               "structuredCount": 1,
               "countsByLevel": {
                 "Y12": 1,
-                "Y13": 0
+                "Y13": 1
               }
             },
             {
@@ -2263,7 +2263,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
               "mcqCount": 1,
               "structuredCount": 0,
               "countsByLevel": {
-                "Y12": 0,
+                "Y12": 1,
                 "Y13": 1
               }
             }
@@ -2282,8 +2282,8 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
           "mcqCount": 2,
           "structuredCount": 1,
           "countsByLevel": {
-            "Y12": 1,
-            "Y13": 2
+            "Y12": 3,
+            "Y13": 3
           },
           "subtopics": [
             {
@@ -2299,8 +2299,8 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
               "mcqCount": 2,
               "structuredCount": 1,
               "countsByLevel": {
-                "Y12": 1,
-                "Y13": 2
+                "Y12": 3,
+                "Y13": 3
               }
             },
             {
@@ -2336,7 +2336,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
           "structuredCount": 2,
           "countsByLevel": {
             "Y12": 3,
-            "Y13": 0
+            "Y13": 3
           },
           "subtopics": [
             {
@@ -2353,7 +2353,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
               "structuredCount": 2,
               "countsByLevel": {
                 "Y12": 3,
-                "Y13": 0
+                "Y13": 3
               }
             }
           ]

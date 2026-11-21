@@ -1,3 +1,4 @@
+import { resolveEffectiveAlevelLevels } from "./alevel-levels";
 import { resolveEffectiveNcukLevels } from "./ncuk-levels";
 import {
   SEED_FALLBACK_CHUNK_BY_ID,
@@ -297,6 +298,12 @@ function normalizeLevelToken(level: string): string {
   const trimmed = level.trim().toUpperCase();
   if (trimmed === "S1") return "IFY-S1";
   if (trimmed === "S2") return "IFY-S2";
+  if (trimmed === "AS" || trimmed === "YEAR 12" || trimmed === "AS/Y12") {
+    return "Y12";
+  }
+  if (trimmed === "A2" || trimmed === "A-LEVEL" || trimmed === "YEAR 13") {
+    return "Y13";
+  }
   return trimmed;
 }
 
@@ -345,7 +352,9 @@ export function filterIndexRows(
         const levelMatches =
           criteria.syllabus === "ncuk"
             ? resolveEffectiveNcukLevels(tag).has(targetLevel)
-            : normalizeLevelToken(tag.level) === targetLevel;
+            : criteria.syllabus === "alevel"
+              ? resolveEffectiveAlevelLevels(tag).has(targetLevel)
+              : normalizeLevelToken(tag.level) === targetLevel;
         if (!levelMatches) {
           return false;
         }

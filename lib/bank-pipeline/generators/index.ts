@@ -84,6 +84,41 @@ import {
   ThermalGeneratorOptions,
 } from "./thermal";
 import {
+  ALEVEL_CORE_A2_DEFAULT_BASE_SEED,
+  ALEVEL_CORE_A2_DEFAULT_MODEL,
+  ALEVEL_CORE_A2_ID_PREFIX,
+  generateAlevelCoreA2Candidates,
+  GenerateAlevelCoreA2Options,
+} from "./alevel-core-a2";
+import {
+  ALEVEL_CORE_AS_DEFAULT_BASE_SEED,
+  ALEVEL_CORE_AS_DEFAULT_MODEL,
+  ALEVEL_CORE_AS_ID_PREFIX,
+  generateAlevelCoreAsCandidates,
+  GenerateAlevelCoreAsOptions,
+} from "./alevel-core-as";
+import {
+  ALEVEL_OPT_AM_DEFAULT_BASE_SEED,
+  ALEVEL_OPT_AM_DEFAULT_MODEL,
+  ALEVEL_OPT_AM_ID_PREFIX,
+  generateAlevelOptionsAstromedCandidates,
+  GenerateAlevelOptionsAstromedOptions,
+} from "./alevel-options-astromed";
+import {
+  ALEVEL_OPT_EE_DEFAULT_BASE_SEED,
+  ALEVEL_OPT_EE_DEFAULT_MODEL,
+  ALEVEL_OPT_EE_ID_PREFIX,
+  generateAlevelOptionsEngElecCandidates,
+  GenerateAlevelOptionsEngElecOptions,
+} from "./alevel-options-eng-elec";
+import {
+  ALEVEL_PRACTICALS_DEFAULT_BASE_SEED,
+  ALEVEL_PRACTICALS_DEFAULT_MODEL,
+  ALEVEL_PRACTICALS_ID_PREFIX,
+  generateAlevelPracticalsCandidates,
+  GenerateAlevelPracticalsOptions,
+} from "./alevel-practicals";
+import {
   DEFAULT_NCUK_AC4_BASE_SEED,
   generateNcukAc4Candidates,
   GenerateNcukAc4Options,
@@ -120,6 +155,21 @@ import {
 } from "./waves";
 
 export {
+  ALEVEL_CORE_A2_DEFAULT_BASE_SEED,
+  ALEVEL_CORE_A2_DEFAULT_MODEL,
+  ALEVEL_CORE_A2_ID_PREFIX,
+  ALEVEL_CORE_AS_DEFAULT_BASE_SEED,
+  ALEVEL_CORE_AS_DEFAULT_MODEL,
+  ALEVEL_CORE_AS_ID_PREFIX,
+  ALEVEL_OPT_AM_DEFAULT_BASE_SEED,
+  ALEVEL_OPT_AM_DEFAULT_MODEL,
+  ALEVEL_OPT_AM_ID_PREFIX,
+  ALEVEL_OPT_EE_DEFAULT_BASE_SEED,
+  ALEVEL_OPT_EE_DEFAULT_MODEL,
+  ALEVEL_OPT_EE_ID_PREFIX,
+  ALEVEL_PRACTICALS_DEFAULT_BASE_SEED,
+  ALEVEL_PRACTICALS_DEFAULT_MODEL,
+  ALEVEL_PRACTICALS_ID_PREFIX,
   BUILTIN_MECHANICS_SCENARIO_KINDS_USED,
   buildFieldsSyllabusTags,
   CIRCUITS_GENERATOR_ARCHETYPES,
@@ -138,6 +188,11 @@ export {
   formatPhysicsNumber,
   formatPhysicsValue,
   formatThermalValue,
+  generateAlevelCoreA2Candidates,
+  generateAlevelCoreAsCandidates,
+  generateAlevelOptionsAstromedCandidates,
+  generateAlevelOptionsEngElecCandidates,
+  generateAlevelPracticalsCandidates,
   generateCircuitsCandidates,
   generateEmInductionCandidates,
   generateFieldsCandidates,
@@ -182,6 +237,11 @@ export type {
   CircuitsArchetypeSpec,
   EmInductionArchetypeDescriptor,
   FieldsArchetypeSpec,
+  GenerateAlevelCoreA2Options,
+  GenerateAlevelCoreAsOptions,
+  GenerateAlevelOptionsAstromedOptions,
+  GenerateAlevelOptionsEngElecOptions,
+  GenerateAlevelPracticalsOptions,
   GenerateCircuitsOptions,
   GenerateEmInductionCandidatesOptions,
   GenerateFieldsCandidatesOptions,

@@ -3,12 +3,16 @@ import os from "node:os";
 import path from "node:path";
 
 import {
+  ALEVEL_OPTION_SUBTOPIC_IDS,
+  ALEVEL_PAPER1_SUBTOPIC_IDS,
+  ALEVEL_PAPER2_SUBTOPIC_IDS,
   MOCK_PAPER_PRESETS,
   PHYSICS_DOMAIN_IDS,
   STUDENT_PROGRESS_STORAGE_KEY,
   SEED_FALLBACK_ITEMS,
   SEED_FALLBACK_MANIFEST,
   advanceDailyStreak,
+  assembleOfficialAlevelBlueprint,
   buildMockPaperSession,
   clearProgressState,
   computeOverallSyllabusMastery,
@@ -30,6 +34,7 @@ import {
   recordCompletedMock,
   recordQuestionAttempt,
   resetBankClientCache,
+  resolveEffectiveAlevelLevels,
   resolveEffectiveNcukLevels,
   saveProgressState,
   scoreMockPaperSession,
@@ -41,6 +46,14 @@ import {
   type PublicBankManifest,
   type PublicQuestionIndexRow,
 } from "../index";
+import {
+  ALEVEL_V3_SHARD_SPECS,
+  EXPECTED_FROZEN_MANIFEST_SHA256,
+  EXPECTED_TEST_JSONL_SHA256,
+  EXPECTED_VAL_JSONL_SHA256,
+  inferAlevelV3QuestionStyle,
+  parseBuildBankV3AlevelArgs,
+} from "../../../scripts/bank-generation/build-bank-v3-alevel";
 import {
   buildPublicBankManifest,
   capAndInterleaveRecords,
@@ -584,8 +597,13 @@ describe("SixthPhysics Static Web Bank, Loader, Mastery Store & Mock Builder", (
             expect(
               session.questionRows.every((r) => r.format === "structured"),
             ).toBe(true);
-            expect(session.totalMarks).toBeGreaterThanOrEqual(20);
-            expect(session.totalMarks).toBeLessThanOrEqual(32);
+            const expectedMarks = preset.targetTotalMarks ?? 25;
+            expect(session.totalMarks).toBeGreaterThanOrEqual(
+              Math.round(expectedMarks * 0.8),
+            );
+            expect(session.totalMarks).toBeLessThanOrEqual(
+              Math.round(expectedMarks * 1.28),
+            );
           } else {
             expect(session.questionRows).toHaveLength(preset.questionCount);
           }
@@ -1183,6 +1201,508 @@ describe("SixthPhysics Static Web Bank, Loader, Mastery Store & Mock Builder", (
       expect(
         finalSession.questionRows.slice(37, 40).reduce((s, r) => s + r.totalMarks, 0),
       ).toBe(30);
+    });
+  });
+
+  describe("UK A-Level cumulative Y12/Y13 level parity, official AQA 7407/7408 mocks & v3-alevel scaffold", () => {
+    it("resolves A-Level Sections 1-5 to BOTH Y12 & Y13, Sections 6-13 to Y13 only, normalizes AS -> Y12, and guarantees badge/filter parity", () => {
+      const sec1RawY13 = {
+        syllabus: "alevel" as const,
+        level: "Y13",
+        topicId: "alevel-sec1-measurements-errors",
+        subtopicId: "alevel-3-1-si-uncertainties-estimation",
+      };
+      const sec2ParticlesRawY12 = {
+        syllabus: "alevel" as const,
+        level: "Y12",
+        topicId: "alevel-sec2-particles-radiation",
+        subtopicId: "alevel-3-2-1-particles-quarks",
+      };
+      const sec2QuantumRawAS = {
+        syllabus: "alevel" as const,
+        level: "AS",
+        topicId: "alevel-sec2-particles-radiation",
+        subtopicId: "alevel-3-2-2-quantum-phenomena",
+      };
+      const sec5ElecRawY13 = {
+        syllabus: "alevel" as const,
+        level: "Y13",
+        topicId: "alevel-sec5-electricity",
+        subtopicId: "alevel-3-5-1-current-electricity",
+      };
+      const sec6Shm = {
+        syllabus: "alevel" as const,
+        level: "Y13",
+        topicId: "alevel-sec6-further-mechanics-thermal",
+        subtopicId: "alevel-3-6-1-periodic-motion-shm",
+      };
+      const sec6Thermal = {
+        syllabus: "alevel" as const,
+        level: "Y13",
+        topicId: "alevel-sec6-further-mechanics-thermal",
+        subtopicId: "alevel-3-6-2-thermal-physics",
+      };
+      const sec8Nuclear = {
+        syllabus: "alevel" as const,
+        level: "Y13",
+        topicId: "alevel-sec8-nuclear-physics",
+        subtopicId: "alevel-3-8-nuclear-decay-energy",
+      };
+      const opt13Electronics = {
+        syllabus: "alevel" as const,
+        level: "Y13",
+        topicId: "alevel-options-9-13",
+        subtopicId: "alevel-3-13-electronics",
+      };
+
+      for (const asTag of [
+        sec1RawY13,
+        sec2ParticlesRawY12,
+        sec2QuantumRawAS,
+        sec5ElecRawY13,
+      ]) {
+        const levels = resolveEffectiveAlevelLevels(asTag);
+        expect(levels.has("Y12")).toBe(true);
+        expect(levels.has("Y13")).toBe(true);
+      }
+
+      for (const a2Tag of [sec6Shm, sec6Thermal, sec8Nuclear, opt13Electronics]) {
+        const levels = resolveEffectiveAlevelLevels(a2Tag);
+        expect(levels.has("Y13")).toBe(true);
+        expect(levels.has("Y12")).toBe(false);
+      }
+
+      const rows: PublicQuestionIndexRow[] = [
+        {
+          id: "al-3-1",
+          syllabi: [sec1RawY13],
+          format: "mcq",
+          difficulty: "foundation",
+          visualFamily: "graphs",
+          totalMarks: 1,
+          hasSvg: true,
+          chunkKey: "graphs",
+          conceptId: "uncertainties",
+          familyGroupKey: "al::3-1",
+        },
+        {
+          id: "al-3-2-1",
+          syllabi: [sec2ParticlesRawY12],
+          format: "mcq",
+          difficulty: "standard",
+          visualFamily: "quantum-nuclear",
+          totalMarks: 1,
+          hasSvg: true,
+          chunkKey: "quantum-nuclear",
+          conceptId: "particles",
+          familyGroupKey: "al::3-2-1",
+        },
+        {
+          id: "al-3-2-2",
+          syllabi: [sec2QuantumRawAS],
+          format: "structured",
+          difficulty: "higher",
+          visualFamily: "quantum-nuclear",
+          totalMarks: 6,
+          hasSvg: true,
+          chunkKey: "quantum-nuclear",
+          conceptId: "quantum",
+          familyGroupKey: "al::3-2-2",
+        },
+        {
+          id: "al-3-5-1",
+          syllabi: [sec5ElecRawY13],
+          format: "structured",
+          difficulty: "standard",
+          visualFamily: "circuits",
+          totalMarks: 6,
+          hasSvg: true,
+          chunkKey: "circuits",
+          conceptId: "electricity",
+          familyGroupKey: "al::3-5-1",
+        },
+        {
+          id: "al-3-6-1",
+          syllabi: [sec6Shm],
+          format: "mcq",
+          difficulty: "higher",
+          visualFamily: "optics-shm",
+          totalMarks: 1,
+          hasSvg: true,
+          chunkKey: "optics-shm",
+          conceptId: "shm",
+          familyGroupKey: "al::3-6-1",
+        },
+        {
+          id: "al-3-6-2",
+          syllabi: [sec6Thermal],
+          format: "structured",
+          difficulty: "standard",
+          visualFamily: "thermal",
+          totalMarks: 6,
+          hasSvg: true,
+          chunkKey: "thermal",
+          conceptId: "thermal",
+          familyGroupKey: "al::3-6-2",
+        },
+        {
+          id: "al-3-8",
+          syllabi: [sec8Nuclear],
+          format: "structured",
+          difficulty: "higher",
+          visualFamily: "quantum-nuclear",
+          totalMarks: 6,
+          hasSvg: true,
+          chunkKey: "quantum-nuclear",
+          conceptId: "nuclear",
+          familyGroupKey: "al::3-8",
+        },
+        {
+          id: "al-3-13",
+          syllabi: [opt13Electronics],
+          format: "structured",
+          difficulty: "higher",
+          visualFamily: "circuits",
+          totalMarks: 6,
+          hasSvg: true,
+          chunkKey: "circuits",
+          conceptId: "electronics",
+          familyGroupKey: "al::3-13",
+        },
+      ];
+
+      const y12Rows = filterIndexRows(rows, { syllabus: "alevel", level: "Y12" });
+      const asShorthandRows = filterIndexRows(rows, { syllabus: "alevel", level: "AS" });
+      const y13Rows = filterIndexRows(rows, { syllabus: "alevel", level: "Y13" });
+
+      expect(y12Rows.map((r) => r.id)).toEqual([
+        "al-3-1",
+        "al-3-2-1",
+        "al-3-2-2",
+        "al-3-5-1",
+      ]);
+      expect(asShorthandRows).toEqual(y12Rows);
+      // Cumulative Y13 MUST include all 8 items, including Section 2 (3.2)!
+      expect(y13Rows).toHaveLength(8);
+      expect(y13Rows.some((r) => r.id === "al-3-2-1")).toBe(true);
+      expect(y13Rows.some((r) => r.id === "al-3-2-2")).toBe(true);
+
+      const manifest = buildPublicBankManifest(rows, "2026-11-21T00:00:00.000Z");
+      expect(manifest.syllabi.alevel.countsByLevel["Y12"]).toBe(y12Rows.length);
+      expect(manifest.syllabi.alevel.countsByLevel["Y13"]).toBe(y13Rows.length);
+
+      const sec2Topic = manifest.syllabi.alevel.topics.find(
+        (t) => t.id === "alevel-sec2-particles-radiation",
+      )!;
+      expect(sec2Topic.countsByLevel["Y12"]).toBe(2);
+      expect(sec2Topic.countsByLevel["Y13"]).toBe(2);
+
+      const sec6Topic = manifest.syllabi.alevel.topics.find(
+        (t) => t.id === "alevel-sec6-further-mechanics-thermal",
+      )!;
+      expect(sec6Topic.countsByLevel["Y12"]).toBe(0);
+      expect(sec6Topic.countsByLevel["Y13"]).toBe(2);
+    });
+
+    it("assembles all 5 official AQA 7407/7408 mock papers with strict subtopic isolation (Paper 1 gets 3.6.1 not 3.6.2; Paper 2 gets 3.6.2 not 3.6.1; Paper 3B gets one single option)", () => {
+      const subtopicSpecs: Array<{
+        topicId: string;
+        subtopicId: string;
+        level: string;
+        chunkKey: PublicQuestionIndexRow["chunkKey"];
+      }> = [
+        { topicId: "alevel-sec1-measurements-errors", subtopicId: "alevel-3-1-si-uncertainties-estimation", level: "Y12", chunkKey: "graphs" },
+        { topicId: "alevel-sec2-particles-radiation", subtopicId: "alevel-3-2-1-particles-quarks", level: "Y12", chunkKey: "quantum-nuclear" },
+        { topicId: "alevel-sec2-particles-radiation", subtopicId: "alevel-3-2-2-quantum-phenomena", level: "Y12", chunkKey: "quantum-nuclear" },
+        { topicId: "alevel-sec3-waves", subtopicId: "alevel-3-3-1-progressive-stationary-waves", level: "Y12", chunkKey: "waves" },
+        { topicId: "alevel-sec3-waves", subtopicId: "alevel-3-3-2-refraction-diffraction-interference", level: "Y12", chunkKey: "waves" },
+        { topicId: "alevel-sec4-mechanics-materials", subtopicId: "alevel-3-4-1-force-energy-momentum", level: "Y12", chunkKey: "mechanics" },
+        { topicId: "alevel-sec4-mechanics-materials", subtopicId: "alevel-3-4-2-materials-young-modulus", level: "Y12", chunkKey: "mechanics" },
+        { topicId: "alevel-sec5-electricity", subtopicId: "alevel-3-5-1-current-electricity", level: "Y12", chunkKey: "circuits" },
+        { topicId: "alevel-sec6-further-mechanics-thermal", subtopicId: "alevel-3-6-1-periodic-motion-shm", level: "Y13", chunkKey: "optics-shm" },
+        { topicId: "alevel-sec6-further-mechanics-thermal", subtopicId: "alevel-3-6-2-thermal-physics", level: "Y13", chunkKey: "thermal" },
+        { topicId: "alevel-sec7-fields-consequences", subtopicId: "alevel-3-7-2-gravitational-fields", level: "Y13", chunkKey: "grav-astro" },
+        { topicId: "alevel-sec7-fields-consequences", subtopicId: "alevel-3-7-3-electric-fields", level: "Y13", chunkKey: "fields" },
+        { topicId: "alevel-sec7-fields-consequences", subtopicId: "alevel-3-7-4-capacitance", level: "Y13", chunkKey: "em-induction" },
+        { topicId: "alevel-sec7-fields-consequences", subtopicId: "alevel-3-7-5-magnetic-fields-induction-ac", level: "Y13", chunkKey: "em-induction" },
+        { topicId: "alevel-sec8-nuclear-physics", subtopicId: "alevel-3-8-nuclear-decay-energy", level: "Y13", chunkKey: "quantum-nuclear" },
+        { topicId: "alevel-options-9-13", subtopicId: "alevel-3-9-astrophysics", level: "Y13", chunkKey: "grav-astro" },
+        { topicId: "alevel-options-9-13", subtopicId: "alevel-3-10-medical-physics", level: "Y13", chunkKey: "optics-shm" },
+        { topicId: "alevel-options-9-13", subtopicId: "alevel-3-11-engineering-physics", level: "Y13", chunkKey: "mechanics" },
+        { topicId: "alevel-options-9-13", subtopicId: "alevel-3-12-turning-points", level: "Y13", chunkKey: "quantum-nuclear" },
+        { topicId: "alevel-options-9-13", subtopicId: "alevel-3-13-electronics", level: "Y13", chunkKey: "circuits" },
+      ];
+
+      const rows: PublicQuestionIndexRow[] = [];
+      let seq = 0;
+      const pushRow = (
+        spec: (typeof subtopicSpecs)[number],
+        format: "mcq" | "structured",
+        marks: number,
+        questionStyle: string,
+        overrideChunkKey?: PublicQuestionIndexRow["chunkKey"],
+      ) => {
+        seq += 1;
+        rows.push({
+          id: `al-sim-${seq}`,
+          syllabi: [
+            {
+              syllabus: "alevel",
+              level: spec.level,
+              topicId: spec.topicId,
+              subtopicId: spec.subtopicId,
+            },
+          ],
+          format,
+          difficulty: seq % 3 === 0 ? "higher" : seq % 2 === 0 ? "standard" : "foundation",
+          visualFamily: overrideChunkKey ?? spec.chunkKey,
+          totalMarks: marks,
+          hasSvg: true,
+          chunkKey: overrideChunkKey ?? spec.chunkKey,
+          conceptId: `concept-${spec.subtopicId}`,
+          familyGroupKey: `al-fam-${spec.subtopicId}-${format}-${marks}-${seq}`,
+          questionStyle,
+        });
+      };
+
+      for (const spec of subtopicSpecs) {
+        const isOption = spec.topicId === "alevel-options-9-13";
+        for (let i = 0; i < 6; i += 1) {
+          pushRow(spec, "mcq", 1, i % 2 === 0 ? "qualitative" : "calculation");
+        }
+        for (let i = 0; i < 3; i += 1) {
+          pushRow(spec, "structured", 4, i === 0 && !isOption ? "experimental" : "calculation");
+          pushRow(spec, "structured", 5, i === 0 && !isOption ? "experimental" : "calculation");
+        }
+        for (let i = 0; i < 5; i += 1) {
+          pushRow(
+            spec,
+            "structured",
+            6,
+            i === 0 && !isOption
+              ? "experimental"
+              : i % 2 === 0
+                ? "qualitative"
+                : "calculation",
+            i === 0 && !isOption ? "graphs" : undefined,
+          );
+        }
+      }
+
+      const manifest = buildPublicBankManifest(rows, "2026-11-21T00:00:00.000Z");
+      const getSubtopic = (r: PublicQuestionIndexRow) =>
+        r.syllabi.find((t) => t.syllabus === "alevel")!.subtopicId!;
+
+      // 1. AQA AS Paper 1 (7407/1): 90 min, 70 marks, 12 structured only, Sections 1-5
+      const as1Preset = MOCK_PAPER_PRESETS.find((p) => p.id === "alevel-as-paper1-official")!;
+      const as1 = buildMockPaperSession(
+        manifest,
+        createConfigFromPreset(as1Preset, { level: "Y13", seed: 2026 }),
+      );
+      expect(as1.durationSeconds).toBe(90 * 60);
+      expect(as1.questionRows).toHaveLength(12);
+      expect(as1.totalMarks).toBe(70);
+      expect(as1.questionRows.every((r) => r.format === "structured")).toBe(true);
+      expect(new Set(as1.questionRows.map((r) => r.familyGroupKey)).size).toBe(12);
+      for (const r of as1.questionRows) {
+        expect(resolveEffectiveAlevelLevels(r.syllabi[0]).has("Y12")).toBe(true);
+      }
+
+      // 2. AQA AS Paper 2 (7407/2): 90 min, 70 marks, 8 structured (40m) + 30 MCQs (30m), Sections 1-5
+      const as2Preset = MOCK_PAPER_PRESETS.find((p) => p.id === "alevel-as-paper2-official")!;
+      const as2 = buildMockPaperSession(
+        manifest,
+        createConfigFromPreset(as2Preset, { level: "Y13", seed: 2026 }),
+      );
+      expect(as2.durationSeconds).toBe(90 * 60);
+      expect(as2.questionRows).toHaveLength(38);
+      expect(as2.totalMarks).toBe(70);
+      expect(as2.questionRows.filter((r) => r.format === "structured")).toHaveLength(8);
+      expect(as2.questionRows.filter((r) => r.format === "mcq")).toHaveLength(30);
+      expect(new Set(as2.questionRows.map((r) => r.familyGroupKey)).size).toBe(38);
+      for (const r of as2.questionRows) {
+        expect(resolveEffectiveAlevelLevels(r.syllabi[0]).has("Y12")).toBe(true);
+      }
+
+      // 3. AQA A-Level Paper 1 (7408/1): 120 min, 85 marks, 3.1-3.5 + 3.6.1 ONLY (NEVER 3.6.2!)
+      const a2p1Preset = MOCK_PAPER_PRESETS.find((p) => p.id === "alevel-a2-paper1-official")!;
+      const a2p1 = buildMockPaperSession(
+        manifest,
+        createConfigFromPreset(a2p1Preset, { level: "Y12", seed: 2026 }),
+      );
+      expect(a2p1.durationSeconds).toBe(120 * 60);
+      expect(a2p1.questionRows).toHaveLength(35);
+      expect(a2p1.totalMarks).toBe(85);
+      expect(a2p1.questionRows.filter((r) => r.format === "structured")).toHaveLength(10);
+      expect(a2p1.questionRows.filter((r) => r.format === "mcq")).toHaveLength(25);
+      expect(new Set(a2p1.questionRows.map((r) => r.familyGroupKey)).size).toBe(35);
+      const p1Subs = new Set(a2p1.questionRows.map(getSubtopic));
+      expect(p1Subs.has("alevel-3-6-1-periodic-motion-shm")).toBe(true);
+      expect(p1Subs.has("alevel-3-6-2-thermal-physics")).toBe(false);
+      for (const sub of p1Subs) {
+        expect(ALEVEL_PAPER1_SUBTOPIC_IDS).toContain(sub);
+      }
+      const p1QualMcqs = a2p1.questionRows.filter(
+        (r) => r.format === "mcq" && r.questionStyle === "qualitative",
+      );
+      expect(p1QualMcqs.length).toBeGreaterThanOrEqual(8);
+
+      // 4. AQA A-Level Paper 2 (7408/2): 120 min, 85 marks, 3.6.2 + 3.7 + 3.8 ONLY (NEVER 3.6.1!)
+      const a2p2Preset = MOCK_PAPER_PRESETS.find((p) => p.id === "alevel-a2-paper2-official")!;
+      const a2p2 = buildMockPaperSession(
+        manifest,
+        createConfigFromPreset(a2p2Preset, { level: "Y12", seed: 2026 }),
+      );
+      expect(a2p2.durationSeconds).toBe(120 * 60);
+      expect(a2p2.questionRows).toHaveLength(35);
+      expect(a2p2.totalMarks).toBe(85);
+      expect(a2p2.questionRows.filter((r) => r.format === "structured")).toHaveLength(10);
+      expect(a2p2.questionRows.filter((r) => r.format === "mcq")).toHaveLength(25);
+      expect(new Set(a2p2.questionRows.map((r) => r.familyGroupKey)).size).toBe(35);
+      const p2Subs = new Set(a2p2.questionRows.map(getSubtopic));
+      expect(p2Subs.has("alevel-3-6-2-thermal-physics")).toBe(true);
+      expect(p2Subs.has("alevel-3-6-1-periodic-motion-shm")).toBe(false);
+      for (const sub of p2Subs) {
+        expect(ALEVEL_PAPER2_SUBTOPIC_IDS).toContain(sub);
+      }
+
+      // 5. AQA A-Level Paper 3 (7408/3): 120 min, 80 marks, Sec A (45m practical) + Sec B (35m ONE option)
+      const a2p3Preset = MOCK_PAPER_PRESETS.find((p) => p.id === "alevel-a2-paper3-official")!;
+      const a2p3 = buildMockPaperSession(
+        manifest,
+        createConfigFromPreset(a2p3Preset, { seed: 2026 }),
+      );
+      expect(a2p3.durationSeconds).toBe(120 * 60);
+      expect(a2p3.questionRows).toHaveLength(14);
+      expect(a2p3.totalMarks).toBe(80);
+      expect(a2p3.questionRows.every((r) => r.format === "structured")).toBe(true);
+      expect(new Set(a2p3.questionRows.map((r) => r.familyGroupKey)).size).toBe(14);
+
+      const p3SecA = a2p3.questionRows.slice(0, 8);
+      const p3SecB = a2p3.questionRows.slice(8, 14);
+      expect(p3SecA.reduce((s, r) => s + r.totalMarks, 0)).toBe(45);
+      expect(p3SecB.reduce((s, r) => s + r.totalMarks, 0)).toBe(35);
+      expect(
+        p3SecA.every((r) => !ALEVEL_OPTION_SUBTOPIC_IDS.includes(getSubtopic(r))),
+      ).toBe(true);
+      const p3Options = new Set(p3SecB.map(getSubtopic));
+      expect(p3Options.size).toBe(1);
+      expect(ALEVEL_OPTION_SUBTOPIC_IDS).toContain([...p3Options][0]);
+
+      // Verify explicit option selection via assembleOfficialAlevelBlueprint
+      let rngState = 12345;
+      const simpleRng = () => {
+        rngState = (rngState * 1664525 + 1013904223) >>> 0;
+        return rngState / 4294967296;
+      };
+      const elecPaper3 = assembleOfficialAlevelBlueprint(
+        rows,
+        "alevel-a2-paper3-official",
+        simpleRng,
+        { optionSubtopicId: "alevel-3-13-electronics" },
+      );
+      expect(elecPaper3.selectedOptionSubtopicId).toBe("alevel-3-13-electronics");
+      expect(elecPaper3.sectionBStructuredRows).toHaveLength(6);
+      expect(
+        elecPaper3.sectionBStructuredRows.every(
+          (r) => getSubtopic(r) === "alevel-3-13-electronics",
+        ),
+      ).toBe(true);
+    });
+
+    it("exposes build-bank-v3-alevel SHA-256 locks, wired 5-shard specs, CLI parsing, and style inference", () => {
+      expect(EXPECTED_FROZEN_MANIFEST_SHA256).toBe(
+        "0a0d1bc071c8250107864a4dc7db44575c4d8e5f1c56978ade15b64f124c4c67",
+      );
+      expect(EXPECTED_VAL_JSONL_SHA256).toBe(
+        "a094cab46b48ea1c08300ed172fc13d8660a0a1cc5fe1021e273552d1ac6c846",
+      );
+      expect(EXPECTED_TEST_JSONL_SHA256).toBe(
+        "fd6888e53f0c98ccd0b5f792e1f6bf223f6067ef400b270dd2cb9463310b1252",
+      );
+      expect(
+        ALEVEL_V3_SHARD_SPECS.map((s) => ({
+          shardId: s.shardId,
+          baseSeed: s.baseSeed,
+        })),
+      ).toEqual([
+        { shardId: "alevel-v3-practicals", baseSeed: 73_000_000 },
+        { shardId: "alevel-v3-core-as", baseSeed: 74_000_000 },
+        { shardId: "alevel-v3-core-a2", baseSeed: 75_000_000 },
+        { shardId: "alevel-v3-options-astromed", baseSeed: 76_000_000 },
+        { shardId: "alevel-v3-options-eng-elec", baseSeed: 77_000_000 },
+      ]);
+
+      const cliArgs = parseBuildBankV3AlevelArgs([
+        "--source-dir",
+        "dataset/sixthphysics-bank",
+        "--out-dir",
+        "dataset/sixthphysics-bank-v3-alevel",
+        "--allow-custom-manifest",
+      ]);
+      expect(cliArgs.sourceBankDir).toMatch(/dataset\/sixthphysics-bank$/);
+      expect(cliArgs.outDir).toMatch(/dataset\/sixthphysics-bank-v3-alevel$/);
+      expect(cliArgs.allowCustomManifest).toBe(true);
+
+      expect(
+        inferAlevelV3QuestionStyle({
+          id: "test-prac",
+          conceptId: "uncertainties",
+          templateArchetype: "al-prac-rp7-shm",
+          seed: 73000001,
+          syllabi: [],
+          format: "structured",
+          difficulty: "standard",
+          domain: "graphs",
+          scenarioSpec: { kind: "al-prac-rp7-shm" },
+          hiddenQuantities: [],
+          requiredGivens: [],
+          stem: "A student performs Required Practical 7 with error bars.",
+          workedSolution: "Gradient.",
+          markScheme: [],
+          totalMarks: 6,
+          parts: [
+            {
+              partId: "a",
+              prompt: "Determine the worst-fit gradient.",
+              marks: 6,
+              expectedAnswer: "4.0",
+              workingSteps: [],
+            },
+          ],
+        }),
+      ).toBe("experimental");
+
+      expect(
+        inferAlevelV3QuestionStyle({
+          id: "test-lor",
+          conceptId: "photoelectric-effect",
+          templateArchetype: "al-as-photoelectric-lor",
+          seed: 74000001,
+          syllabi: [],
+          format: "structured",
+          targetMode: "qualitative",
+          difficulty: "higher",
+          domain: "quantum-nuclear",
+          scenarioSpec: { kind: "al-as-photoelectric" },
+          hiddenQuantities: [],
+          requiredGivens: [],
+          stem: "Explain why the wave model fails to explain the photoelectric effect.",
+          workedSolution: "Photon model.",
+          markScheme: [],
+          totalMarks: 6,
+          parts: [
+            {
+              partId: "a",
+              prompt: "Explain how the photon model accounts for threshold frequency.",
+              marks: 6,
+              targetMode: "qualitative",
+              expectedAnswer: "One-to-one photon absorption",
+              workingSteps: [],
+            },
+          ],
+        }),
+      ).toBe("qualitative");
     });
   });
 });

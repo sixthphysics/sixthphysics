@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 import {
+  ALEVEL_V3_DOMAIN_PLUGINS,
   getDomainAdapter,
   NCUK_V3_DOMAIN_PLUGINS,
   PHYSICS_DOMAIN_IDS,
@@ -190,8 +191,13 @@ function inferUnitFromKey(key: string): string | undefined {
   return undefined;
 }
 
+const ALL_V3_DOMAIN_PLUGINS = [
+  ...NCUK_V3_DOMAIN_PLUGINS,
+  ...ALEVEL_V3_DOMAIN_PLUGINS,
+];
+
 function pluginSpecsForDomain(domain: PhysicsDomainId): StaticKindSpec[] {
-  return NCUK_V3_DOMAIN_PLUGINS.filter((p) => p.domain === domain).map(
+  return ALL_V3_DOMAIN_PLUGINS.filter((p) => p.domain === domain).map(
     (plugin) => ({
       kind: plugin.kind,
       summary: plugin.summary,
@@ -1028,6 +1034,7 @@ const STATIC_DOMAIN_SPECS: Readonly<
         },
       ],
     },
+    ...pluginSpecsForDomain("fields"),
   ],
 
   mechanics: [
@@ -1528,6 +1535,7 @@ const STATIC_DOMAIN_SPECS: Readonly<
         "incidentIntensityWm2 > 0 and 0 <= analyzerAngleDegrees <= 180",
       ],
     },
+    ...pluginSpecsForDomain("waves"),
   ],
 
   "optics-shm": [
@@ -1725,6 +1733,7 @@ const STATIC_DOMAIN_SPECS: Readonly<
         "provide amplitudeM > 0 and at least one consistent timing parameter (periodS, frequencyHz, or angularFrequencyRadS)",
       ],
     },
+    ...pluginSpecsForDomain("optics-shm"),
   ],
 
   thermal: [
@@ -2136,6 +2145,7 @@ const STATIC_DOMAIN_SPECS: Readonly<
       ],
       physicalConstraints: ["observedWavelengthM > restWavelengthM > 0"],
     },
+    ...pluginSpecsForDomain("grav-astro"),
   ],
 
   "em-induction": [
@@ -2572,6 +2582,7 @@ const STATIC_DOMAIN_SPECS: Readonly<
         "supply either beta in (-1, 1) or frameSpeedMs in (-c, c)",
       ],
     },
+    ...pluginSpecsForDomain("quantum-nuclear"),
   ],
 
   "pure-calculation": [

@@ -1,3 +1,8 @@
+import {
+  ALEVEL_AS_SUBTOPIC_IDS,
+  ALEVEL_AS_TOPIC_IDS,
+  ALEVEL_OPTION_SUBTOPIC_IDS,
+} from "./alevel-levels";
 import { filterIndexRows } from "./client-loader";
 import { resolveNcukSemester } from "./ncuk-levels";
 import type {
@@ -58,6 +63,81 @@ export const MOCK_PAPER_PRESETS: readonly MockPaperPreset[] = [
   },
 
   // UK A-Level Physics (DfE Core + AQA 7407/7408)
+  {
+    id: "alevel-as-paper1-official",
+    syllabus: "alevel",
+    title: "AQA AS Paper 1 (7407/1) · 70 marks · 90 min",
+    subtitle:
+      "Official AQA 7407/1 blueprint (Sections 1–5, Year 12): short and long structured questions totalling ~70 marks (g = 9.81 m s⁻²).",
+    badgeLabel: "70 marks · 90 min",
+    formatMode: "structured",
+    level: "Y12",
+    questionCount: 12,
+    targetTotalMarks: 70,
+    durationMinutes: 90,
+    mcqCount: 0,
+    structuredCount: 12,
+  },
+  {
+    id: "alevel-as-paper2-official",
+    syllabus: "alevel",
+    title: "AQA AS Paper 2 (7407/2) · 70 marks · 90 min",
+    subtitle:
+      "Official AQA 7407/2 blueprint (Sections 1–5, Year 12): Practical/Data Analysis (~20m), Synoptic Structured (~20m), and 30×1m MCQs (30m).",
+    badgeLabel: "70 marks · 90 min",
+    formatMode: "mixed",
+    level: "Y12",
+    questionCount: 38,
+    targetTotalMarks: 70,
+    durationMinutes: 90,
+    mcqCount: 30,
+    structuredCount: 8,
+  },
+  {
+    id: "alevel-a2-paper1-official",
+    syllabus: "alevel",
+    title: "AQA A-Level Paper 1 (7408/1) · 85 marks · 120 min",
+    subtitle:
+      "Official AQA 7408/1 blueprint (Sections 1–5 & 6.1 Periodic Motion): ~60m structured questions plus 25×1m MCQs (25m).",
+    badgeLabel: "85 marks · 120 min",
+    formatMode: "mixed",
+    level: "Y13",
+    questionCount: 35,
+    targetTotalMarks: 85,
+    durationMinutes: 120,
+    mcqCount: 25,
+    structuredCount: 10,
+  },
+  {
+    id: "alevel-a2-paper2-official",
+    syllabus: "alevel",
+    title: "AQA A-Level Paper 2 (7408/2) · 85 marks · 120 min",
+    subtitle:
+      "Official AQA 7408/2 blueprint (Sections 6.2 Thermal, 7 Fields & 8 Nuclear): ~60m structured questions plus 25×1m MCQs (25m).",
+    badgeLabel: "85 marks · 120 min",
+    formatMode: "mixed",
+    level: "Y13",
+    questionCount: 35,
+    targetTotalMarks: 85,
+    durationMinutes: 120,
+    mcqCount: 25,
+    structuredCount: 10,
+  },
+  {
+    id: "alevel-a2-paper3-official",
+    syllabus: "alevel",
+    title: "AQA A-Level Paper 3 (7408/3) · 80 marks · 120 min",
+    subtitle:
+      "Official AQA 7408/3 blueprint: Section A Practical Skills & Data Analysis (~45m) plus Section B single Option topic from 3.9–3.13 (~35m).",
+    badgeLabel: "80 marks · 120 min",
+    formatMode: "structured",
+    level: "Y13",
+    questionCount: 14,
+    targetTotalMarks: 80,
+    durationMinutes: 120,
+    mcqCount: 0,
+    structuredCount: 14,
+  },
   {
     id: "alevel-core-mock",
     syllabus: "alevel",
@@ -582,6 +662,676 @@ export function assembleOfficialNcukBlueprint(
   };
 }
 
+export type OfficialAlevelBlueprintId =
+  | "alevel-as-paper1-official"
+  | "alevel-as-paper2-official"
+  | "alevel-a2-paper1-official"
+  | "alevel-a2-paper2-official"
+  | "alevel-a2-paper3-official";
+
+const OFFICIAL_ALEVEL_BLUEPRINT_IDS = new Set<string>([
+  "alevel-as-paper1-official",
+  "alevel-as-paper2-official",
+  "alevel-a2-paper1-official",
+  "alevel-a2-paper2-official",
+  "alevel-a2-paper3-official",
+]);
+
+export function isOfficialAlevelBlueprintId(
+  presetId?: string,
+): presetId is OfficialAlevelBlueprintId {
+  return Boolean(presetId && OFFICIAL_ALEVEL_BLUEPRINT_IDS.has(presetId));
+}
+
+export const ALEVEL_PAPER1_SUBTOPIC_IDS: readonly string[] = [
+  ...ALEVEL_AS_SUBTOPIC_IDS,
+  "alevel-3-6-1-periodic-motion-shm",
+];
+
+export const ALEVEL_PAPER2_SUBTOPIC_IDS: readonly string[] = [
+  "alevel-3-6-2-thermal-physics",
+  "alevel-3-7-2-gravitational-fields",
+  "alevel-3-7-3-electric-fields",
+  "alevel-3-7-4-capacitance",
+  "alevel-3-7-5-magnetic-fields-induction-ac",
+  "alevel-3-8-nuclear-decay-energy",
+];
+
+const ALEVEL_AS_SUBTOPIC_SET = new Set<string>(ALEVEL_AS_SUBTOPIC_IDS);
+const ALEVEL_AS_TOPIC_SET = new Set<string>(ALEVEL_AS_TOPIC_IDS);
+const ALEVEL_PAPER1_SUBTOPIC_SET = new Set<string>(ALEVEL_PAPER1_SUBTOPIC_IDS);
+const ALEVEL_PAPER2_SUBTOPIC_SET = new Set<string>(ALEVEL_PAPER2_SUBTOPIC_IDS);
+const ALEVEL_PAPER2_FALLBACK_TOPIC_SET = new Set<string>([
+  "alevel-sec7-fields-consequences",
+  "alevel-sec8-nuclear-physics",
+]);
+const ALEVEL_OPTION_SUBTOPIC_SET = new Set<string>(ALEVEL_OPTION_SUBTOPIC_IDS);
+
+const PRACTICAL_FAMILY_HINT_RE =
+  /al-prac-|practical|rp\d+|uncertainty|uncertainties|error-bar|worst-fit|lineariz|vernier|micrometer|oscilloscope|precaution|gradient|false-origin/i;
+
+interface AlevelBlueprintSlot {
+  format: "mcq" | "structured";
+  targetMarks: number;
+  preferredSubtopics?: readonly string[];
+  preferQualitative?: boolean;
+  preferPractical?: boolean;
+}
+
+function rowMatchesAlevelSubtopicScope(
+  row: PublicQuestionIndexRow,
+  allowedSubtopics: ReadonlySet<string>,
+  fallbackTopics?: ReadonlySet<string>,
+): boolean {
+  return row.syllabi.some((tag) => {
+    if (tag.syllabus !== "alevel") return false;
+    if (tag.subtopicId) {
+      return allowedSubtopics.has(tag.subtopicId);
+    }
+    return fallbackTopics ? fallbackTopics.has(tag.topicId) : false;
+  });
+}
+
+function rowMatchesPreferredAlevelSubtopics(
+  row: PublicQuestionIndexRow,
+  preferredSubtopics: readonly string[],
+): boolean {
+  return row.syllabi.some(
+    (tag) =>
+      tag.syllabus === "alevel" &&
+      Boolean(tag.subtopicId && preferredSubtopics.includes(tag.subtopicId)),
+  );
+}
+
+function rowIsAlevelOption(row: PublicQuestionIndexRow): boolean {
+  return row.syllabi.some(
+    (tag) =>
+      tag.syllabus === "alevel" &&
+      (tag.topicId === "alevel-options-9-13" ||
+        Boolean(tag.subtopicId && ALEVEL_OPTION_SUBTOPIC_SET.has(tag.subtopicId))),
+  );
+}
+
+function isStrongPracticalAlevelRow(row: PublicQuestionIndexRow): boolean {
+  if (row.questionStyle?.toLowerCase() === "experimental") {
+    return true;
+  }
+  if (
+    row.syllabi.some(
+      (tag) =>
+        tag.syllabus === "alevel" &&
+        (tag.subtopicId === "alevel-3-1-si-uncertainties-estimation" ||
+          tag.topicId === "alevel-sec1-measurements-errors"),
+    )
+  ) {
+    return true;
+  }
+  return PRACTICAL_FAMILY_HINT_RE.test(row.familyGroupKey);
+}
+
+function isPracticalAlevelRow(row: PublicQuestionIndexRow): boolean {
+  if (isStrongPracticalAlevelRow(row)) {
+    return true;
+  }
+  return (
+    row.chunkKey === "graphs" ||
+    row.visualFamily === "graphs" ||
+    row.visualFamily === "cartesian_plot"
+  );
+}
+
+function pickAlevelBlueprintSlot(
+  shuffledPool: readonly PublicQuestionIndexRow[],
+  slot: AlevelBlueprintSlot,
+  usedFamilies: Set<string>,
+  usedIds: Set<string>,
+): PublicQuestionIndexRow | null {
+  const candidates = shuffledPool.filter(
+    (row) =>
+      row.format === slot.format &&
+      !usedIds.has(row.id) &&
+      !usedFamilies.has(row.familyGroupKey),
+  );
+  if (candidates.length === 0) {
+    return null;
+  }
+
+  let bestRow: PublicQuestionIndexRow | null = null;
+  let bestScore = Number.POSITIVE_INFINITY;
+
+  for (let idx = 0; idx < candidates.length; idx += 1) {
+    const row = candidates[idx];
+    const markDelta = Math.abs(row.totalMarks - slot.targetMarks);
+    const subtopicMatch =
+      slot.preferredSubtopics && slot.preferredSubtopics.length > 0
+        ? rowMatchesPreferredAlevelSubtopics(row, slot.preferredSubtopics)
+        : true;
+    const styleMatch =
+      typeof slot.preferQualitative === "boolean"
+        ? isQualitativeIndexRow(row) === slot.preferQualitative
+        : true;
+
+    let practicalPenalty = 0;
+    if (slot.preferPractical) {
+      if (isStrongPracticalAlevelRow(row)) {
+        practicalPenalty = 0;
+      } else if (isPracticalAlevelRow(row)) {
+        practicalPenalty = 180;
+      } else {
+        practicalPenalty = 50_000;
+      }
+    }
+
+    const markPenalty = markDelta === 0 ? 0 : 1000 + markDelta * 1000;
+    const subtopicPenalty = subtopicMatch ? 0 : 300;
+    const stylePenalty = styleMatch ? 0 : 60;
+    const score =
+      practicalPenalty +
+      markPenalty +
+      subtopicPenalty +
+      stylePenalty +
+      idx * 1e-4;
+
+    if (score < bestScore) {
+      bestScore = score;
+      bestRow = row;
+    }
+  }
+
+  if (bestRow) {
+    usedIds.add(bestRow.id);
+    usedFamilies.add(bestRow.familyGroupKey);
+  }
+  return bestRow;
+}
+
+const ALEVEL_AS_PAPER1_SLOTS: readonly AlevelBlueprintSlot[] = [
+  // 12 structured questions across Sections 1-5 summing to 70 marks (2 x 5m + 10 x 6m)
+  { format: "structured", targetMarks: 5, preferredSubtopics: ["alevel-3-1-si-uncertainties-estimation"], preferPractical: true },
+  { format: "structured", targetMarks: 5, preferredSubtopics: ["alevel-3-2-1-particles-quarks"] },
+  { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-2-2-quantum-phenomena"], preferQualitative: true },
+  { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-3-1-progressive-stationary-waves"], preferQualitative: false },
+  { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-3-2-refraction-diffraction-interference"], preferQualitative: true },
+  { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-4-1-force-energy-momentum"], preferQualitative: false },
+  { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-4-1-force-energy-momentum"], preferQualitative: true },
+  { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-4-2-materials-young-modulus"], preferQualitative: false },
+  { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-5-1-current-electricity"], preferQualitative: false },
+  { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-5-1-current-electricity"], preferQualitative: true },
+  { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-3-2-refraction-diffraction-interference", "alevel-3-3-1-progressive-stationary-waves"], preferQualitative: false },
+  { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-4-1-force-energy-momentum", "alevel-3-5-1-current-electricity"], preferQualitative: false },
+];
+
+const ALEVEL_AS_PAPER2_SECTIONS: {
+  sectionAPractical: readonly AlevelBlueprintSlot[];
+  sectionBSynoptic: readonly AlevelBlueprintSlot[];
+  sectionCMcq: readonly AlevelBlueprintSlot[];
+} = {
+  // Section A (~20m): Practical skills & data analysis across Sections 1-5
+  sectionAPractical: [
+    { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-1-si-uncertainties-estimation"], preferPractical: true },
+    { format: "structured", targetMarks: 5, preferredSubtopics: ["alevel-3-1-si-uncertainties-estimation", "alevel-3-4-2-materials-young-modulus"], preferPractical: true },
+    { format: "structured", targetMarks: 5, preferredSubtopics: ["alevel-3-5-1-current-electricity", "alevel-3-3-1-progressive-stationary-waves"], preferPractical: true },
+    { format: "structured", targetMarks: 4, preferredSubtopics: ["alevel-3-4-1-force-energy-momentum", "alevel-3-1-si-uncertainties-estimation"], preferPractical: true },
+  ],
+  // Section B (~20m): Synoptic structured across Sections 1-5
+  sectionBSynoptic: [
+    { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-2-2-quantum-phenomena", "alevel-3-2-1-particles-quarks"], preferQualitative: true },
+    { format: "structured", targetMarks: 5, preferredSubtopics: ["alevel-3-3-2-refraction-diffraction-interference", "alevel-3-3-1-progressive-stationary-waves"], preferQualitative: false },
+    { format: "structured", targetMarks: 5, preferredSubtopics: ["alevel-3-4-1-force-energy-momentum", "alevel-3-4-2-materials-young-modulus"], preferQualitative: true },
+    { format: "structured", targetMarks: 4, preferredSubtopics: ["alevel-3-5-1-current-electricity"], preferQualitative: false },
+  ],
+  // Section C (30m): 30 x 1m MCQs across Sections 1-5 (~40% qualitative when available)
+  sectionCMcq: [
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-1-si-uncertainties-estimation"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-1-si-uncertainties-estimation"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-1-si-uncertainties-estimation"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-2-1-particles-quarks"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-2-1-particles-quarks"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-2-1-particles-quarks"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-2-2-quantum-phenomena"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-2-2-quantum-phenomena"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-2-2-quantum-phenomena"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-3-1-progressive-stationary-waves"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-3-1-progressive-stationary-waves"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-3-1-progressive-stationary-waves"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-3-1-progressive-stationary-waves"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-3-2-refraction-diffraction-interference"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-3-2-refraction-diffraction-interference"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-3-2-refraction-diffraction-interference"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-3-2-refraction-diffraction-interference"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-4-1-force-energy-momentum"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-4-1-force-energy-momentum"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-4-1-force-energy-momentum"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-4-1-force-energy-momentum"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-4-1-force-energy-momentum"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-4-2-materials-young-modulus"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-4-2-materials-young-modulus"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-4-2-materials-young-modulus"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-5-1-current-electricity"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-5-1-current-electricity"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-5-1-current-electricity"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-5-1-current-electricity"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-5-1-current-electricity"], preferQualitative: false },
+  ],
+};
+
+const ALEVEL_A2_PAPER1_SECTIONS: {
+  sectionAStructured: readonly AlevelBlueprintSlot[];
+  sectionBMcq: readonly AlevelBlueprintSlot[];
+} = {
+  // Section A (~60m): 10 x 6m across 3.1-3.5 + 3.6.1 (qualitative/LoR + calculation mix)
+  sectionAStructured: [
+    { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-1-si-uncertainties-estimation"], preferQualitative: false },
+    { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-2-1-particles-quarks", "alevel-3-2-2-quantum-phenomena"], preferQualitative: true },
+    { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-2-2-quantum-phenomena"], preferQualitative: false },
+    { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-3-1-progressive-stationary-waves"], preferQualitative: true },
+    { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-3-2-refraction-diffraction-interference"], preferQualitative: false },
+    { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-4-1-force-energy-momentum"], preferQualitative: false },
+    { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-4-2-materials-young-modulus"], preferQualitative: true },
+    { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-5-1-current-electricity"], preferQualitative: false },
+    { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-6-1-periodic-motion-shm"], preferQualitative: true },
+    { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-6-1-periodic-motion-shm"], preferQualitative: false },
+  ],
+  // Section B (25m): 25 x 1m MCQs across 3.1-3.5 + 3.6.1 (10/25 = 40% qualitative when available)
+  sectionBMcq: [
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-1-si-uncertainties-estimation"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-1-si-uncertainties-estimation"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-2-1-particles-quarks"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-2-1-particles-quarks"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-2-2-quantum-phenomena"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-2-2-quantum-phenomena"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-3-1-progressive-stationary-waves"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-3-1-progressive-stationary-waves"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-3-1-progressive-stationary-waves"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-3-2-refraction-diffraction-interference"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-3-2-refraction-diffraction-interference"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-3-2-refraction-diffraction-interference"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-4-1-force-energy-momentum"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-4-1-force-energy-momentum"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-4-1-force-energy-momentum"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-4-1-force-energy-momentum"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-4-2-materials-young-modulus"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-4-2-materials-young-modulus"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-5-1-current-electricity"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-5-1-current-electricity"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-5-1-current-electricity"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-6-1-periodic-motion-shm"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-6-1-periodic-motion-shm"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-6-1-periodic-motion-shm"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-6-1-periodic-motion-shm"], preferQualitative: false },
+  ],
+};
+
+const ALEVEL_A2_PAPER2_SECTIONS: {
+  sectionAStructured: readonly AlevelBlueprintSlot[];
+  sectionBMcq: readonly AlevelBlueprintSlot[];
+} = {
+  // Section A (~60m): 10 x 6m across 3.6.2 Thermal + 3.7 Fields + 3.8 Nuclear
+  sectionAStructured: [
+    { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-6-2-thermal-physics"], preferQualitative: true },
+    { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-6-2-thermal-physics"], preferQualitative: false },
+    { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-7-2-gravitational-fields"], preferQualitative: false },
+    { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-7-3-electric-fields"], preferQualitative: true },
+    { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-7-3-electric-fields"], preferQualitative: false },
+    { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-7-4-capacitance"], preferQualitative: true },
+    { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-7-5-magnetic-fields-induction-ac"], preferQualitative: false },
+    { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-7-5-magnetic-fields-induction-ac"], preferQualitative: false },
+    { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-8-nuclear-decay-energy"], preferQualitative: true },
+    { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-8-nuclear-decay-energy"], preferQualitative: false },
+  ],
+  // Section B (25m): 25 x 1m MCQs across 3.6.2, 3.7.2-3.7.5, 3.8 (10/25 = 40% qualitative)
+  sectionBMcq: [
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-6-2-thermal-physics"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-6-2-thermal-physics"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-6-2-thermal-physics"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-6-2-thermal-physics"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-7-2-gravitational-fields"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-7-2-gravitational-fields"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-7-2-gravitational-fields"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-7-3-electric-fields"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-7-3-electric-fields"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-7-3-electric-fields"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-7-3-electric-fields"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-7-3-electric-fields"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-7-4-capacitance"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-7-4-capacitance"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-7-4-capacitance"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-7-4-capacitance"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-7-5-magnetic-fields-induction-ac"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-7-5-magnetic-fields-induction-ac"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-7-5-magnetic-fields-induction-ac"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-7-5-magnetic-fields-induction-ac"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-7-5-magnetic-fields-induction-ac"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-8-nuclear-decay-energy"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-8-nuclear-decay-energy"], preferQualitative: true },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-8-nuclear-decay-energy"], preferQualitative: false },
+    { format: "mcq", targetMarks: 1, preferredSubtopics: ["alevel-3-8-nuclear-decay-energy"], preferQualitative: false },
+  ],
+};
+
+const ALEVEL_A2_PAPER3_SECTION_A_SLOTS: readonly AlevelBlueprintSlot[] = [
+  // Section A (~45m): 8 structured practical / data-analysis / Required Practical questions (5 x 6m + 3 x 5m = 45m)
+  { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-1-si-uncertainties-estimation"], preferPractical: true },
+  { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-1-si-uncertainties-estimation"], preferPractical: true },
+  { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-3-1-progressive-stationary-waves", "alevel-3-3-2-refraction-diffraction-interference"], preferPractical: true },
+  { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-4-1-force-energy-momentum", "alevel-3-4-2-materials-young-modulus"], preferPractical: true },
+  { format: "structured", targetMarks: 6, preferredSubtopics: ["alevel-3-6-1-periodic-motion-shm", "alevel-3-6-2-thermal-physics"], preferPractical: true },
+  { format: "structured", targetMarks: 5, preferredSubtopics: ["alevel-3-5-1-current-electricity", "alevel-3-7-4-capacitance"], preferPractical: true },
+  { format: "structured", targetMarks: 5, preferredSubtopics: ["alevel-3-7-5-magnetic-fields-induction-ac", "alevel-3-8-nuclear-decay-energy"], preferPractical: true },
+  { format: "structured", targetMarks: 5, preferredSubtopics: ["alevel-3-1-si-uncertainties-estimation"], preferPractical: true },
+];
+
+const ALEVEL_A2_PAPER3_SECTION_B_TARGET_MARKS: readonly number[] = [
+  6, 6, 6, 6, 6, 5,
+];
+
+export interface OfficialAlevelBlueprintOptions {
+  /** Optional AQA Paper 3 Section B option subtopic ID (`alevel-3-9-astrophysics` .. `alevel-3-13-electronics`). */
+  optionSubtopicId?: string;
+}
+
+export interface OfficialAlevelBlueprintAssembly {
+  sectionAStructuredRows: PublicQuestionIndexRow[];
+  sectionBStructuredRows: PublicQuestionIndexRow[];
+  structuredRows: PublicQuestionIndexRow[];
+  mcqRows: PublicQuestionIndexRow[];
+  selectedOptionSubtopicId: string | null;
+  orderedRows: PublicQuestionIndexRow[];
+}
+
+function choosePaper3OptionSubtopic(
+  structuredRows: readonly PublicQuestionIndexRow[],
+  rng: () => number,
+  requestedOptionSubtopicId?: string,
+): string | null {
+  if (
+    requestedOptionSubtopicId &&
+    ALEVEL_OPTION_SUBTOPIC_SET.has(requestedOptionSubtopicId)
+  ) {
+    return requestedOptionSubtopicId;
+  }
+
+  const familyCountByOption = new Map<string, Set<string>>();
+  for (const optId of ALEVEL_OPTION_SUBTOPIC_IDS) {
+    familyCountByOption.set(optId, new Set<string>());
+  }
+
+  for (const row of structuredRows) {
+    for (const tag of row.syllabi) {
+      if (
+        tag.syllabus === "alevel" &&
+        tag.subtopicId &&
+        familyCountByOption.has(tag.subtopicId)
+      ) {
+        familyCountByOption.get(tag.subtopicId)!.add(row.familyGroupKey);
+      }
+    }
+  }
+
+  const fullCandidates = ALEVEL_OPTION_SUBTOPIC_IDS.filter(
+    (optId) =>
+      (familyCountByOption.get(optId)?.size ?? 0) >=
+      ALEVEL_A2_PAPER3_SECTION_B_TARGET_MARKS.length,
+  );
+  if (fullCandidates.length > 0) {
+    return fullCandidates[Math.floor(rng() * fullCandidates.length)] ?? fullCandidates[0];
+  }
+
+  let maxFamilies = 0;
+  for (const optId of ALEVEL_OPTION_SUBTOPIC_IDS) {
+    const count = familyCountByOption.get(optId)?.size ?? 0;
+    if (count > maxFamilies) {
+      maxFamilies = count;
+    }
+  }
+  if (maxFamilies === 0) {
+    return null;
+  }
+
+  const bestCandidates = ALEVEL_OPTION_SUBTOPIC_IDS.filter(
+    (optId) => (familyCountByOption.get(optId)?.size ?? 0) === maxFamilies,
+  );
+  return (
+    bestCandidates[Math.floor(rng() * bestCandidates.length)] ??
+    bestCandidates[0]
+  );
+}
+
+/**
+ * Assembles any of the 5 official AQA GCE Physics (`7407/1`, `7407/2`,
+ * `7408/1`, `7408/2`, `7408/3`) papers with strict subtopic isolation (e.g.
+ * Paper 1 includes `3.6.1` and never `3.6.2`; Paper 2 includes `3.6.2` and
+ * never `3.6.1`; Paper 3 Section B selects one single Option from `3.9`–`3.13`),
+ * unique `familyGroupKey` enforcement, and graceful nearest-tier fallback on
+ * partial banks.
+ */
+export function assembleOfficialAlevelBlueprint(
+  eligibleRows: readonly PublicQuestionIndexRow[],
+  blueprintId: OfficialAlevelBlueprintId,
+  rng: () => number,
+  options: OfficialAlevelBlueprintOptions = {},
+): OfficialAlevelBlueprintAssembly {
+  const usedFamilies = new Set<string>();
+  const usedIds = new Set<string>();
+  const sectionAStructuredRows: PublicQuestionIndexRow[] = [];
+  const sectionBStructuredRows: PublicQuestionIndexRow[] = [];
+  const mcqRows: PublicQuestionIndexRow[] = [];
+  let selectedOptionSubtopicId: string | null = null;
+
+  const sortByDifficulty = (
+    a: PublicQuestionIndexRow,
+    b: PublicQuestionIndexRow,
+  ): number => DIFFICULTY_RANK[a.difficulty] - DIFFICULTY_RANK[b.difficulty];
+
+  if (blueprintId === "alevel-as-paper1-official") {
+    const scopedPool = eligibleRows.filter((row) =>
+      rowMatchesAlevelSubtopicScope(
+        row,
+        ALEVEL_AS_SUBTOPIC_SET,
+        ALEVEL_AS_TOPIC_SET,
+      ),
+    );
+    const shuffled = deterministicShuffle(scopedPool, rng);
+
+    for (const slot of ALEVEL_AS_PAPER1_SLOTS) {
+      const picked = pickAlevelBlueprintSlot(shuffled, slot, usedFamilies, usedIds);
+      if (picked) sectionAStructuredRows.push(picked);
+    }
+
+    sectionAStructuredRows.sort(sortByDifficulty);
+    return {
+      sectionAStructuredRows,
+      sectionBStructuredRows,
+      structuredRows: [...sectionAStructuredRows],
+      mcqRows,
+      selectedOptionSubtopicId: null,
+      orderedRows: [...sectionAStructuredRows],
+    };
+  }
+
+  if (blueprintId === "alevel-as-paper2-official") {
+    const scopedPool = eligibleRows.filter((row) =>
+      rowMatchesAlevelSubtopicScope(
+        row,
+        ALEVEL_AS_SUBTOPIC_SET,
+        ALEVEL_AS_TOPIC_SET,
+      ),
+    );
+    const shuffled = deterministicShuffle(scopedPool, rng);
+
+    // Fill structured sections first so shared families never starve Section A/B
+    for (const slot of ALEVEL_AS_PAPER2_SECTIONS.sectionAPractical) {
+      const picked = pickAlevelBlueprintSlot(shuffled, slot, usedFamilies, usedIds);
+      if (picked) sectionAStructuredRows.push(picked);
+    }
+    for (const slot of ALEVEL_AS_PAPER2_SECTIONS.sectionBSynoptic) {
+      const picked = pickAlevelBlueprintSlot(shuffled, slot, usedFamilies, usedIds);
+      if (picked) sectionBStructuredRows.push(picked);
+    }
+    for (const slot of ALEVEL_AS_PAPER2_SECTIONS.sectionCMcq) {
+      const picked = pickAlevelBlueprintSlot(shuffled, slot, usedFamilies, usedIds);
+      if (picked) mcqRows.push(picked);
+    }
+
+    const targetTotal =
+      ALEVEL_AS_PAPER2_SECTIONS.sectionAPractical.length +
+      ALEVEL_AS_PAPER2_SECTIONS.sectionBSynoptic.length +
+      ALEVEL_AS_PAPER2_SECTIONS.sectionCMcq.length;
+    const shortfall =
+      targetTotal -
+      (sectionAStructuredRows.length +
+        sectionBStructuredRows.length +
+        mcqRows.length);
+    if (shortfall > 0) {
+      const topUp = selectStratifiedUniqueFamilies(
+        scopedPool,
+        "alevel",
+        shortfall,
+        usedFamilies,
+        usedIds,
+        rng,
+      );
+      for (const row of topUp) {
+        if (row.format === "mcq") mcqRows.push(row);
+        else sectionBStructuredRows.push(row);
+      }
+    }
+
+    sectionAStructuredRows.sort(sortByDifficulty);
+    sectionBStructuredRows.sort(sortByDifficulty);
+    mcqRows.sort(sortByDifficulty);
+    const structuredRows = [
+      ...sectionAStructuredRows,
+      ...sectionBStructuredRows,
+    ];
+    return {
+      sectionAStructuredRows,
+      sectionBStructuredRows,
+      structuredRows,
+      mcqRows,
+      selectedOptionSubtopicId: null,
+      orderedRows: [...structuredRows, ...mcqRows],
+    };
+  }
+
+  if (
+    blueprintId === "alevel-a2-paper1-official" ||
+    blueprintId === "alevel-a2-paper2-official"
+  ) {
+    const isPaper1 = blueprintId === "alevel-a2-paper1-official";
+    const allowedSubtopics = isPaper1
+      ? ALEVEL_PAPER1_SUBTOPIC_SET
+      : ALEVEL_PAPER2_SUBTOPIC_SET;
+    const fallbackTopics = isPaper1
+      ? ALEVEL_AS_TOPIC_SET
+      : ALEVEL_PAPER2_FALLBACK_TOPIC_SET;
+    const blueprint = isPaper1
+      ? ALEVEL_A2_PAPER1_SECTIONS
+      : ALEVEL_A2_PAPER2_SECTIONS;
+
+    const scopedPool = eligibleRows.filter((row) =>
+      rowMatchesAlevelSubtopicScope(row, allowedSubtopics, fallbackTopics),
+    );
+    const shuffled = deterministicShuffle(scopedPool, rng);
+
+    for (const slot of blueprint.sectionAStructured) {
+      const picked = pickAlevelBlueprintSlot(shuffled, slot, usedFamilies, usedIds);
+      if (picked) sectionAStructuredRows.push(picked);
+    }
+    for (const slot of blueprint.sectionBMcq) {
+      const picked = pickAlevelBlueprintSlot(shuffled, slot, usedFamilies, usedIds);
+      if (picked) mcqRows.push(picked);
+    }
+
+    const targetTotal =
+      blueprint.sectionAStructured.length + blueprint.sectionBMcq.length;
+    const shortfall =
+      targetTotal - (sectionAStructuredRows.length + mcqRows.length);
+    if (shortfall > 0) {
+      const topUp = selectStratifiedUniqueFamilies(
+        scopedPool,
+        "alevel",
+        shortfall,
+        usedFamilies,
+        usedIds,
+        rng,
+      );
+      for (const row of topUp) {
+        if (row.format === "mcq") mcqRows.push(row);
+        else sectionAStructuredRows.push(row);
+      }
+    }
+
+    sectionAStructuredRows.sort(sortByDifficulty);
+    mcqRows.sort(sortByDifficulty);
+    return {
+      sectionAStructuredRows,
+      sectionBStructuredRows,
+      structuredRows: [...sectionAStructuredRows],
+      mcqRows,
+      selectedOptionSubtopicId: null,
+      orderedRows: [...sectionAStructuredRows, ...mcqRows],
+    };
+  }
+
+  // alevel-a2-paper3-official: Section A (~45m Practical Skills/Data Analysis)
+  // + Section B (~35m single Option subtopic from 3.9-3.13)
+  const structuredOnly = eligibleRows.filter((row) => row.format === "structured");
+  const sectionAPool = deterministicShuffle(
+    structuredOnly.filter((row) => !rowIsAlevelOption(row)),
+    rng,
+  );
+
+  for (const slot of ALEVEL_A2_PAPER3_SECTION_A_SLOTS) {
+    const picked = pickAlevelBlueprintSlot(sectionAPool, slot, usedFamilies, usedIds);
+    if (picked) sectionAStructuredRows.push(picked);
+  }
+
+  selectedOptionSubtopicId = choosePaper3OptionSubtopic(
+    structuredOnly,
+    rng,
+    options.optionSubtopicId,
+  );
+
+  if (selectedOptionSubtopicId) {
+    const singleOptionSet = new Set<string>([selectedOptionSubtopicId]);
+    const optionPool = deterministicShuffle(
+      structuredOnly.filter((row) =>
+        rowMatchesAlevelSubtopicScope(row, singleOptionSet),
+      ),
+      rng,
+    );
+
+    for (let idx = 0; idx < ALEVEL_A2_PAPER3_SECTION_B_TARGET_MARKS.length; idx += 1) {
+      const targetMarks = ALEVEL_A2_PAPER3_SECTION_B_TARGET_MARKS[idx];
+      const slot: AlevelBlueprintSlot = {
+        format: "structured",
+        targetMarks,
+        preferredSubtopics: [selectedOptionSubtopicId],
+        preferQualitative: idx === 1 || idx === 4,
+      };
+      const picked = pickAlevelBlueprintSlot(optionPool, slot, usedFamilies, usedIds);
+      if (picked) sectionBStructuredRows.push(picked);
+    }
+  }
+
+  sectionAStructuredRows.sort(sortByDifficulty);
+  sectionBStructuredRows.sort(sortByDifficulty);
+  const structuredRows = [
+    ...sectionAStructuredRows,
+    ...sectionBStructuredRows,
+  ];
+
+  return {
+    sectionAStructuredRows,
+    sectionBStructuredRows,
+    structuredRows,
+    mcqRows,
+    selectedOptionSubtopicId,
+    orderedRows: [...structuredRows],
+  };
+}
+
 function selectStratifiedUniqueFamilies(
   pool: readonly PublicQuestionIndexRow[],
   syllabus: SyllabusId,
@@ -699,17 +1449,31 @@ export function buildMockPaperSession(
       : (now.getTime() ^ 0x5f3759df) >>> 0;
   const rng = createMulberry32(seed);
 
-  const officialBlueprintId =
+  const officialNcukBlueprintId =
     config.syllabus === "ncuk" && isOfficialNcukBlueprintId(config.presetId)
       ? config.presetId
       : null;
+  const officialAlevelBlueprintId =
+    config.syllabus === "alevel" && isOfficialAlevelBlueprintId(config.presetId)
+      ? config.presetId
+      : null;
+
+  const requestedPaper3OptionId =
+    officialAlevelBlueprintId === "alevel-a2-paper3-official"
+      ? config.topicIds?.find((id) => ALEVEL_OPTION_SUBTOPIC_SET.has(id))
+      : undefined;
 
   const effectiveLevel =
-    officialBlueprintId === "ncuk-eos1-official"
+    officialNcukBlueprintId === "ncuk-eos1-official"
       ? "IFY-S1"
-      : officialBlueprintId === "ncuk-final-official"
+      : officialNcukBlueprintId === "ncuk-final-official"
         ? "all"
-        : config.level;
+        : officialAlevelBlueprintId === "alevel-as-paper1-official" ||
+            officialAlevelBlueprintId === "alevel-as-paper2-official"
+          ? "Y12"
+          : officialAlevelBlueprintId !== null
+            ? "Y13"
+            : config.level;
 
   const baseFiltered = filterIndexRows(manifest.items, {
     syllabus: config.syllabus,
@@ -718,10 +1482,11 @@ export function buildMockPaperSession(
   });
 
   const excludedSet = new Set(config.excludeQuestionIds ?? []);
+  const nonOptionTopicIds = (config.topicIds ?? []).filter(
+    (id) => !ALEVEL_OPTION_SUBTOPIC_SET.has(id),
+  );
   const allowedTopics =
-    config.topicIds && config.topicIds.length > 0
-      ? new Set(config.topicIds)
-      : null;
+    nonOptionTopicIds.length > 0 ? new Set(nonOptionTopicIds) : null;
 
   const eligibleRows = baseFiltered.filter((row) => {
     if (excludedSet.has(row.id)) {
@@ -736,26 +1501,47 @@ export function buildMockPaperSession(
     return true;
   });
 
-  const officialPresetSpec = officialBlueprintId
-    ? MOCK_PAPER_PRESETS.find((p) => p.id === officialBlueprintId)
+  const officialNcukPresetSpec = officialNcukBlueprintId
+    ? MOCK_PAPER_PRESETS.find((p) => p.id === officialNcukBlueprintId)
     : undefined;
-  const useOfficialBlueprint =
-    officialBlueprintId !== null &&
-    officialPresetSpec !== undefined &&
+  const useOfficialNcukBlueprint =
+    officialNcukBlueprintId !== null &&
+    officialNcukPresetSpec !== undefined &&
     config.formatMode === "mixed" &&
-    config.questionCount === officialPresetSpec.questionCount &&
+    config.questionCount === officialNcukPresetSpec.questionCount &&
     (config.mcqCount === undefined ||
-      config.mcqCount === officialPresetSpec.mcqCount) &&
+      config.mcqCount === officialNcukPresetSpec.mcqCount) &&
     (config.structuredCount === undefined ||
-      config.structuredCount === officialPresetSpec.structuredCount);
+      config.structuredCount === officialNcukPresetSpec.structuredCount);
+
+  const officialAlevelPresetSpec = officialAlevelBlueprintId
+    ? MOCK_PAPER_PRESETS.find((p) => p.id === officialAlevelBlueprintId)
+    : undefined;
+  const useOfficialAlevelBlueprint =
+    officialAlevelBlueprintId !== null &&
+    officialAlevelPresetSpec !== undefined &&
+    config.formatMode === officialAlevelPresetSpec.formatMode &&
+    config.questionCount === officialAlevelPresetSpec.questionCount &&
+    (config.mcqCount === undefined ||
+      config.mcqCount === officialAlevelPresetSpec.mcqCount) &&
+    (config.structuredCount === undefined ||
+      config.structuredCount === officialAlevelPresetSpec.structuredCount);
 
   let orderedRows: PublicQuestionIndexRow[];
 
-  if (useOfficialBlueprint && officialBlueprintId) {
+  if (useOfficialNcukBlueprint && officialNcukBlueprintId) {
     const assembled = assembleOfficialNcukBlueprint(
       eligibleRows,
-      officialBlueprintId,
+      officialNcukBlueprintId,
       rng,
+    );
+    orderedRows = assembled.orderedRows;
+  } else if (useOfficialAlevelBlueprint && officialAlevelBlueprintId) {
+    const assembled = assembleOfficialAlevelBlueprint(
+      eligibleRows,
+      officialAlevelBlueprintId,
+      rng,
+      { optionSubtopicId: requestedPaper3OptionId },
     );
     orderedRows = assembled.orderedRows;
   } else {
