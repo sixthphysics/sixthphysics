@@ -399,6 +399,8 @@ tags:
 
 **Live Practice App:** [sixthphysics.github.io](https://sixthphysics.github.io) · **Source Code:** [sixthphysics/sixthphysics](https://github.com/sixthphysics/sixthphysics) · **LoRA Adapter (`bf16`):** [{SOURCE_LORA_REPO_ID}](https://huggingface.co/{SOURCE_LORA_REPO_ID}) · **Dataset & Benchmark:** [{DATASET_REPO_ID}](https://huggingface.co/datasets/{DATASET_REPO_ID})
 
+> **Independence & Copyright Notice:** SixthPhysics is an independent, unofficial synthetic-data project not affiliated with, endorsed by, or trained on copyrighted past papers or official materials from the IB, AQA, Pearson Edexcel, OCR, Cambridge, WJEC, or NCUK. No copyrighted material from IB, UK A-Level awarding bodies, or NCUK was used in training or distribution.
+
 ## Overview
 
 Quantized **GGUF** builds of the promoted SixthPhysics champion model (`round1_sft_core` `bf16` LoRA merged cleanly into [`{BASE_MODEL_ID}`](https://huggingface.co/{BASE_MODEL_ID}), vision tower frozen / text backbone exported cleanly for local CPU & consumer GPU inference).
@@ -500,9 +502,11 @@ Full methodology, 95% Wilson confidence intervals, per-syllabus breakdowns, and 
 {smoke_json_pretty}
 ```
 
-## License
+## License & Independence Disclaimer
 
 Apache 2.0 (matching `{BASE_MODEL_ID}` and `{SOURCE_LORA_REPO_ID}`).
+
+SixthPhysics is an independent, unofficial synthetic-data project not affiliated with, endorsed by, or trained on copyrighted past papers or official materials from the IB, AQA, Pearson Edexcel, OCR, Cambridge, WJEC, or NCUK. No copyrighted material from IB, UK A-Level awarding bodies, or NCUK was used in training or distribution.
 """
 
 

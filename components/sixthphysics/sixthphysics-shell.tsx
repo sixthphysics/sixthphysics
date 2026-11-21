@@ -22,6 +22,7 @@ import {
 import { TopicRail } from '@/components/sixthphysics/topic-rail';
 import {
   SIXTHPHYSICS_EXTERNAL_LINKS,
+  SIXTHPHYSICS_INDEPENDENCE_DISCLAIMER,
   SYLLABUS_SEO_LIST,
 } from '@/lib/sixthphysics-web/seo';
 import {
@@ -900,7 +901,8 @@ export function SixthPhysicsShell() {
       />
 
       <footer className="mt-10 border-t border-[var(--sp-border)] bg-[var(--sp-surface)]/70 print:hidden">
-        <div className="mx-auto flex max-w-[1400px] flex-col gap-3 px-4 py-4 text-[12.5px] text-[var(--sp-muted)] sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <div className="mx-auto max-w-[1400px] space-y-3 px-4 py-4 text-[12.5px] text-[var(--sp-muted)] sm:px-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <nav
             aria-label="Syllabus topic guides"
             className="flex flex-wrap items-center gap-x-4 gap-y-1.5"
@@ -958,6 +960,10 @@ export function SixthPhysicsShell() {
               Dataset
             </a>
           </div>
+          </div>
+          <p className="border-t border-[var(--sp-border)]/70 pt-3 text-[11.5px] leading-relaxed text-[var(--sp-muted)]">
+            {SIXTHPHYSICS_INDEPENDENCE_DISCLAIMER}
+          </p>
         </div>
       </footer>
     </div>

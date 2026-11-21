@@ -11,6 +11,7 @@ import {
 import { ApicutsLogoMark } from '@/components/sixthphysics/apicuts-logo';
 import {
   SIXTHPHYSICS_EXTERNAL_LINKS,
+  SIXTHPHYSICS_INDEPENDENCE_DISCLAIMER,
   SYLLABUS_SEO_CONFIGS,
   SYLLABUS_SEO_LIST,
   buildSyllabusJsonLd,
@@ -418,7 +419,8 @@ export function SyllabusLandingPage({
         </section>
 
         {/* Cross-links to sibling syllabi & open-source project */}
-        <footer className="flex flex-col gap-4 border-t-2 border-[var(--sp-border)] pt-6 text-[13.5px] text-[var(--sp-muted)] sm:flex-row sm:items-center sm:justify-between">
+        <footer className="space-y-4 border-t-2 border-[var(--sp-border)] pt-6 text-[13.5px] text-[var(--sp-muted)]">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <Link
               href="/"
@@ -476,6 +478,10 @@ export function SyllabusLandingPage({
               Dataset &amp; Benchmark
             </a>
           </div>
+          </div>
+          <p className="border-t border-[var(--sp-border)]/70 pt-3.5 text-[12px] leading-relaxed text-[var(--sp-muted)]">
+            {SIXTHPHYSICS_INDEPENDENCE_DISCLAIMER}
+          </p>
         </footer>
       </main>
     </div>

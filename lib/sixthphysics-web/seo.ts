@@ -21,6 +21,9 @@ export const SIXTHPHYSICS_EXTERNAL_LINKS = {
   apicutsSponsor: 'https://apicuts.ai',
 } as const;
 
+export const SIXTHPHYSICS_INDEPENDENCE_DISCLAIMER =
+  'SixthPhysics is an independent, unofficial synthetic-data project not affiliated with, endorsed by, or trained on copyrighted past papers or official materials from the IB, AQA, Pearson Edexcel, OCR, Cambridge, WJEC, or NCUK. No copyrighted exam board material is used in training or distribution.';
+
 export interface SyllabusSeoFaq {
   question: string;
   answer: string;

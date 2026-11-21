@@ -5,6 +5,7 @@ import robots from '@/app/robots';
 import sitemap from '@/app/sitemap';
 import { SyllabusLandingPage } from '@/components/sixthphysics/syllabus-landing-page';
 import {
+  SIXTHPHYSICS_INDEPENDENCE_DISCLAIMER,
   SIXTHPHYSICS_SITE_URL,
   SYLLABUS_SEO_CONFIGS,
   SYLLABUS_SEO_LIST,
@@ -96,6 +97,7 @@ describe('SixthPhysics SEO metadata, routes, and structured data', () => {
       expect(html).toContain(`/?mode=pdf&amp;syllabus=${cfg.syllabus}`);
       expect(html).toContain('https://apicuts.ai');
       expect(html).toContain('APIcuts.ai');
+      expect(html).toContain(SIXTHPHYSICS_INDEPENDENCE_DISCLAIMER);
       for (const topic of cfg.catalogue.topics) {
         expect(html).toContain(topic.title);
       }
