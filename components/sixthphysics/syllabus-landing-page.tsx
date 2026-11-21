@@ -8,7 +8,6 @@ import {
   List,
   Target,
 } from 'lucide-react';
-import { ApicutsLogoMark } from '@/components/sixthphysics/apicuts-logo';
 import {
   SIXTHPHYSICS_EXTERNAL_LINKS,
   SIXTHPHYSICS_INDEPENDENCE_DISCLAIMER,
@@ -421,63 +420,49 @@ export function SyllabusLandingPage({
         {/* Cross-links to sibling syllabi & open-source project */}
         <footer className="space-y-4 border-t-2 border-[var(--sp-border)] pt-6 text-[13.5px] text-[var(--sp-muted)]">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <Link
-              href="/"
-              className="font-bold text-[var(--sp-ink)] hover:text-[var(--sp-accent)]"
-            >
-              Interactive Practice Desk
-            </Link>
-            {siblingSyllabi.map((other) => (
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
               <Link
-                key={other.syllabus}
-                href={other.path}
+                href="/"
+                className="font-bold text-[var(--sp-ink)] hover:text-[var(--sp-accent)]"
+              >
+                Interactive Practice Desk
+              </Link>
+              {siblingSyllabi.map((other) => (
+                <Link
+                  key={other.syllabus}
+                  href={other.path}
+                  className="font-semibold hover:text-[var(--sp-ink)]"
+                >
+                  {other.navLabel}
+                </Link>
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+              <a
+                href={SIXTHPHYSICS_EXTERNAL_LINKS.githubRepo}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="font-semibold hover:text-[var(--sp-ink)]"
               >
-                {other.navLabel}
-              </Link>
-            ))}
-          </div>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <a
-              href={SIXTHPHYSICS_EXTERNAL_LINKS.apicutsSponsor}
-              target="_blank"
-              rel="noopener"
-              className="inline-flex items-center gap-1.5 font-semibold text-[var(--sp-muted)] transition-colors hover:text-[var(--sp-ink)]"
-            >
-              <ApicutsLogoMark className="h-3.5 w-3.5 shrink-0" />
-              <span>
-                Free AI grading via{' '}
-                <span className="font-bold text-[var(--sp-ink)]">
-                  APIcuts.ai
-                </span>
-              </span>
-            </a>
-            <a
-              href={SIXTHPHYSICS_EXTERNAL_LINKS.githubRepo}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-semibold hover:text-[var(--sp-ink)]"
-            >
-              GitHub Source
-            </a>
-            <a
-              href={SIXTHPHYSICS_EXTERNAL_LINKS.huggingFaceGguf}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-semibold hover:text-[var(--sp-ink)]"
-            >
-              Qwen3.5-9B GGUF
-            </a>
-            <a
-              href={SIXTHPHYSICS_EXTERNAL_LINKS.huggingFaceDataset}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-semibold hover:text-[var(--sp-ink)]"
-            >
-              Dataset &amp; Benchmark
-            </a>
-          </div>
+                GitHub Source
+              </a>
+              <a
+                href={SIXTHPHYSICS_EXTERNAL_LINKS.huggingFaceGguf}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold hover:text-[var(--sp-ink)]"
+              >
+                Qwen3.5-9B GGUF
+              </a>
+              <a
+                href={SIXTHPHYSICS_EXTERNAL_LINKS.huggingFaceDataset}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold hover:text-[var(--sp-ink)]"
+              >
+                Dataset &amp; Benchmark
+              </a>
+            </div>
           </div>
           <p className="border-t border-[var(--sp-border)]/70 pt-3.5 text-[12px] leading-relaxed text-[var(--sp-muted)]">
             {SIXTHPHYSICS_INDEPENDENCE_DISCLAIMER}

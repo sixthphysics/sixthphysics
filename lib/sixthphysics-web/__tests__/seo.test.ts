@@ -95,8 +95,9 @@ describe('SixthPhysics SEO metadata, routes, and structured data', () => {
       expect(html).toContain(`/?syllabus=${cfg.syllabus}`);
       expect(html).toContain(`/?mode=mock&amp;syllabus=${cfg.syllabus}`);
       expect(html).toContain(`/?mode=pdf&amp;syllabus=${cfg.syllabus}`);
-      expect(html).toContain('https://apicuts.ai');
-      expect(html).toContain('APIcuts.ai');
+      expect(html).not.toContain('https://apicuts.ai');
+      expect(html).not.toContain('APIcuts.ai');
+      expect(html).not.toContain('apicuts-logo.svg');
       expect(html).toContain(SIXTHPHYSICS_INDEPENDENCE_DISCLAIMER);
       for (const topic of cfg.catalogue.topics) {
         expect(html).toContain(topic.title);

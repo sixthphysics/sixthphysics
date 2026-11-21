@@ -18,7 +18,6 @@ export const SIXTHPHYSICS_EXTERNAL_LINKS = {
   huggingFaceGguf: 'https://huggingface.co/d4ydy/sixthphysics-qwen3.5-9b-GGUF',
   huggingFaceDataset:
     'https://huggingface.co/datasets/d4ydy/sixthphysics-bench-and-bank',
-  apicutsSponsor: 'https://apicuts.ai',
 } as const;
 
 export const SIXTHPHYSICS_INDEPENDENCE_DISCLAIMER =

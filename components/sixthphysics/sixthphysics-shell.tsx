@@ -9,7 +9,6 @@ import {
   Search,
   X,
 } from 'lucide-react';
-import { ApicutsLogoMark } from '@/components/sixthphysics/apicuts-logo';
 import { FormulaDrawer } from '@/components/sixthphysics/formula-drawer';
 import { MockExamView } from '@/components/sixthphysics/mock-exam-view';
 import { PdfPaperStudio } from '@/components/sixthphysics/pdf-paper-studio';
@@ -903,63 +902,49 @@ export function SixthPhysicsShell() {
       <footer className="mt-10 border-t border-[var(--sp-border)] bg-[var(--sp-surface)]/70 print:hidden">
         <div className="mx-auto max-w-[1400px] space-y-3 px-4 py-4 text-[12.5px] text-[var(--sp-muted)] sm:px-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <nav
-            aria-label="Syllabus topic guides"
-            className="flex flex-wrap items-center gap-x-4 gap-y-1.5"
-          >
-            <span className="font-bold text-[var(--sp-ink)]">
-              Syllabus guides:
-            </span>
-            {SYLLABUS_SEO_LIST.map((item) => (
-              <Link
-                key={item.syllabus}
-                href={item.path}
-                className="font-semibold transition-colors hover:text-[var(--sp-accent)]"
-              >
-                {item.navLabel}
-              </Link>
-            ))}
-          </nav>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
-            <a
-              href={SIXTHPHYSICS_EXTERNAL_LINKS.apicutsSponsor}
-              target="_blank"
-              rel="noopener"
-              className="inline-flex items-center gap-1.5 font-semibold text-[var(--sp-muted)] transition-colors hover:text-[var(--sp-ink)]"
+            <nav
+              aria-label="Syllabus topic guides"
+              className="flex flex-wrap items-center gap-x-4 gap-y-1.5"
             >
-              <ApicutsLogoMark className="h-3.5 w-3.5 shrink-0" />
-              <span>
-                Free AI grading via{' '}
-                <span className="font-bold text-[var(--sp-ink)]">
-                  APIcuts.ai
-                </span>
+              <span className="font-bold text-[var(--sp-ink)]">
+                Syllabus guides:
               </span>
-            </a>
-            <a
-              href={SIXTHPHYSICS_EXTERNAL_LINKS.githubRepo}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-semibold transition-colors hover:text-[var(--sp-ink)]"
-            >
-              GitHub
-            </a>
-            <a
-              href={SIXTHPHYSICS_EXTERNAL_LINKS.huggingFaceGguf}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-semibold transition-colors hover:text-[var(--sp-ink)]"
-            >
-              Qwen3.5-9B GGUF
-            </a>
-            <a
-              href={SIXTHPHYSICS_EXTERNAL_LINKS.huggingFaceDataset}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-semibold transition-colors hover:text-[var(--sp-ink)]"
-            >
-              Dataset
-            </a>
-          </div>
+              {SYLLABUS_SEO_LIST.map((item) => (
+                <Link
+                  key={item.syllabus}
+                  href={item.path}
+                  className="font-semibold transition-colors hover:text-[var(--sp-accent)]"
+                >
+                  {item.navLabel}
+                </Link>
+              ))}
+            </nav>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+              <a
+                href={SIXTHPHYSICS_EXTERNAL_LINKS.githubRepo}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold transition-colors hover:text-[var(--sp-ink)]"
+              >
+                GitHub
+              </a>
+              <a
+                href={SIXTHPHYSICS_EXTERNAL_LINKS.huggingFaceGguf}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold transition-colors hover:text-[var(--sp-ink)]"
+              >
+                Qwen3.5-9B GGUF
+              </a>
+              <a
+                href={SIXTHPHYSICS_EXTERNAL_LINKS.huggingFaceDataset}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold transition-colors hover:text-[var(--sp-ink)]"
+              >
+                Dataset
+              </a>
+            </div>
           </div>
           <p className="border-t border-[var(--sp-border)]/70 pt-3 text-[11.5px] leading-relaxed text-[var(--sp-muted)]">
             {SIXTHPHYSICS_INDEPENDENCE_DISCLAIMER}

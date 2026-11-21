@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import { MathText } from '@/components/sixthphysics/math-text';
 import {
-  APICUTS_SPONSOR,
   formatGraderModelLabel,
   gradeStructuredAnswer,
   hasGradableWorking,
@@ -856,70 +855,42 @@ export function StructuredInteraction({
                 data-testid="ai-examiner-feedback"
                 className="rounded-xl border-2 border-[var(--sp-accent)]/35 bg-[var(--sp-surface)] p-3.5"
               >
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 text-[13.5px] font-extrabold text-[var(--sp-accent-ink)]">
-                      <Sparkles
-                        className="h-4 w-4 text-[var(--sp-accent)]"
-                        aria-hidden="true"
-                      />
-                      AI Examiner Feedback
-                    </span>
-
-                    <span
-                      data-testid="ai-grader-model-chip"
-                      className="sp-chip sp-chip--accent text-[11.5px]"
-                    >
-                      <span>{formatGraderModelLabel(effectiveAiGrade.model)}</span>
-                      {effectiveAiGrade.cached && (
-                        <>
-                          <span aria-hidden="true">·</span>
-                          <span className="inline-flex items-center gap-1">
-                            <span
-                              className="h-1.5 w-1.5 rounded-full bg-[var(--sp-success)]"
-                              aria-hidden="true"
-                            />
-                            Cached
-                          </span>
-                        </>
-                      )}
-                    </span>
-
-                    {isManuallyEdited && (
-                      <span
-                        data-testid="ai-edited-manually-badge"
-                        className="sp-chip sp-chip--warn text-[11.5px]"
-                      >
-                        Edited manually
-                      </span>
-                    )}
-                  </div>
-
-                  <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-[var(--sp-muted)]">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={APICUTS_SPONSOR.logoPath}
-                      alt=""
-                      width={14}
-                      height={14}
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 text-[13.5px] font-extrabold text-[var(--sp-accent-ink)]">
+                    <Sparkles
+                      className="h-4 w-4 text-[var(--sp-accent)]"
                       aria-hidden="true"
-                      className="h-3.5 w-3.5 shrink-0 rounded-[3px]"
                     />
-                    <span>
-                      Free AI grading via{' '}
-                      <a
-                        href={
-                          effectiveAiGrade.poweredBy?.url || APICUTS_SPONSOR.url
-                        }
-                        target="_blank"
-                        rel="noopener"
-                        className="font-bold text-[var(--sp-ink)] underline decoration-[var(--sp-border)] underline-offset-2 transition-colors hover:text-[var(--sp-accent)] hover:decoration-[var(--sp-accent)]"
-                      >
-                        {effectiveAiGrade.poweredBy?.name ||
-                          APICUTS_SPONSOR.name}
-                      </a>
-                    </span>
+                    AI Examiner Feedback
                   </span>
+
+                  <span
+                    data-testid="ai-grader-model-chip"
+                    className="sp-chip sp-chip--accent text-[11.5px]"
+                  >
+                    <span>{formatGraderModelLabel(effectiveAiGrade.model)}</span>
+                    {effectiveAiGrade.cached && (
+                      <>
+                        <span aria-hidden="true">·</span>
+                        <span className="inline-flex items-center gap-1">
+                          <span
+                            className="h-1.5 w-1.5 rounded-full bg-[var(--sp-success)]"
+                            aria-hidden="true"
+                          />
+                          Cached
+                        </span>
+                      </>
+                    )}
+                  </span>
+
+                  {isManuallyEdited && (
+                    <span
+                      data-testid="ai-edited-manually-badge"
+                      className="sp-chip sp-chip--warn text-[11.5px]"
+                    >
+                      Edited manually
+                    </span>
+                  )}
                 </div>
 
                 {effectiveAiGrade.overallFeedback && (

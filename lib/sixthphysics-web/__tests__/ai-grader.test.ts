@@ -119,7 +119,7 @@ describe('SixthPhysics AI Grader client', () => {
     expect(result.data.awardedKeys).toEqual(['0:a:M1', '1:a:A1', '2:b:M1']);
     expect(result.data.criteria).toHaveLength(4);
     expect(result.data.provider).toBe('groq');
-    expect(result.data.poweredBy.url).toBe('https://apicuts.ai');
+    expect(result.data.poweredBy?.url).toBe('https://apicuts.ai');
   });
 
   it('classifies daily quota exhaustion and network failures as graceful manual fallbacks', async () => {

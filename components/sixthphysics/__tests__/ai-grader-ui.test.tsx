@@ -16,7 +16,6 @@ import {
   StructuredInteraction,
 } from '@/components/sixthphysics/structured-interaction';
 import {
-  APICUTS_SPONSOR,
   getFallbackManifest,
   type AiGradeResult,
   type AiGradeSuccessResponse,
@@ -189,8 +188,8 @@ const SAMPLE_AI_GRADE: AiGradeSuccessResponse = {
   overallFeedback:
     'Strong physics method across parts (a)–(c). Watch degree mode on $\\sin \\theta = 0.387$.',
   poweredBy: {
-    name: APICUTS_SPONSOR.name,
-    url: APICUTS_SPONSOR.url,
+    name: 'APIcuts.ai',
+    url: 'https://apicuts.ai',
   },
 };
 
@@ -274,7 +273,7 @@ describe('StructuredInteraction AI Grader helpers & Practice Desk UI', () => {
     expect(html).not.toContain('Examiner mark scheme');
   });
 
-  it('renders AI Examiner Feedback strip, model chip, APIcuts attribution, per-criterion notes, and manual-edit badge', () => {
+  it('renders AI Examiner Feedback strip, model chip, per-criterion notes, and manual-edit badge without sponsor attribution', () => {
     const matchingHtml = renderToStaticMarkup(
       <StructuredInteraction
         item={STRUCTURED_Q1}
@@ -289,12 +288,10 @@ describe('StructuredInteraction AI Grader helpers & Practice Desk UI', () => {
     expect(matchingHtml).toContain('Qwen 3.8 27B');
     expect(matchingHtml).toContain('Cached');
     expect(matchingHtml).toContain('Re-grade with AI');
-    expect(matchingHtml).toContain('/apicuts-logo.svg');
-    expect(matchingHtml).toContain('href="https://apicuts.ai"');
-    expect(matchingHtml).toContain('rel="noopener"');
-    expect(matchingHtml).not.toContain('nofollow');
-    expect(matchingHtml).toContain('Free AI grading via');
-    expect(matchingHtml).toContain('APIcuts.ai');
+    expect(matchingHtml).not.toContain('/apicuts-logo.svg');
+    expect(matchingHtml).not.toContain('https://apicuts.ai');
+    expect(matchingHtml).not.toContain('Free AI grading via');
+    expect(matchingHtml).not.toContain('APIcuts.ai');
     expect(matchingHtml).toContain('Strong physics method across parts');
     expect(matchingHtml).toContain('data-testid="ai-criterion-reason-0"');
     expect(matchingHtml).toContain('Correctly converts 300 lines');
@@ -371,7 +368,8 @@ describe('StructuredInteraction AI Grader helpers & Practice Desk UI', () => {
 
     expect(html).toContain('AI Examiner Feedback');
     expect(html).toContain('Qwen 3.8 27B');
-    expect(html).toContain('APIcuts.ai');
+    expect(html).not.toContain('APIcuts.ai');
+    expect(html).not.toContain('https://apicuts.ai');
   });
 });
 

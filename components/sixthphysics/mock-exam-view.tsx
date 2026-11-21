@@ -24,7 +24,6 @@ import {
   formatCompactTopicTitle,
 } from '@/components/sixthphysics/topic-rail';
 import {
-  APICUTS_SPONSOR,
   buildMockPaperSession,
   createConfigFromPreset,
   filterIndexRows,
@@ -2043,29 +2042,6 @@ export function MockExamView({
                 <span>{batchSummaryText}</span>
               </div>
             )}
-
-            <div className="flex items-center justify-end gap-1.5 border-t border-[var(--sp-border)]/70 pt-2 text-[12px] font-medium text-[var(--sp-muted)]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={APICUTS_SPONSOR.logoPath}
-                alt=""
-                width={14}
-                height={14}
-                aria-hidden="true"
-                className="h-3.5 w-3.5 shrink-0 rounded-[3px]"
-              />
-              <span>
-                Free AI grading powered by{' '}
-                <a
-                  href={APICUTS_SPONSOR.url}
-                  target="_blank"
-                  rel="noopener"
-                  className="font-bold text-[var(--sp-ink)] underline decoration-[var(--sp-border)] underline-offset-2 transition-colors hover:text-[var(--sp-accent)] hover:decoration-[var(--sp-accent)]"
-                >
-                  {APICUTS_SPONSOR.name}
-                </a>
-              </span>
-            </div>
           </div>
         )}
       </section>

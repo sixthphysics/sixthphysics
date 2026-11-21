@@ -3,12 +3,6 @@ import type { MarkSchemePoint, SyllabusId } from '@/lib/sixthphysics-web/types';
 export const DEFAULT_AI_GRADER_ENDPOINT =
   'https://apicuts.ai/v1/public/sixthphysics/grade';
 
-export const APICUTS_SPONSOR = {
-  name: 'APIcuts.ai',
-  url: 'https://apicuts.ai',
-  logoPath: '/apicuts-logo.svg',
-} as const;
-
 export const AI_GRADER_MAX_PART_CHARS = 600;
 export const AI_GRADER_MAX_TOTAL_CHARS = 1500;
 export const AI_GRADER_TIMEOUT_MS = 18_000;
@@ -35,7 +29,7 @@ export interface AiGradeSuccessResponse {
   awardedKeys: string[];
   criteria: AiGraderCriterionVerdict[];
   overallFeedback: string;
-  poweredBy: {
+  poweredBy?: {
     name: string;
     url: string;
   };
@@ -359,6 +353,14 @@ export async function gradeStructuredAnswer(
       parsed.poweredBy && typeof parsed.poweredBy === 'object'
         ? (parsed.poweredBy as Record<string, unknown>)
         : null;
+    const poweredBy =
+      typeof poweredByRaw?.name === 'string' &&
+      typeof poweredByRaw?.url === 'string'
+        ? {
+            name: poweredByRaw.name,
+            url: poweredByRaw.url,
+          }
+        : undefined;
 
     return {
       ok: true,
@@ -379,16 +381,7 @@ export async function gradeStructuredAnswer(
         awardedKeys: normalized.awardedKeys,
         criteria: normalized.criteria,
         overallFeedback,
-        poweredBy: {
-          name:
-            typeof poweredByRaw?.name === 'string'
-              ? poweredByRaw.name
-              : APICUTS_SPONSOR.name,
-          url:
-            typeof poweredByRaw?.url === 'string'
-              ? poweredByRaw.url
-              : APICUTS_SPONSOR.url,
-        },
+        ...(poweredBy ? { poweredBy } : {}),
       },
     };
   } catch (error: unknown) {
