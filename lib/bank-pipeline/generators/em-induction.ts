@@ -182,11 +182,58 @@ function toSuperscriptExponent(exp: number): string {
   return [...String(exp)].map((ch) => SUPERSCRIPT_MAP[ch] ?? ch).join("");
 }
 
+function fixIndefiniteArticles(text: string): string {
+  return text.replace(
+    /\b([Aa])\s+((?:electron|electrostatic|electromagnetic|electrodynamic|electric|electrical|electrometer|alpha|ion|isolated|ideal|inkjet|industrial|aerospace|alumina|insulated|insulator|optical|oscilloscope|oscillating|ammeter|acoustic|evacuated|induction|inductor)[a-z-]*)\b/gi,
+    (_m, art: string, word: string) =>
+      `${art === "A" ? "An" : "an"} ${word}`,
+  );
+}
+
+function normalizeCandidateArticles(
+  candidate: CandidateQuestionInput,
+): CandidateQuestionInput {
+  return {
+    ...candidate,
+    stem: fixIndefiniteArticles(candidate.stem),
+    workedSolution: fixIndefiniteArticles(candidate.workedSolution),
+    ...(candidate.options
+      ? {
+          options: candidate.options.map((opt) => ({
+            ...opt,
+            text: fixIndefiniteArticles(opt.text),
+            ...(opt.distractorRationale
+              ? {
+                  distractorRationale: fixIndefiniteArticles(
+                    opt.distractorRationale,
+                  ),
+                }
+              : {}),
+          })),
+        }
+      : {}),
+    ...(candidate.parts
+      ? {
+          parts: candidate.parts.map((part) => ({
+            ...part,
+            prompt: fixIndefiniteArticles(part.prompt),
+            expectedAnswer: fixIndefiniteArticles(part.expectedAnswer),
+            workingSteps: part.workingSteps.map(fixIndefiniteArticles),
+          })),
+        }
+      : {}),
+    markScheme: candidate.markScheme.map((pt) => ({
+      ...pt,
+      criterion: fixIndefiniteArticles(pt.criterion),
+    })),
+  };
+}
+
 function fmtNum(value: number, sigFigs = 3): string {
   if (!Number.isFinite(value)) {
     throw new Error(`Cannot format non-finite physics value: ${String(value)}`);
   }
-  if (Math.abs(value) < 1e-18) {
+  if (Math.abs(value) < 1e-35) {
     return "0";
   }
   const sign = value < 0 ? "−" : "";
@@ -207,7 +254,7 @@ function fmtNum(value: number, sigFigs = 3): string {
 }
 
 function fmtGiven(value: number): string {
-  if (Math.abs(value) < 1e-18) {
+  if (Math.abs(value) < 1e-35) {
     return "0";
   }
   const sign = value < 0 ? "−" : "";
@@ -266,7 +313,7 @@ function buildMcqBundle(
   const isAcceptable = (val: number): boolean => {
     if (!Number.isFinite(val)) return false;
     if (!allowNegative && correctValue > 0 && val <= 0) return false;
-    if (Math.abs(correctValue) > 1e-15 && Math.abs(val) < 1e-18 && !allowNegative) {
+    if (Math.abs(correctValue) > 1e-35 && Math.abs(val) < 1e-35 && !allowNegative) {
       return false;
     }
     for (const prev of chosenValues) {
@@ -7001,7 +7048,9 @@ export function generateEmInductionCandidates(
 
         let candidate: CandidateQuestionInput;
         try {
-          candidate = builder(descriptor, variantIdx, format, id, itemSeed);
+          candidate = normalizeCandidateArticles(
+            builder(descriptor, variantIdx, format, id, itemSeed),
+          );
         } catch (err) {
           lastFailureSummary =
             err instanceof Error ? err.message : String(err);

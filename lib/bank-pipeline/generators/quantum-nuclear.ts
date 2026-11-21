@@ -241,7 +241,7 @@ function formatQuantity3sf(
     const numPart = `${signStr}${Math.abs(rounded)}`;
     return unit ? `${numPart} ${unit}` : numPart;
   }
-  if (Math.abs(value) < 1e-15) {
+  if (Math.abs(value) < 1e-35) {
     return unit ? `0.00 ${unit}` : "0.00";
   }
   const sign = value < 0 ? "−" : "";
@@ -5200,7 +5200,7 @@ function buildArchetype13Candidate(
 
   const frames = [
     `In ${target.expContext}, an energetic ${projName} with initial kinetic energy ${kineticEnergyMeV} MeV approaches a stationary ${target.foilName} nucleus (Z = ${target.Z}, A = ${target.A}) directly head-on and recoils elastically. Neglect target recoil and take k = 8.99 × 10⁹ N m² C⁻² and e = 1.60 × 10⁻¹⁹ C.`,
-    `During an experiment in ${target.expContext}, a ${projName} of kinetic energy ${kineticEnergyMeV} MeV is directed along a head-on trajectory toward a fixed ${target.foilName} nucleus (proton number Z = ${target.Z}, nucleon number A = ${target.A}). Use k = 8.99 × 10⁹ N m² C⁻² and e = 1.60 × 10⁻¹⁹ C.`,
+    `During an experiment in ${target.expContext}, ${isProton ? "a" : "an"} ${projName} of kinetic energy ${kineticEnergyMeV} MeV is directed along a head-on trajectory toward a fixed ${target.foilName} nucleus (proton number Z = ${target.Z}, nucleon number A = ${target.A}). Use k = 8.99 × 10⁹ N m² C⁻² and e = 1.60 × 10⁻¹⁹ C.`,
     `A collimated ${projName} carrying ${kineticEnergyMeV} MeV of kinetic energy undergoes direct head-on Coulomb backscattering from a stationary ${target.foilName} nucleus (Z = ${target.Z}, A = ${target.A}) inside ${target.expContext}. Constants: k = 8.99 × 10⁹ N m² C⁻², e = 1.60 × 10⁻¹⁹ C.`,
     `Inside ${target.expContext}, a ${kineticEnergyMeV} MeV ${projName} comes momentarily to rest at minimum separation d before reversing direction in front of a ${target.foilName} nucleus (Z = ${target.Z}, A = ${target.A}). Take k = 8.99 × 10⁹ N m² C⁻² and e = 1.60 × 10⁻¹⁹ C.`,
     `Elastic 180° backscattering in ${target.expContext} sends a ${kineticEnergyMeV} MeV ${projName} directly toward an immobile ${target.foilName} target nucleus (Z = ${target.Z}, A = ${target.A}), taking k = 8.99 × 10⁹ N m² C⁻² and e = 1.60 × 10⁻¹⁹ C.`,

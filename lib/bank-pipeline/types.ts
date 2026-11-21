@@ -47,6 +47,17 @@ export type McqOptionLabel = (typeof MCQ_OPTION_LABELS)[number];
 
 export type QuestionTargetMode = "quantitative" | "qualitative";
 
+export const QUESTION_STYLE_TAGS = [
+  "calculation",
+  "qualitative",
+  "definition",
+  "derivation",
+  "sketch",
+  "experimental",
+  "mixed-exam",
+] as const;
+export type QuestionStyleTag = (typeof QUESTION_STYLE_TAGS)[number];
+
 export type VerifiedScalar = number | string | boolean;
 export type VerifiedQuantityMap = Record<string, VerifiedScalar>;
 
@@ -108,6 +119,7 @@ export interface SixthPhysicsBankItem {
   familyGroupKey: string;
   syllabi: SyllabusTag[];
   format: QuestionFormat;
+  questionStyle?: QuestionStyleTag;
   difficulty: QuestionDifficulty;
   visualFamily: string;
   stem: string;
@@ -171,6 +183,7 @@ export interface QwenDistillationMetadata {
   templateArchetype: string;
   visualFamily: string;
   format: QuestionFormat;
+  questionStyle?: QuestionStyleTag;
   difficulty: QuestionDifficulty;
   totalMarks: number;
   shardId: string;
@@ -222,6 +235,7 @@ export interface CandidateQuestionInput {
   seed: number;
   syllabi: SyllabusTag[];
   format: QuestionFormat;
+  questionStyle?: QuestionStyleTag;
   difficulty: QuestionDifficulty;
   domain: PhysicsDomainId;
   scenarioSpec: Record<string, unknown>;

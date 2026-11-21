@@ -73,6 +73,8 @@ export interface PublicBankItem {
   totalMarks: number;
   conceptId: string;
   familyGroupKey: string;
+  /** Optional pedagogical style tag (e.g. "calculation", "qualitative", "definition", "experimental") */
+  questionStyle?: string;
 }
 
 /**
@@ -90,6 +92,8 @@ export interface PublicQuestionIndexRow {
   chunkKey: PhysicsDomainId;
   conceptId: string;
   familyGroupKey: string;
+  /** Optional pedagogical style tag used by exam mock builders to balance qualitative vs calculation items */
+  questionStyle?: string;
 }
 
 export interface PublicSubtopicSummary {
@@ -143,6 +147,10 @@ export interface PublicBankManifest {
   schemaVersion: typeof PUBLIC_BANK_MANIFEST_SCHEMA_VERSION;
   generatedAt: string;
   totalItems: number;
+  /** Total verified items in the full source bank prior to per-family web capping */
+  fullBankTotalItems?: number;
+  /** Per-family web cap applied during compilation (0 or omitted means unlimited) */
+  maxItemsPerFamily?: number;
   syllabi: Record<SyllabusId, PublicSyllabusSummary>;
   items: PublicQuestionIndexRow[];
   chunks?: Record<PhysicsDomainId, PublicDomainChunkSummary>;

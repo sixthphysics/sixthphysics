@@ -22,6 +22,7 @@ import {
   PackageGateEvaluation,
   QUESTION_DIFFICULTIES,
   QUESTION_FORMATS,
+  QUESTION_STYLE_TAGS,
   RequiredGivenSpec,
   SYLLABUS_IDS,
 } from "./types";
@@ -64,6 +65,69 @@ function textAgreesWithSignedGroundTruth(
     });
   }
   return false;
+}
+
+const PURE_UNIT_WORDS = new Set([
+  "kg",
+  "mg",
+  "ug",
+  "cm",
+  "mm",
+  "km",
+  "nm",
+  "pm",
+  "fm",
+  "ms",
+  "us",
+  "ns",
+  "ps",
+  "fs",
+  "min",
+  "hr",
+  "kv",
+  "mv",
+  "kw",
+  "mw",
+  "gw",
+  "ma",
+  "ua",
+  "na",
+  "kj",
+  "mj",
+  "ev",
+  "kev",
+  "mev",
+  "gev",
+  "hz",
+  "khz",
+  "mhz",
+  "ghz",
+  "pa",
+  "kpa",
+  "mpa",
+  "gpa",
+  "kn",
+  "mn",
+  "uc",
+  "nc",
+  "pc",
+  "uf",
+  "nf",
+  "pf",
+  "mh",
+  "mt",
+  "ut",
+  "wb",
+  "bq",
+  "mol",
+  "ohm",
+  "ohms",
+]);
+
+function countAlphabeticProseWords(text: string): number {
+  const matches = text.match(/[A-Za-z]{2,}/g) ?? [];
+  return matches.filter((word) => !PURE_UNIT_WORDS.has(word.toLowerCase()))
+    .length;
 }
 
 function normalizeQualitativePhrase(text: string): string {
@@ -243,6 +307,16 @@ export function verifyCandidateWithGate(
       code: "invalid-candidate-schema",
       stage: "schema",
       message: `Unsupported difficulty: ${String(candidate.difficulty)}`,
+    });
+  }
+  if (
+    candidate.questionStyle !== undefined &&
+    !QUESTION_STYLE_TAGS.includes(candidate.questionStyle)
+  ) {
+    issues.push({
+      code: "invalid-candidate-schema",
+      stage: "schema",
+      message: `Unsupported questionStyle: ${String(candidate.questionStyle)}`,
     });
   }
   if (!stemText) {
@@ -663,21 +737,23 @@ export function verifyCandidateWithGate(
       ].join(" ");
 
       if (itemTargetMode === "qualitative") {
-        if (correctOptionIndex !== undefined) {
-          const correctOpt = opts[correctOptionIndex];
-          const numericInCorrect = extractNumbersFromPhysicsText(correctOpt.text);
-          if (numericInCorrect.length > 0) {
-            issues.push({
-              code: "ground-truth-mismatch",
-              stage: "ground-truth",
-              message: `Qualitative MCQ correct option ${correctOpt.label} ("${correctOpt.text}") contains numeric value "${numericInCorrect[0].rawText}"; quantitative MCQs must use targetMode: "quantitative" with a numeric targetQuantityKey`,
-              actual: correctOpt.text,
-              repairHint:
-                "Set targetMode to \"quantitative\" and specify a numeric solver targetQuantityKey, or remove numerical claims from qualitative options",
-            });
-          }
-        }
         if (primaryKey === undefined) {
+          if (correctOptionIndex !== undefined) {
+            const correctOpt = opts[correctOptionIndex];
+            const numericInCorrect = extractNumbersFromPhysicsText(
+              correctOpt.text,
+            );
+            if (numericInCorrect.length > 0) {
+              issues.push({
+                code: "ground-truth-mismatch",
+                stage: "ground-truth",
+                message: `Qualitative MCQ correct option ${correctOpt.label} ("${correctOpt.text}") contains numeric value "${numericInCorrect[0].rawText}"; quantitative MCQs must use targetMode: "quantitative" with a numeric targetQuantityKey`,
+                actual: correctOpt.text,
+                repairHint:
+                  'Set targetMode to "quantitative" and specify a numeric solver targetQuantityKey, or remove numerical claims from qualitative options',
+              });
+            }
+          }
           issues.push({
             code: "ground-truth-mismatch",
             stage: "ground-truth",
@@ -689,17 +765,58 @@ export function verifyCandidateWithGate(
         } else {
           const truth = solveOutput.quantities[primaryKey];
           if (truth === undefined || typeof truth === "number") {
+            if (correctOptionIndex !== undefined) {
+              const correctOpt = opts[correctOptionIndex];
+              const numericInCorrect = extractNumbersFromPhysicsText(
+                correctOpt.text,
+              );
+              if (numericInCorrect.length > 0) {
+                issues.push({
+                  code: "ground-truth-mismatch",
+                  stage: "ground-truth",
+                  message: `Qualitative MCQ correct option ${correctOpt.label} ("${correctOpt.text}") contains numeric value "${numericInCorrect[0].rawText}"; quantitative MCQs must use targetMode: "quantitative" with a numeric targetQuantityKey`,
+                  actual: correctOpt.text,
+                  repairHint:
+                    'Set targetMode to "quantitative" and specify a numeric solver targetQuantityKey, or remove numerical claims from qualitative options',
+                });
+              }
+            }
             issues.push({
               code: "ground-truth-mismatch",
               stage: "ground-truth",
               message: `Qualitative MCQ targetQuantityKey "${primaryKey}" must resolve to a non-numeric conceptual classification in solver outputs; received ${String(truth)}`,
               actual: String(truth),
               repairHint:
-                "Use a non-numeric classification key for qualitative MCQs or use targetMode: \"quantitative\" for numeric quantities",
+                'Use a non-numeric classification key for qualitative MCQs or use targetMode: "quantitative" for numeric quantities',
             });
           } else if (correctOptionIndex !== undefined) {
             const correctOpt = opts[correctOptionIndex];
-            if (!textAgreesWithQualitativeTruth(correctOpt.text, truth)) {
+            const numericInCorrect = extractNumbersFromPhysicsText(
+              correctOpt.text,
+            );
+            const agreesWithTruth = textAgreesWithQualitativeTruth(
+              correctOpt.text,
+              truth,
+            );
+            const hasVerifiedStringTruth =
+              typeof truth === "string" &&
+              normalizeQualitativePhrase(truth).length >= 3;
+            const allowIncidentalNumerals =
+              hasVerifiedStringTruth &&
+              agreesWithTruth &&
+              countAlphabeticProseWords(correctOpt.text) >= 3;
+
+            if (numericInCorrect.length > 0 && !allowIncidentalNumerals) {
+              issues.push({
+                code: "ground-truth-mismatch",
+                stage: "ground-truth",
+                message: `Qualitative MCQ correct option ${correctOpt.label} ("${correctOpt.text}") contains numeric value "${numericInCorrect[0].rawText}"; quantitative MCQs must use targetMode: "quantitative" with a numeric targetQuantityKey`,
+                actual: correctOpt.text,
+                repairHint:
+                  'Set targetMode to "quantitative" and specify a numeric solver targetQuantityKey, or ensure qualitative options match a verified conceptual classification with >= 3 prose words',
+              });
+            }
+            if (!agreesWithTruth) {
               issues.push({
                 code: "ground-truth-mismatch",
                 stage: "ground-truth",
@@ -873,9 +990,26 @@ export function verifyCandidateWithGate(
 
         if (!partTargetKey) {
           if (part.targetMode === "qualitative") {
+            if (part.marks > 4) {
+              issues.push({
+                code: "ground-truth-mismatch",
+                stage: "ground-truth",
+                message: `Auxiliary qualitative subpart "${part.partId}" without a solver targetQuantityKey exceeds the 4-mark cap (allocated ${part.marks} marks)`,
+                expected: "<= 4 marks",
+                actual: part.marks,
+                repairHint:
+                  "Keep unkeyed auxiliary qualitative subparts at <= 4 marks or attach a solver-verified classification targetQuantityKey",
+              });
+            }
+            const hasProseAnswer =
+              countAlphabeticProseWords(part.expectedAnswer) >= 3;
+            const hasProseWorking =
+              extractedWorkingNums.length === 0 ||
+              countAlphabeticProseWords(part.workingSteps.join(" ")) >= 3;
             if (
-              extractedAnswerNums.length > 0 ||
-              extractedWorkingNums.length > 0
+              (extractedAnswerNums.length > 0 && !hasProseAnswer) ||
+              (extractedWorkingNums.length > 0 &&
+                (!hasProseAnswer || !hasProseWorking))
             ) {
               issues.push({
                 code: "ground-truth-mismatch",
@@ -883,7 +1017,7 @@ export function verifyCandidateWithGate(
                 message: `Qualitative subpart "${part.partId}" contains numerical values in expectedAnswer/workingSteps without a solver-verified targetQuantityKey`,
                 actual: part.expectedAnswer,
                 repairHint:
-                  "Provide a valid numeric targetQuantityKey for any subpart involving numerical calculation, or keep qualitative subparts strictly conceptual",
+                  "Provide a valid numeric targetQuantityKey for any subpart involving numerical calculation, or write conceptual prose (>= 3 alphabetic words) for qualitative subparts",
               });
             }
           } else if (extractedAnswerNums.length > 0) {
@@ -975,7 +1109,20 @@ export function verifyCandidateWithGate(
             }
           } else {
             // Non-numeric string or boolean solver classification
-            if (extractedAnswerNums.length > 0) {
+            const agreesWithTruth = textAgreesWithQualitativeTruth(
+              part.expectedAnswer,
+              truth,
+            );
+            const hasVerifiedStringTruth =
+              typeof truth === "string" &&
+              normalizeQualitativePhrase(truth).length >= 3;
+            const allowIncidentalNumerals =
+              part.targetMode === "qualitative" &&
+              hasVerifiedStringTruth &&
+              agreesWithTruth &&
+              countAlphabeticProseWords(part.expectedAnswer) >= 3;
+
+            if (extractedAnswerNums.length > 0 && !allowIncidentalNumerals) {
               issues.push({
                 code: "ground-truth-mismatch",
                 stage: "ground-truth",
@@ -985,9 +1132,7 @@ export function verifyCandidateWithGate(
               });
             } else {
               solverCheckedQualitativeParts += 1;
-              if (
-                !textAgreesWithQualitativeTruth(part.expectedAnswer, truth)
-              ) {
+              if (!agreesWithTruth) {
                 issues.push({
                   code: "ground-truth-mismatch",
                   stage: "ground-truth",

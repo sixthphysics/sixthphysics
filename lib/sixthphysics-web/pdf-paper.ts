@@ -1,4 +1,9 @@
 import { filterIndexRows } from './client-loader';
+import {
+  assembleOfficialNcukBlueprint,
+  isOfficialNcukBlueprintId,
+  type OfficialNcukBlueprintId,
+} from './mock-builder';
 import type {
   MockPaperFormatMode,
   MockPaperSession,
@@ -25,8 +30,10 @@ export interface ExamPaperPreset {
   description: string;
   badgeLabel: string;
   formatMode: MockPaperFormatMode;
+  level?: string;
   mcqCount: number;
   structuredCount: number;
+  targetTotalMarks?: number;
   durationMinutes: number;
   recommended?: boolean;
 }
@@ -81,6 +88,12 @@ export interface ExamPaperDraft {
   createdAt: string;
 }
 
+export interface OfficialExamSectionHeader {
+  title: string;
+  questionRange: string;
+  marks: number;
+}
+
 export interface SyllabusExamMetadata {
   syllabus: SyllabusId;
   boardMasthead: string;
@@ -91,6 +104,7 @@ export interface SyllabusExamMetadata {
   dataBookletName: string;
   sectionATitle: string;
   sectionBTitle: string;
+  officialSections?: readonly OfficialExamSectionHeader[];
   materials: string[];
   instructions: string[];
   formatMarkTag: (marks: number) => string;
@@ -221,6 +235,36 @@ export const EXAM_PAPER_PRESETS: readonly ExamPaperPreset[] = [
     structuredCount: 4,
     durationMinutes: 55,
     recommended: true,
+  },
+  {
+    id: 'ncuk-eos1-official',
+    syllabus: 'ncuk',
+    shortTitle: 'NCUK IFY EoS1 Exam',
+    paperLabel: 'IFYPH005 EoS1 · 60 marks',
+    description:
+      'Official Semester 1 blueprint (AC1–AC4.4): 10 MCQs, 5×2m short, 5×4m application, and 2×10m longer structured questions.',
+    badgeLabel: '60 marks · 90 min',
+    formatMode: 'mixed',
+    level: 'IFY-S1',
+    mcqCount: 10,
+    structuredCount: 12,
+    targetTotalMarks: 60,
+    durationMinutes: 90,
+  },
+  {
+    id: 'ncuk-final-official',
+    syllabus: 'ncuk',
+    shortTitle: 'NCUK IFY Cumulative Final',
+    paperLabel: 'IFYPH005 Final · 100 marks',
+    description:
+      'Official cumulative exam (AC1–AC8): 20 MCQs, 7 short (15m), 10 application (35m), and 3×10m longer structured questions.',
+    badgeLabel: '100 marks · 150 min',
+    formatMode: 'mixed',
+    level: 'all',
+    mcqCount: 20,
+    structuredCount: 20,
+    targetTotalMarks: 100,
+    durationMinutes: 150,
   },
   {
     id: 'ncuk-pdf-sec-a',
@@ -665,8 +709,19 @@ export function buildExamPaperDraft(
       : (now.getTime() ^ 0x9e3779b9) >>> 0;
   const rng = createMulberry32(seed);
 
+  const officialBlueprintId: OfficialNcukBlueprintId | null =
+    request.syllabus === 'ncuk' && isOfficialNcukBlueprintId(request.presetId)
+      ? request.presetId
+      : null;
+
   const normalizedLevel =
-    request.level && request.level.trim() !== '' ? request.level : 'all';
+    officialBlueprintId === 'ncuk-eos1-official'
+      ? 'IFY-S1'
+      : officialBlueprintId === 'ncuk-final-official'
+        ? 'all'
+        : request.level && request.level.trim() !== ''
+          ? request.level
+          : 'all';
 
   const baseFiltered = filterIndexRows(manifest.items, {
     syllabus: request.syllabus,
@@ -693,47 +748,73 @@ export function buildExamPaperDraft(
     return true;
   });
 
-  const mcqPool = eligibleRows.filter((r) => r.format === 'mcq');
-  const structuredPool = eligibleRows.filter((r) => r.format === 'structured');
+  const officialPresetSpec = officialBlueprintId
+    ? EXAM_PAPER_PRESETS.find((p) => p.id === officialBlueprintId)
+    : undefined;
+  const useOfficialBlueprint =
+    officialBlueprintId !== null &&
+    officialPresetSpec !== undefined &&
+    request.formatMode === 'mixed' &&
+    Math.round(request.mcqCount) === officialPresetSpec.mcqCount &&
+    Math.round(request.structuredCount) === officialPresetSpec.structuredCount;
 
-  const usedFamilies = new Set<string>();
-  const usedIds = new Set<string>();
+  let orderedRows: PublicQuestionIndexRow[];
 
-  const desiredMcq =
-    request.formatMode === 'structured'
-      ? 0
-      : Math.max(0, Math.min(40, Math.round(request.mcqCount)));
-  const desiredStructured =
-    request.formatMode === 'mcq'
-      ? 0
-      : Math.max(0, Math.min(12, Math.round(request.structuredCount)));
+  if (useOfficialBlueprint && officialBlueprintId) {
+    const assembled = assembleOfficialNcukBlueprint(
+      eligibleRows,
+      officialBlueprintId,
+      rng
+    );
+    orderedRows = assembled.orderedRows;
+  } else {
+    const mcqPool = eligibleRows.filter((r) => r.format === 'mcq');
+    const structuredPool = eligibleRows.filter(
+      (r) => r.format === 'structured'
+    );
 
-  const chosenMcqs = selectWithDifficultyMix(
-    mcqPool,
-    request.syllabus,
-    desiredMcq,
-    request.difficultyMix,
-    usedFamilies,
-    usedIds,
-    rng
-  );
-  const chosenStructured = selectWithDifficultyMix(
-    structuredPool,
-    request.syllabus,
-    desiredStructured,
-    request.difficultyMix,
-    usedFamilies,
-    usedIds,
-    rng
-  );
+    const usedFamilies = new Set<string>();
+    const usedIds = new Set<string>();
 
-  const orderedRows = [...chosenMcqs, ...chosenStructured];
+    const desiredMcq =
+      request.formatMode === 'structured'
+        ? 0
+        : Math.max(0, Math.min(40, Math.round(request.mcqCount)));
+    const desiredStructured =
+      request.formatMode === 'mcq'
+        ? 0
+        : Math.max(0, Math.min(25, Math.round(request.structuredCount)));
+
+    const chosenMcqs = selectWithDifficultyMix(
+      mcqPool,
+      request.syllabus,
+      desiredMcq,
+      request.difficultyMix,
+      usedFamilies,
+      usedIds,
+      rng
+    );
+    const chosenStructured = selectWithDifficultyMix(
+      structuredPool,
+      request.syllabus,
+      desiredStructured,
+      request.difficultyMix,
+      usedFamilies,
+      usedIds,
+      rng
+    );
+
+    orderedRows = [...chosenMcqs, ...chosenStructured];
+  }
+
   const totals = buildDraftTotals(orderedRows);
   const autoDuration = request.autoDuration ?? true;
   const durationMinutes =
     !autoDuration && typeof request.durationMinutes === 'number'
       ? Math.max(5, Math.min(240, Math.round(request.durationMinutes)))
-      : calculateRecommendedMinutes(orderedRows);
+      : useOfficialBlueprint && officialPresetSpec
+        ? officialPresetSpec.durationMinutes
+        : calculateRecommendedMinutes(orderedRows);
 
   const paperCode = generatePaperCode(request.syllabus, seed);
 
@@ -980,7 +1061,8 @@ export function getSyllabusExamMetadata(
   syllabus: SyllabusId,
   level: string | undefined,
   counts: { mcqCount: number; structuredCount: number; totalMarks: number },
-  includeFormulaSheet: boolean
+  includeFormulaSheet: boolean,
+  presetId?: string
 ): SyllabusExamMetadata {
   const hasMcq = counts.mcqCount > 0;
   const hasStructured = counts.structuredCount > 0;
@@ -1066,6 +1148,94 @@ export function getSyllabusExamMetadata(
   }
 
   // NCUK IFY Physics (IFYPH005)
+  const normLevel = (level ?? 'all').trim().toUpperCase();
+  const isOfficialEoS1 =
+    presetId === 'ncuk-eos1-official' ||
+    ((normLevel === 'IFY-S1' || normLevel === 'S1') &&
+      counts.mcqCount === 10 &&
+      counts.structuredCount === 12);
+  const isOfficialFinal =
+    presetId === 'ncuk-final-official' ||
+    (counts.mcqCount === 20 && counts.structuredCount === 20);
+
+  if (isOfficialEoS1) {
+    const officialSections: OfficialExamSectionHeader[] = [
+      { title: 'Section 1 — Multiple-Choice Questions', questionRange: 'Q1–Q10', marks: 10 },
+      { title: 'Section 2 — Short Structured Questions', questionRange: 'Q11–Q15', marks: 10 },
+      { title: 'Section 3 — Application & Calculation Questions', questionRange: 'Q16–Q20', marks: 20 },
+      { title: 'Section 4 — Longer Structured Questions', questionRange: 'Q21–Q22', marks: 20 },
+    ];
+    return {
+      syllabus,
+      boardMasthead: 'THE NCUK INTERNATIONAL FOUNDATION YEAR · END OF SEMESTER 1',
+      subjectTitle: 'IFYPH005 PHYSICS',
+      levelBadge: formatLevelDisplay('ncuk', 'IFY-S1'),
+      specSubtitle:
+        'NCUK IFYPH005 End of Semester 1 Examination (Modules AC1–AC4.4 · 90 minutes · 60 marks)',
+      gravityText: 'g = 9.81 m s⁻²',
+      dataBookletName: 'NCUK Data, Formulae & Relationships (Selected Extract)',
+      sectionATitle: 'Section 1 — Multiple-Choice Questions (Q1–Q10 · 10 marks)',
+      sectionBTitle:
+        'Sections 2–4 — Short, Application & Longer Structured Questions (Q11–Q22 · 50 marks)',
+      officialSections,
+      materials: [
+        'Approved non-programmable scientific calculator',
+        'Ruler, protractor, pencil, and black/blue pen',
+        'NCUK Data, Formulae and Relationships Booklet',
+      ],
+      instructions: [
+        'Write clearly in dark blue or black ink. Diagrams may be drawn in pencil.',
+        'This End of Semester 1 paper comprises Section 1 (10 MCQs, 10 marks), Section 2 (5 short questions, 10 marks), Section 3 (5 application questions, 20 marks), and Section 4 (2 longer structured questions, 20 marks). Answer all questions.',
+        'Time allowed: 1 hour 30 minutes (90 minutes). Take g = 9.81 m s⁻² unless told otherwise, and give numerical answers to 3 significant figures.',
+        includeFormulaSheet
+          ? 'A selected NCUK Data, Formulae & Relationships sheet is provided inside this paper.'
+          : 'An NCUK Data, Formulae & Relationships Booklet is permitted for this examination.',
+        `Total marks available for this paper: ${counts.totalMarks} marks.`,
+      ],
+      formatMarkTag: (marks: number) =>
+        marks === 1 ? '(1 mark)' : `(${marks} marks)`,
+    };
+  }
+
+  if (isOfficialFinal) {
+    const officialSections: OfficialExamSectionHeader[] = [
+      { title: 'Section 1 — Multiple-Choice Questions', questionRange: 'Q1–Q20', marks: 20 },
+      { title: 'Section 2 — Short Structured Questions', questionRange: 'Q21–Q27', marks: 15 },
+      { title: 'Section 3 — Application & Calculation Questions', questionRange: 'Q28–Q37', marks: 35 },
+      { title: 'Section 4 — Longer Structured Questions', questionRange: 'Q38–Q40', marks: 30 },
+    ];
+    return {
+      syllabus,
+      boardMasthead: 'THE NCUK INTERNATIONAL FOUNDATION YEAR · CUMULATIVE FINAL',
+      subjectTitle: 'IFYPH005 PHYSICS',
+      levelBadge: formatLevelDisplay('ncuk', 'all'),
+      specSubtitle:
+        'NCUK IFYPH005 Cumulative Final Examination (Modules AC1–AC8 · 150 minutes · 100 marks)',
+      gravityText: 'g = 9.81 m s⁻²',
+      dataBookletName: 'NCUK Data, Formulae & Relationships (Selected Extract)',
+      sectionATitle: 'Section 1 — Multiple-Choice Questions (Q1–Q20 · 20 marks)',
+      sectionBTitle:
+        'Sections 2–4 — Short, Application & Longer Structured Questions (Q21–Q40 · 80 marks)',
+      officialSections,
+      materials: [
+        'Approved non-programmable scientific calculator',
+        'Ruler, protractor, pencil, and black/blue pen',
+        'NCUK Data, Formulae and Relationships Booklet',
+      ],
+      instructions: [
+        'Write clearly in dark blue or black ink. Diagrams may be drawn in pencil.',
+        'This Cumulative Final paper comprises Section 1 (20 MCQs, 20 marks), Section 2 (7 short questions, 15 marks), Section 3 (10 application questions, 35 marks), and Section 4 (3 longer structured questions, 30 marks). Answer all questions.',
+        'Time allowed: 2 hours 30 minutes (150 minutes). Take g = 9.81 m s⁻² unless told otherwise, and give numerical answers to 3 significant figures.',
+        includeFormulaSheet
+          ? 'A selected NCUK Data, Formulae & Relationships sheet is provided inside this paper.'
+          : 'An NCUK Data, Formulae & Relationships Booklet is permitted for this examination.',
+        `Total marks available for this paper: ${counts.totalMarks} marks.`,
+      ],
+      formatMarkTag: (marks: number) =>
+        marks === 1 ? '(1 mark)' : `(${marks} marks)`,
+    };
+  }
+
   const instructions = [
     'Write clearly in dark blue or black ink. Diagrams may be drawn in pencil.',
     hasMcq && hasStructured

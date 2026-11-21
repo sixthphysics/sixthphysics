@@ -3,6 +3,7 @@ import path from "node:path";
 
 import {
   getDomainAdapter,
+  NCUK_V3_DOMAIN_PLUGINS,
   PHYSICS_DOMAIN_IDS,
   PhysicsDomainId,
 } from "../../lib/bank-pipeline";
@@ -187,6 +188,21 @@ function inferUnitFromKey(key: string): string | undefined {
   if (leaf.endsWith("T")) return "T";
   if (leaf.endsWith("D")) return "D";
   return undefined;
+}
+
+function pluginSpecsForDomain(domain: PhysicsDomainId): StaticKindSpec[] {
+  return NCUK_V3_DOMAIN_PLUGINS.filter((p) => p.domain === domain).map(
+    (plugin) => ({
+      kind: plugin.kind,
+      summary: plugin.summary,
+      requiredFields: plugin.requiredFields,
+      ...(plugin.optionalFields
+        ? { optionalFields: plugin.optionalFields }
+        : {}),
+      physicalConstraints: plugin.physicalConstraints,
+      probeSpecs: plugin.probeSpecs,
+    }),
+  );
 }
 
 const STATIC_DOMAIN_SPECS: Readonly<
@@ -404,6 +420,7 @@ const STATIC_DOMAIN_SPECS: Readonly<
         },
       ],
     },
+    ...pluginSpecsForDomain("graphs"),
   ],
 
   circuits: [
@@ -699,6 +716,7 @@ const STATIC_DOMAIN_SPECS: Readonly<
         },
       ],
     },
+    ...pluginSpecsForDomain("circuits"),
   ],
 
   fields: [
@@ -1337,6 +1355,7 @@ const STATIC_DOMAIN_SPECS: Readonly<
         },
       ],
     },
+    ...pluginSpecsForDomain("mechanics"),
   ],
 
   waves: [
@@ -1857,6 +1876,7 @@ const STATIC_DOMAIN_SPECS: Readonly<
         "temperatureK > 0, surfaceAreaM2 > 0, 0 < emissivity <= 1",
       ],
     },
+    ...pluginSpecsForDomain("thermal"),
   ],
 
   "grav-astro": [
@@ -2340,6 +2360,7 @@ const STATIC_DOMAIN_SPECS: Readonly<
         "selectorElectricFieldVm / selectorMagneticFieldT < 0.2 c",
       ],
     },
+    ...pluginSpecsForDomain("em-induction"),
   ],
 
   "quantum-nuclear": [
@@ -2634,6 +2655,7 @@ const STATIC_DOMAIN_SPECS: Readonly<
         },
       ],
     },
+    ...pluginSpecsForDomain("pure-calculation"),
   ],
 };
 

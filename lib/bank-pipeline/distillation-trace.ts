@@ -254,6 +254,9 @@ export function buildQwenDistillationTrace(
           totalMarks: bankItem.totalMarks,
         };
 
+  const effectiveQuestionStyle =
+    candidate.questionStyle ?? bankItem.questionStyle;
+
   return {
     schemaVersion: QWEN_DISTILLATION_TRACE_SCHEMA_VERSION,
     traceId: `trace-${bankItem.id}`,
@@ -300,6 +303,9 @@ export function buildQwenDistillationTrace(
       templateArchetype: candidate.templateArchetype,
       visualFamily: bankItem.visualFamily,
       format: bankItem.format,
+      ...(effectiveQuestionStyle
+        ? { questionStyle: effectiveQuestionStyle }
+        : {}),
       difficulty: bankItem.difficulty,
       totalMarks: bankItem.totalMarks,
       shardId: bankItem.provenance.shardId,

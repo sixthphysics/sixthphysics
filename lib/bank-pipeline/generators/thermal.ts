@@ -181,7 +181,7 @@ export function formatThermalValue(value: number, sigFigs = 3): string {
   if (!Number.isFinite(value)) {
     throw new Error(`Cannot format non-finite thermal value: ${String(value)}`);
   }
-  if (Math.abs(value) < 1e-15) {
+  if (Math.abs(value) < 1e-35) {
     return "0";
   }
   const sign = value < 0 ? "-" : "";
@@ -207,7 +207,7 @@ function fmtDatum(value: number): string {
   if (!Number.isFinite(value)) {
     throw new Error(`Invalid datum: ${String(value)}`);
   }
-  if (Math.abs(value) < 1e-15) {
+  if (Math.abs(value) < 1e-35) {
     return "0";
   }
   const abs = Math.abs(value);
@@ -619,8 +619,11 @@ function buildIdealGasStatePressureDensity(
   const volumeM3 = rng.pick(volumePool);
   const useCelsius = variantIndex % 2 === 1;
   const tempC = rng.pick(tempCPool);
+  const hasNcuk = syllabi.some((s) => s.syllabus === "ncuk");
+  const kelvinOffset = hasNcuk ? 273.2 : KELVIN_OFFSET;
+  const kelvinOffsetStr = hasNcuk ? "273.2" : "273.15";
   const temperatureK = useCelsius
-    ? Number((tempC + KELVIN_OFFSET).toFixed(2))
+    ? Number((tempC + kelvinOffset).toFixed(2))
     : rng.pick([240, 280, 310, 340, 380, 420, 460, 520]);
 
   const spec: KineticTheoryScenarioSpec = {
@@ -651,7 +654,7 @@ function buildIdealGasStatePressureDensity(
     ? `${fmtDatum(molarMassG)} g mol⁻¹`
     : `${fmtDatum(gas.molarMassKgPerMol)} kg mol⁻¹`;
   const tempText = useCelsius
-    ? `${fmtDatum(tempC)} °C (take T(K) = θ(°C) + 273.15)`
+    ? `${fmtDatum(tempC)} °C (take T/K = θ/°C + ${kelvinOffsetStr})`
     : `${fmtDatum(temperatureK)} K`;
 
   const requiredGivens: RequiredGivenSpec[] = [
@@ -756,7 +759,7 @@ function buildIdealGasStatePressureDensity(
     const ansFormatted = fmtWithUnit(truth, targetUnit, 3);
     const workedSolution = askDensity
       ? `Total gas mass m = nM = ${fmtDatum(moles)} × ${fmtDatum(gas.molarMassKgPerMol)} = ${formatThermalValue(moles * gas.molarMassKgPerMol, 4)} kg. Density ρ = m / V = ${formatThermalValue(moles * gas.molarMassKgPerMol, 4)} / ${fmtDatum(volumeM3)} = ${ansFormatted}.`
-      : `${useCelsius ? `Convert temperature to kelvin: T = ${fmtDatum(tempC)} + 273.15 = ${fmtDatum(temperatureK)} K. ` : ""}From the ideal gas equation p = nRT / V = (${fmtDatum(moles)} × 8.31 × ${fmtDatum(temperatureK)}) / ${fmtDatum(volumeM3)} = ${ansFormatted}.`;
+      : `${useCelsius ? `Convert temperature to kelvin: T = ${fmtDatum(tempC)} + ${kelvinOffsetStr} = ${fmtDatum(temperatureK)} K. ` : ""}From the ideal gas equation p = nRT / V = (${fmtDatum(moles)} × 8.31 × ${fmtDatum(temperatureK)}) / ${fmtDatum(volumeM3)} = ${ansFormatted}.`;
 
     const questionPlan: CandidateQuestionPlan = {
       targetSummary: `Evaluate macroscopic ideal gas ${askDensity ? "mass density" : "pressure"} from equation-of-state parameters`,
@@ -822,7 +825,7 @@ function buildIdealGasStatePressureDensity(
       expectedAnswer: pAns,
       workingSteps: [
         ...(useCelsius
-          ? [`T = ${fmtDatum(tempC)} + 273.15 = ${fmtDatum(temperatureK)} K.`]
+          ? [`T = ${fmtDatum(tempC)} + ${kelvinOffsetStr} = ${fmtDatum(temperatureK)} K.`]
           : []),
         `p = nRT / V = (${fmtDatum(moles)} × 8.31 × ${fmtDatum(temperatureK)}) / ${fmtDatum(volumeM3)} = ${pAns}.`,
       ],
@@ -1762,6 +1765,7 @@ function buildIsobaricIsochoricOpenFirstLaw(
           };
 
   const sol = solveThermodynamicProcess(spec);
+  const hasNcuk = syllabi.some((s) => s.syllabus === "ncuk");
   const hiddenQuantities = [
     "netWorkJ",
     "totalWorkJ",
@@ -1773,7 +1777,7 @@ function buildIsobaricIsochoricOpenFirstLaw(
     "leg:0:heatJ",
     "leg:0:deltaUJ",
     ...(mode === 2
-      ? ["leg:1:workJ", "leg:1:heatJ", "leg:1:deltaUJ"]
+      ? ["leg:1:workJ", "leg:1:workOnGasJ", "leg:1:heatJ", "leg:1:deltaUJ"]
       : []),
   ];
 
@@ -1800,22 +1804,34 @@ function buildIsobaricIsochoricOpenFirstLaw(
 
     const stems =
       mode === 0
-        ? [
-            `A sample of ${fmtDatum(moles)} mol of an ideal monatomic gas in ${apparatus} expands isobarically at constant pressure ${fmtDatum(pHigh)} Pa from volume ${fmtDatum(vLow)} m³ (state A) to ${fmtDatum(vHigh)} m³ (state B). Taking thermal energy supplied to the gas and work done by the gas as positive, how much thermal energy Q is supplied to the gas during A → B?`,
-            `On the P–V diagram, ${fmtDatum(moles)} mol of monatomic ideal gas inside ${apparatus} undergoes a constant-pressure expansion at ${fmtDatum(pHigh)} Pa from V_A = ${fmtDatum(vLow)} m³ to V_B = ${fmtDatum(vHigh)} m³. Defining heat transferred into the gas as positive (with expansion work done by the gas positive), calculate Q for process A → B.`,
-            `Inside ${apparatus}, ${fmtDatum(moles)} mol of monatomic ideal gas is heated at a steady pressure of ${fmtDatum(pHigh)} Pa so that its volume increases from ${fmtDatum(vLow)} m³ to ${fmtDatum(vHigh)} m³. What total thermal energy must be transferred into the gas (heat into gas positive)?`,
-          ]
+        ? hasNcuk
+          ? [
+              `A sample of ${fmtDatum(moles)} mol of an ideal monatomic gas in ${apparatus} expands isobarically at constant pressure ${fmtDatum(pHigh)} Pa from volume ${fmtDatum(vLow)} m³ (state A) to ${fmtDatum(vHigh)} m³ (state B). Using the first law ΔU = ΔQ + ΔW (thermal energy supplied to the gas and work done on the gas positive), how much thermal energy ΔQ is supplied to the gas during A → B?`,
+              `On the P–V diagram, ${fmtDatum(moles)} mol of monatomic ideal gas inside ${apparatus} undergoes a constant-pressure expansion at ${fmtDatum(pHigh)} Pa from V_A = ${fmtDatum(vLow)} m³ to V_B = ${fmtDatum(vHigh)} m³. Defining thermal energy transferred into the gas and work done on the gas as positive (ΔU = ΔQ + ΔW), calculate ΔQ for process A → B.`,
+              `Inside ${apparatus}, ${fmtDatum(moles)} mol of monatomic ideal gas is heated at a steady pressure of ${fmtDatum(pHigh)} Pa so that its volume increases from ${fmtDatum(vLow)} m³ to ${fmtDatum(vHigh)} m³. Using ΔU = ΔQ + ΔW (work done on the gas positive), what total thermal energy ΔQ must be transferred into the gas?`,
+            ]
+          : [
+              `A sample of ${fmtDatum(moles)} mol of an ideal monatomic gas in ${apparatus} expands isobarically at constant pressure ${fmtDatum(pHigh)} Pa from volume ${fmtDatum(vLow)} m³ (state A) to ${fmtDatum(vHigh)} m³ (state B). Taking thermal energy supplied to the gas and work done by the gas as positive, how much thermal energy Q is supplied to the gas during A → B?`,
+              `On the P–V diagram, ${fmtDatum(moles)} mol of monatomic ideal gas inside ${apparatus} undergoes a constant-pressure expansion at ${fmtDatum(pHigh)} Pa from V_A = ${fmtDatum(vLow)} m³ to V_B = ${fmtDatum(vHigh)} m³. Defining heat transferred into the gas as positive (with expansion work done by the gas positive), calculate Q for process A → B.`,
+              `Inside ${apparatus}, ${fmtDatum(moles)} mol of monatomic ideal gas is heated at a steady pressure of ${fmtDatum(pHigh)} Pa so that its volume increases from ${fmtDatum(vLow)} m³ to ${fmtDatum(vHigh)} m³. What total thermal energy must be transferred into the gas (heat into gas positive)?`,
+            ]
         : mode === 1
           ? [
               `In ${apparatus}, ${fmtDatum(moles)} mol of monatomic ideal gas is compressed at constant pressure ${fmtDatum(pHigh)} Pa from an initial volume of ${fmtDatum(vHigh)} m³ (state A) to a final volume of ${fmtDatum(vLow)} m³ (state B). Taking work done on the gas as positive, what is the work done on the gas during this compression?`,
               `The P–V graph shows an isobaric compression of ${fmtDatum(moles)} mol of ideal monatomic gas inside ${apparatus} at ${fmtDatum(pHigh)} Pa from V_A = ${fmtDatum(vHigh)} m³ to V_B = ${fmtDatum(vLow)} m³. Using the sign convention where work done on the gas is positive, determine the compression work done on the gas.`,
               `An external actuator compresses ${fmtDatum(moles)} mol of monatomic ideal gas in ${apparatus} isobarically at ${fmtDatum(pHigh)} Pa from ${fmtDatum(vHigh)} m³ down to ${fmtDatum(vLow)} m³. How much mechanical work is done on the gas (work on gas positive)?`,
             ]
-          : [
-              `As shown on the P–V diagram, ${fmtDatum(moles)} mol of an ideal monatomic gas in ${apparatus} starts at state A (${fmtDatum(pLow)} Pa, ${fmtDatum(vLow)} m³), is heated isochorically to ${fmtDatum(pHigh)} Pa at state B, and then expands isobarically to ${fmtDatum(vHigh)} m³ at state C. Taking heat supplied to the gas and work done by the gas as positive, what is the total thermal energy Q supplied to the gas along A → B → C?`,
-              `Inside ${apparatus}, ${fmtDatum(moles)} mol of monatomic ideal gas follows the two-leg path A → B → C: constant-volume heating at ${fmtDatum(vLow)} m³ from ${fmtDatum(pLow)} Pa to ${fmtDatum(pHigh)} Pa, followed by constant-pressure expansion at ${fmtDatum(pHigh)} Pa to ${fmtDatum(vHigh)} m³. Find the net heat transferred into the gas (heat into gas positive).`,
-              `A monatomic ideal gas (${fmtDatum(moles)} mol) in ${apparatus} transitions from state A (${fmtDatum(pLow)} Pa, ${fmtDatum(vLow)} m³) to state B (${fmtDatum(pHigh)} Pa, ${fmtDatum(vLow)} m³) and then to state C (${fmtDatum(pHigh)} Pa, ${fmtDatum(vHigh)} m³). Defining expansion work done by the gas as positive, calculate the total thermal energy absorbed by the gas over A → B → C.`,
-            ];
+          : hasNcuk
+            ? [
+                `As shown on the P–V diagram, ${fmtDatum(moles)} mol of an ideal monatomic gas in ${apparatus} starts at state A (${fmtDatum(pLow)} Pa, ${fmtDatum(vLow)} m³), is heated isochorically to ${fmtDatum(pHigh)} Pa at state B, and then expands isobarically to ${fmtDatum(vHigh)} m³ at state C. Using ΔU = ΔQ + ΔW (heat supplied to the gas and work done on the gas positive), what is the total thermal energy ΔQ supplied to the gas along A → B → C?`,
+                `Inside ${apparatus}, ${fmtDatum(moles)} mol of monatomic ideal gas follows the two-leg path A → B → C: constant-volume heating at ${fmtDatum(vLow)} m³ from ${fmtDatum(pLow)} Pa to ${fmtDatum(pHigh)} Pa, followed by constant-pressure expansion at ${fmtDatum(pHigh)} Pa to ${fmtDatum(vHigh)} m³. Taking work done on the gas as positive (ΔU = ΔQ + ΔW), find the net thermal energy ΔQ transferred into the gas.`,
+                `A monatomic ideal gas (${fmtDatum(moles)} mol) in ${apparatus} transitions from state A (${fmtDatum(pLow)} Pa, ${fmtDatum(vLow)} m³) to state B (${fmtDatum(pHigh)} Pa, ${fmtDatum(vLow)} m³) and then to state C (${fmtDatum(pHigh)} Pa, ${fmtDatum(vHigh)} m³). Defining work done on the gas as positive (ΔU = ΔQ + ΔW), calculate the total thermal energy ΔQ absorbed by the gas over A → B → C.`,
+              ]
+            : [
+                `As shown on the P–V diagram, ${fmtDatum(moles)} mol of an ideal monatomic gas in ${apparatus} starts at state A (${fmtDatum(pLow)} Pa, ${fmtDatum(vLow)} m³), is heated isochorically to ${fmtDatum(pHigh)} Pa at state B, and then expands isobarically to ${fmtDatum(vHigh)} m³ at state C. Taking heat supplied to the gas and work done by the gas as positive, what is the total thermal energy Q supplied to the gas along A → B → C?`,
+                `Inside ${apparatus}, ${fmtDatum(moles)} mol of monatomic ideal gas follows the two-leg path A → B → C: constant-volume heating at ${fmtDatum(vLow)} m³ from ${fmtDatum(pLow)} Pa to ${fmtDatum(pHigh)} Pa, followed by constant-pressure expansion at ${fmtDatum(pHigh)} Pa to ${fmtDatum(vHigh)} m³. Find the net heat transferred into the gas (heat into gas positive).`,
+                `A monatomic ideal gas (${fmtDatum(moles)} mol) in ${apparatus} transitions from state A (${fmtDatum(pLow)} Pa, ${fmtDatum(vLow)} m³) to state B (${fmtDatum(pHigh)} Pa, ${fmtDatum(vLow)} m³) and then to state C (${fmtDatum(pHigh)} Pa, ${fmtDatum(vHigh)} m³). Defining expansion work done by the gas as positive, calculate the total thermal energy absorbed by the gas over A → B → C.`,
+              ];
 
     const stem = stems[variantIndex % stems.length];
     if (!stemAvoidsHiddenLeak(stem, requiredGivens, hiddenQuantities, sol.quantities)) {
@@ -1829,22 +1845,23 @@ function buildIsobaricIsochoricOpenFirstLaw(
             {
               value: 2.0 * pHigh * dV,
               rationale:
-                "Omits the 3/2 factor in monatomic ΔU = (3/2) P ΔV, computing ΔU + W = P ΔV + P ΔV = 2 P ΔV instead of (5/2) P ΔV.",
+                "Omits the 3/2 factor in monatomic ΔU = (3/2) P ΔV, computing P ΔV + P ΔV = 2 P ΔV instead of (5/2) P ΔV.",
             },
             {
               value: pHigh * dV,
               rationale:
-                "Calculates only the boundary work W = P ΔV done by the gas and ignores the increase in internal energy ΔU.",
+                "Calculates only the magnitude of boundary work |ΔW| = P ΔV and ignores the increase in internal energy ΔU.",
             },
             {
               value: 1.5 * pHigh * dV,
               rationale:
-                "Calculates only the internal energy change ΔU = (3/2) P ΔV and omits the expansion work P ΔV.",
+                "Calculates only the internal energy change ΔU = (3/2) P ΔV and omits the expansion work magnitude P ΔV.",
             },
             {
               value: 0.5 * pHigh * dV,
-              rationale:
-                "Reverses the work sign in the first law, evaluating Q = ΔU − W_by = (3/2 − 1) P ΔV.",
+              rationale: hasNcuk
+                ? "Reverses the work sign in ΔU = ΔQ + ΔW, adding negative expansion work ΔW instead of subtracting ΔW (computing ΔU + ΔW = (3/2 − 1) P ΔV)."
+                : "Reverses the work sign in the first law, evaluating Q = ΔU − W_by = (3/2 − 1) P ΔV.",
             },
           ]
         : mode === 1
@@ -1874,12 +1891,13 @@ function buildIsobaricIsochoricOpenFirstLaw(
               {
                 value: sol.quantities.totalDeltaUJ,
                 rationale:
-                  "Computes only the total internal energy change ΔU_AC and omits the boundary work done during B → C.",
+                  "Computes only the total internal energy change ΔU_AC and omits the boundary work during B → C.",
               },
               {
                 value: sol.quantities.totalDeltaUJ - sol.quantities.netWorkJ,
-                rationale:
-                  "Subtracts the positive expansion work done by the gas instead of adding Q = ΔU + W_by.",
+                rationale: hasNcuk
+                  ? "Reverses the sign of expansion work ΔW in ΔU = ΔQ + ΔW, adding the negative ΔW instead of evaluating ΔQ = ΔU − ΔW."
+                  : "Subtracts the positive expansion work done by the gas instead of adding Q = ΔU + W_by.",
               },
               {
                 value: (pHigh * vHigh - pLow * vLow) + pHigh * dV,
@@ -1889,7 +1907,7 @@ function buildIsobaricIsochoricOpenFirstLaw(
               {
                 value: sol.quantities.netWorkJ,
                 rationale:
-                  "Computes only the area under B → C (work done by the gas) and ignores internal energy changes.",
+                  "Computes only the area under B → C (magnitude of boundary work) and ignores internal energy changes.",
               },
             ];
 
@@ -1899,10 +1917,14 @@ function buildIsobaricIsochoricOpenFirstLaw(
 
     const workedSolution =
       mode === 0
-        ? `Work done by the gas W_by = P(V_B − V_A) = ${fmtDatum(pHigh)} × (${fmtDatum(vHigh)} − ${fmtDatum(vLow)}) = ${formatThermalValue(pHigh * dV, 4)} J. For a monatomic ideal gas, ΔU = (3/2) P ΔV = ${formatThermalValue(1.5 * pHigh * dV, 4)} J. By the first law, Q = ΔU + W_by = (5/2) P ΔV = ${ans}.`
+        ? hasNcuk
+          ? `Work done on the gas during expansion is ΔW = −P(V_B − V_A) = −${fmtDatum(pHigh)} × (${fmtDatum(vHigh)} − ${fmtDatum(vLow)}) = -${formatThermalValue(pHigh * dV, 4)} J. For a monatomic ideal gas, ΔU = (3/2) P ΔV = ${formatThermalValue(1.5 * pHigh * dV, 4)} J. By the first law ΔU = ΔQ + ΔW, thermal energy supplied is ΔQ = ΔU − ΔW = (5/2) P ΔV = ${ans}.`
+          : `Work done by the gas W_by = P(V_B − V_A) = ${fmtDatum(pHigh)} × (${fmtDatum(vHigh)} − ${fmtDatum(vLow)}) = ${formatThermalValue(pHigh * dV, 4)} J. For a monatomic ideal gas, ΔU = (3/2) P ΔV = ${formatThermalValue(1.5 * pHigh * dV, 4)} J. By the first law, Q = ΔU + W_by = (5/2) P ΔV = ${ans}.`
         : mode === 1
-          ? `During isobaric compression from ${fmtDatum(vHigh)} m³ to ${fmtDatum(vLow)} m³ at ${fmtDatum(pHigh)} Pa, work done on the gas W_on = −P(V_B − V_A) = ${fmtDatum(pHigh)} × (${fmtDatum(vHigh)} − ${fmtDatum(vLow)}) = ${ans}.`
-          : `Along A → B → C, work done by the gas is W_by = 0 + P_B(V_C − V_B) = ${formatThermalValue(sol.quantities.netWorkJ, 4)} J. Total internal energy change ΔU = (3/2)(P_C V_C − P_A V_A) = ${formatThermalValue(sol.quantities.totalDeltaUJ, 4)} J. Hence Q = ΔU + W_by = ${ans}.`;
+          ? `During isobaric compression from ${fmtDatum(vHigh)} m³ to ${fmtDatum(vLow)} m³ at ${fmtDatum(pHigh)} Pa, work done on the gas ΔW = W_on = −P(V_B − V_A) = ${fmtDatum(pHigh)} × (${fmtDatum(vHigh)} − ${fmtDatum(vLow)}) = ${ans}.`
+          : hasNcuk
+            ? `Along A → B → C, work done on the gas is ΔW = 0 − P_B(V_C − V_B) = -${formatThermalValue(sol.quantities.netWorkJ, 4)} J. Total internal energy change ΔU = (3/2)(P_C V_C − P_A V_A) = ${formatThermalValue(sol.quantities.totalDeltaUJ, 4)} J. By the first law ΔU = ΔQ + ΔW, thermal energy supplied is ΔQ = ΔU − ΔW = ${ans}.`
+            : `Along A → B → C, work done by the gas is W_by = 0 + P_B(V_C − V_B) = ${formatThermalValue(sol.quantities.netWorkJ, 4)} J. Total internal energy change ΔU = (3/2)(P_C V_C − P_A V_A) = ${formatThermalValue(sol.quantities.totalDeltaUJ, 4)} J. Hence Q = ΔU + W_by = ${ans}.`;
 
     return {
       id,
@@ -1943,33 +1965,53 @@ function buildIsobaricIsochoricOpenFirstLaw(
   }
 
   // Structured Paper 2 (mode === 2: A -> B isochoric, B -> C isobaric)
-  const structStems = [
-    `The P–V diagram shows ${fmtDatum(moles)} mol of an ideal monatomic gas in ${apparatus} taken from state A (${fmtDatum(pLow)} Pa, ${fmtDatum(vLow)} m³) to state B (${fmtDatum(pHigh)} Pa, ${fmtDatum(vLow)} m³) at constant volume, and then from state B to state C (${fmtDatum(pHigh)} Pa, ${fmtDatum(vHigh)} m³) at constant pressure. Throughout this question, take expansion work done by the gas and thermal energy supplied to the gas as positive.`,
-    `Inside ${apparatus}, ${fmtDatum(moles)} mol of monatomic ideal gas undergoes two sequential processes plotted on the P–V graph: isochoric heating from A (${fmtDatum(pLow)} Pa, ${fmtDatum(vLow)} m³) to B (${fmtDatum(pHigh)} Pa, ${fmtDatum(vLow)} m³), followed by isobaric expansion to C (${fmtDatum(pHigh)} Pa, ${fmtDatum(vHigh)} m³). Take work done by the gas and heat transferred into the gas as positive.`,
-    `A sealed sample of ${fmtDatum(moles)} mol of monatomic ideal gas in ${apparatus} follows path A → B → C on the P–V diagram: state A is at (${fmtDatum(pLow)} Pa, ${fmtDatum(vLow)} m³), state B is at (${fmtDatum(pHigh)} Pa, ${fmtDatum(vLow)} m³), and state C is at (${fmtDatum(pHigh)} Pa, ${fmtDatum(vHigh)} m³). Use the convention where work done by the gas is positive.`,
-  ];
+  const structStems = hasNcuk
+    ? [
+        `The P–V diagram shows ${fmtDatum(moles)} mol of an ideal monatomic gas in ${apparatus} taken from state A (${fmtDatum(pLow)} Pa, ${fmtDatum(vLow)} m³) to state B (${fmtDatum(pHigh)} Pa, ${fmtDatum(vLow)} m³) at constant volume, and then from state B to state C (${fmtDatum(pHigh)} Pa, ${fmtDatum(vHigh)} m³) at constant pressure. Throughout this question, use the first law ΔU = ΔQ + ΔW where thermal energy supplied to the gas (ΔQ) and work done on the gas (ΔW) are positive.`,
+        `Inside ${apparatus}, ${fmtDatum(moles)} mol of monatomic ideal gas undergoes two sequential processes plotted on the P–V graph: isochoric heating from A (${fmtDatum(pLow)} Pa, ${fmtDatum(vLow)} m³) to B (${fmtDatum(pHigh)} Pa, ${fmtDatum(vLow)} m³), followed by isobaric expansion to C (${fmtDatum(pHigh)} Pa, ${fmtDatum(vHigh)} m³). Use ΔU = ΔQ + ΔW with work done on the gas (ΔW) and heat transferred into the gas (ΔQ) taken as positive.`,
+        `A sealed sample of ${fmtDatum(moles)} mol of monatomic ideal gas in ${apparatus} follows path A → B → C on the P–V diagram: state A is at (${fmtDatum(pLow)} Pa, ${fmtDatum(vLow)} m³), state B is at (${fmtDatum(pHigh)} Pa, ${fmtDatum(vLow)} m³), and state C is at (${fmtDatum(pHigh)} Pa, ${fmtDatum(vHigh)} m³). Use the sign convention ΔU = ΔQ + ΔW where work done on the gas is positive.`,
+      ]
+    : [
+        `The P–V diagram shows ${fmtDatum(moles)} mol of an ideal monatomic gas in ${apparatus} taken from state A (${fmtDatum(pLow)} Pa, ${fmtDatum(vLow)} m³) to state B (${fmtDatum(pHigh)} Pa, ${fmtDatum(vLow)} m³) at constant volume, and then from state B to state C (${fmtDatum(pHigh)} Pa, ${fmtDatum(vHigh)} m³) at constant pressure. Throughout this question, take expansion work done by the gas and thermal energy supplied to the gas as positive.`,
+        `Inside ${apparatus}, ${fmtDatum(moles)} mol of monatomic ideal gas undergoes two sequential processes plotted on the P–V graph: isochoric heating from A (${fmtDatum(pLow)} Pa, ${fmtDatum(vLow)} m³) to B (${fmtDatum(pHigh)} Pa, ${fmtDatum(vLow)} m³), followed by isobaric expansion to C (${fmtDatum(pHigh)} Pa, ${fmtDatum(vHigh)} m³). Take work done by the gas and heat transferred into the gas as positive.`,
+        `A sealed sample of ${fmtDatum(moles)} mol of monatomic ideal gas in ${apparatus} follows path A → B → C on the P–V diagram: state A is at (${fmtDatum(pLow)} Pa, ${fmtDatum(vLow)} m³), state B is at (${fmtDatum(pHigh)} Pa, ${fmtDatum(vLow)} m³), and state C is at (${fmtDatum(pHigh)} Pa, ${fmtDatum(vHigh)} m³). Use the convention where work done by the gas is positive.`,
+      ];
   const stem = structStems[variantIndex % structStems.length];
   if (!stemAvoidsHiddenLeak(stem, requiredGivens, hiddenQuantities, sol.quantities)) {
     return null;
   }
 
   const wAns = fmtWithUnit(sol.quantities.netWorkJ, "J", 3);
+  const wOnAns = fmtWithUnit(sol.quantities["leg:1:workOnGasJ"], "J", 3);
   const duAns = fmtWithUnit(sol.quantities.totalDeltaUJ, "J", 3);
   const qAns = fmtWithUnit(sol.quantities.netHeatJ, "J", 3);
 
   const parts: StructuredQuestionPart[] = [
-    {
-      partId: "a",
-      prompt:
-        "Calculate the total mechanical work done by the gas along path A → B → C.",
-      marks: 2,
-      targetQuantityKey: "netWorkJ",
-      expectedAnswer: wAns,
-      workingSteps: [
-        "W_AB = 0 (isochoric step).",
-        `W_BC = P_B (V_C − V_B) = ${fmtDatum(pHigh)} × (${fmtDatum(vHigh)} − ${fmtDatum(vLow)}) = ${wAns}.`,
-      ],
-    },
+    hasNcuk
+      ? {
+          partId: "a",
+          prompt:
+            "Calculate the total mechanical work done on the gas ΔW along path A → B → C (including its sign).",
+          marks: 2,
+          targetQuantityKey: "leg:1:workOnGasJ",
+          expectedAnswer: wOnAns,
+          workingSteps: [
+            "ΔW_AB = 0 (isochoric step).",
+            `ΔW_BC = −P_B (V_C − V_B) = −${fmtDatum(pHigh)} × (${fmtDatum(vHigh)} − ${fmtDatum(vLow)}) = ${wOnAns}.`,
+          ],
+        }
+      : {
+          partId: "a",
+          prompt:
+            "Calculate the total mechanical work done by the gas along path A → B → C.",
+          marks: 2,
+          targetQuantityKey: "netWorkJ",
+          expectedAnswer: wAns,
+          workingSteps: [
+            "W_AB = 0 (isochoric step).",
+            `W_BC = P_B (V_C − V_B) = ${fmtDatum(pHigh)} × (${fmtDatum(vHigh)} − ${fmtDatum(vLow)}) = ${wAns}.`,
+          ],
+        },
     {
       partId: "b",
       prompt:
@@ -1984,14 +2026,17 @@ function buildIsobaricIsochoricOpenFirstLaw(
     },
     {
       partId: "c",
-      prompt:
-        "Determine the total thermal energy Q supplied to the gas over the complete path A → B → C.",
+      prompt: hasNcuk
+        ? "Determine the total thermal energy ΔQ supplied to the gas over the complete path A → B → C."
+        : "Determine the total thermal energy Q supplied to the gas over the complete path A → B → C.",
       marks: 2,
       dependsOnPartIds: ["a", "b"],
       targetQuantityKey: "netHeatJ",
       expectedAnswer: qAns,
       workingSteps: [
-        `By the first law of thermodynamics, Q = ΔU_AC + W_by = ${formatThermalValue(sol.quantities.totalDeltaUJ, 4)} + ${formatThermalValue(sol.quantities.netWorkJ, 4)} = ${qAns}.`,
+        hasNcuk
+          ? `By the first law of thermodynamics (ΔU = ΔQ + ΔW), ΔQ = ΔU_AC − ΔW = ${formatThermalValue(sol.quantities.totalDeltaUJ, 4)} − (${formatThermalValue(sol.quantities["leg:1:workOnGasJ"], 4)}) = ${qAns}.`
+          : `By the first law of thermodynamics, Q = ΔU_AC + W_by = ${formatThermalValue(sol.quantities.totalDeltaUJ, 4)} + ${formatThermalValue(sol.quantities.netWorkJ, 4)} = ${qAns}.`,
       ],
     },
   ];
@@ -2012,7 +2057,9 @@ function buildIsobaricIsochoricOpenFirstLaw(
       targetSummary:
         "Compute boundary work, monatomic internal energy change, and heat input across a two-step open P-V path",
       subpartStrategy: [
-        "Total work done by the gas across isochoric and isobaric legs",
+        hasNcuk
+          ? "Total work done on the gas across isochoric and isobaric legs"
+          : "Total work done by the gas across isochoric and isobaric legs",
         "Net internal energy change using monatomic state relation",
         "Total heat supplied via first law of thermodynamics",
       ],
@@ -2020,12 +2067,20 @@ function buildIsobaricIsochoricOpenFirstLaw(
     },
     stem,
     parts,
-    workedSolution: `(a) Work is done only along B → C: W_by = ${fmtDatum(pHigh)}(${fmtDatum(vHigh)} − ${fmtDatum(vLow)}) = ${wAns}. (b) ΔU_AC = (3/2)(P_C V_C − P_A V_A) = ${duAns}. (c) Total heat supplied Q = ΔU_AC + W_by = ${qAns}.`,
-    markScheme: [
-      ...buildTwoMarkPartScheme("a", "Identifies W_AB = 0 and computes P_B(V_C − V_B).", wAns),
-      ...buildTwoMarkPartScheme("b", "Applies ΔU = (3/2)(P_C V_C − P_A V_A).", duAns),
-      ...buildTwoMarkPartScheme("c", "Sums ΔU_AC and W_by to obtain total heat supplied.", qAns),
-    ],
+    workedSolution: hasNcuk
+      ? `(a) Work is done only along B → C: ΔW = −${fmtDatum(pHigh)}(${fmtDatum(vHigh)} − ${fmtDatum(vLow)}) = ${wOnAns}. (b) ΔU_AC = (3/2)(P_C V_C − P_A V_A) = ${duAns}. (c) By ΔU = ΔQ + ΔW, total heat supplied ΔQ = ΔU_AC − ΔW = ${qAns}.`
+      : `(a) Work is done only along B → C: W_by = ${fmtDatum(pHigh)}(${fmtDatum(vHigh)} − ${fmtDatum(vLow)}) = ${wAns}. (b) ΔU_AC = (3/2)(P_C V_C − P_A V_A) = ${duAns}. (c) Total heat supplied Q = ΔU_AC + W_by = ${qAns}.`,
+    markScheme: hasNcuk
+      ? [
+          ...buildTwoMarkPartScheme("a", "Identifies ΔW_AB = 0 and computes ΔW = −P_B(V_C − V_B).", wOnAns),
+          ...buildTwoMarkPartScheme("b", "Applies ΔU = (3/2)(P_C V_C − P_A V_A).", duAns),
+          ...buildTwoMarkPartScheme("c", "Applies ΔU = ΔQ + ΔW ⇒ ΔQ = ΔU_AC − ΔW to obtain total heat supplied.", qAns),
+        ]
+      : [
+          ...buildTwoMarkPartScheme("a", "Identifies W_AB = 0 and computes P_B(V_C − V_B).", wAns),
+          ...buildTwoMarkPartScheme("b", "Applies ΔU = (3/2)(P_C V_C − P_A V_A).", duAns),
+          ...buildTwoMarkPartScheme("c", "Sums ΔU_AC and W_by to obtain total heat supplied.", qAns),
+        ],
     totalMarks: 6,
     generatorModel,
   };

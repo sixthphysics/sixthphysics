@@ -275,7 +275,7 @@ export function extractNumbersFromPhysicsText(
       const conversions = resolveUnitConversions(rawValue, unitToken);
       const alternates = [...conversions.alternateConvertedValues];
       if (unitToken === "°C") {
-        alternates.push(rawValue + 273.15, rawValue + 273);
+        alternates.push(rawValue + 273.15, rawValue + 273.2, rawValue + 273);
       }
       results.push({
         rawText: match[0].trim(),
@@ -374,7 +374,7 @@ export function textContainsNumericValue(
 }
 
 function canonicalNumberToken(value: number): string {
-  if (Math.abs(value) < 1e-12) return "0";
+  if (Math.abs(value) < 1e-35) return "0";
   return Number(value.toPrecision(6)).toString();
 }
 

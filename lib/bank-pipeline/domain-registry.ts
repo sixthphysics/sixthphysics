@@ -101,6 +101,9 @@ import {
   WAVES_SCENARIO_KINDS,
   WavesScenarioKind,
 } from "@/lib/visuals/waves";
+import { NCUK_AC4_PLUGINS } from "@/lib/visuals/ncuk-ac4";
+import { NCUK_QUAL_EXAM_PLUGINS } from "@/lib/visuals/ncuk-conceptual";
+import { NCUK_STATICS_FLUIDS_PLUGINS } from "@/lib/visuals/ncuk-statics-fluids";
 
 import { formatSignificantFigures } from "./numeric-checker";
 import { PhysicsDomainId, VerifiedQuantityMap, VerifiedScalar } from "./types";
@@ -198,6 +201,31 @@ export interface IncomingVisualModuleHooks<
   description?: string;
   supportedScenarioKinds?: readonly string[];
   sampleScenario?: (seed: number, kind?: string) => TSpec;
+}
+
+export interface DomainKindFieldSpec {
+  readonly name: string;
+  readonly type: string;
+  readonly unit?: string;
+  readonly bounds?: string;
+  readonly enumValues?: readonly string[];
+  readonly notes?: string;
+}
+
+export interface DomainKindPlugin {
+  readonly domain: PhysicsDomainId;
+  readonly kind: string;
+  readonly summary: string;
+  readonly requiredFields: readonly DomainKindFieldSpec[];
+  readonly optionalFields?: readonly DomainKindFieldSpec[];
+  readonly physicalConstraints: readonly string[];
+  readonly probeSpecs: readonly Record<string, unknown>[];
+  readonly validate: (spec: Record<string, unknown>) => DomainValidationResult;
+  readonly solve: (spec: Record<string, unknown>) => DomainSolveOutput;
+  readonly renderSvg?: (
+    spec: Record<string, unknown>,
+    options?: DomainRenderOptions,
+  ) => DomainRenderOutput | undefined;
 }
 
 function isFinitePositive(val: unknown): val is number {
@@ -2020,6 +2048,114 @@ const QUANTUM_NUCLEAR_SCENARIO_KINDS: readonly QuantumNuclearScenarioKind[] = [
   "special-relativity",
 ];
 
+export const NCUK_V3_DOMAIN_PLUGINS: readonly DomainKindPlugin[] = [
+  ...NCUK_AC4_PLUGINS,
+  ...NCUK_STATICS_FLUIDS_PLUGINS,
+  ...NCUK_QUAL_EXAM_PLUGINS,
+];
+
+/**
+ * Attaches deterministic per-kind scenario plugins onto their corresponding
+ * registered domain adapters without adding new top-level domains.
+ */
+export function registerDomainKindPlugins(
+  plugins: readonly DomainKindPlugin[],
+): void {
+  const pluginsByDomain = new Map<PhysicsDomainId, DomainKindPlugin[]>();
+  for (const plugin of plugins) {
+    const bucket = pluginsByDomain.get(plugin.domain) ?? [];
+    bucket.push(plugin);
+    pluginsByDomain.set(plugin.domain, bucket);
+  }
+
+  for (const [domain, domainPlugins] of pluginsByDomain.entries()) {
+    const base = getDomainAdapter(domain);
+    const existingKinds = new Set(base.supportedScenarioKinds);
+    const byKind = new Map<string, DomainKindPlugin>();
+
+    for (const plugin of domainPlugins) {
+      if (existingKinds.has(plugin.kind) || byKind.has(plugin.kind)) {
+        throw new Error(
+          `Duplicate scenario kind "${plugin.kind}" while registering plugins on domain "${domain}"`,
+        );
+      }
+      byKind.set(plugin.kind, plugin);
+    }
+
+    const wrapped: DomainAdapter = {
+      domain: base.domain,
+      defaultVisualFamily: base.defaultVisualFamily,
+      solverId: base.solverId,
+      description: base.description,
+      supportedScenarioKinds: [
+        ...base.supportedScenarioKinds,
+        ...domainPlugins.map((p) => p.kind),
+      ],
+      validateScenario(spec: Record<string, unknown>): DomainValidationResult {
+        const kind = typeof spec.kind === "string" ? spec.kind : "";
+        const plugin = byKind.get(kind);
+        if (plugin) {
+          try {
+            return plugin.validate(spec);
+          } catch (error) {
+            return {
+              valid: false,
+              issues: [error instanceof Error ? error.message : String(error)],
+            };
+          }
+        }
+        return base.validateScenario(spec);
+      },
+      solveScenario(spec: Record<string, unknown>): DomainSolveOutput {
+        const kind = typeof spec.kind === "string" ? spec.kind : "";
+        const plugin = byKind.get(kind);
+        if (plugin) {
+          const validation = plugin.validate(spec);
+          if (!validation.valid) {
+            throw new Error(validation.issues.join("; "));
+          }
+          return plugin.solve(spec);
+        }
+        return base.solveScenario(spec);
+      },
+      ...(base.renderSvg || domainPlugins.some((p) => p.renderSvg)
+        ? {
+            renderSvg(
+              spec: Record<string, unknown>,
+              options?: DomainRenderOptions,
+            ): DomainRenderOutput | undefined {
+              const kind = typeof spec.kind === "string" ? spec.kind : "";
+              const plugin = byKind.get(kind);
+              if (plugin) {
+                return plugin.renderSvg
+                  ? plugin.renderSvg(spec, options)
+                  : undefined;
+              }
+              return base.renderSvg
+                ? base.renderSvg(spec, options)
+                : undefined;
+            },
+          }
+        : {}),
+      sampleScenario(seed: number, kind?: string): Record<string, unknown> {
+        if (kind) {
+          const plugin = byKind.get(kind);
+          if (plugin && plugin.probeSpecs.length > 0) {
+            const idx = Math.abs(Math.trunc(seed)) % plugin.probeSpecs.length;
+            return { ...plugin.probeSpecs[idx] };
+          }
+        }
+        if (base.sampleScenario) {
+          return base.sampleScenario(seed, kind);
+        }
+        throw new Error(`No sampleScenario available for domain "${domain}"`);
+      },
+    };
+
+    registerDomainAdapter(wrapped);
+  }
+}
+
 export function resetDomainRegistryToDefaults(): void {
   registry.clear();
   registerDomainAdapter(buildGraphAdapter());
@@ -2131,6 +2267,7 @@ export function resetDomainRegistryToDefaults(): void {
     },
   });
   registerDomainAdapter(buildPureCalculationAdapter());
+  registerDomainKindPlugins(NCUK_V3_DOMAIN_PLUGINS);
 }
 
 export function hasDomainAdapter(domain: string): domain is PhysicsDomainId {

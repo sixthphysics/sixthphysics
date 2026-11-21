@@ -3224,6 +3224,13 @@ function buildDoubleSlitFringeSpacing(
     "all-core",
     slotIndex,
   );
+  const hasNcuk = syllabi.some((s) => s.syllabus === "ncuk");
+  const ncukFringeNote = hasNcuk
+    ? " (In NCUK/A-Level notation, w = λD / s where w is fringe spacing and s is slit separation.)"
+    : "";
+  const ncukInverseNote = hasNcuk
+    ? " (In NCUK/A-Level notation, w = λD / s rearranges to λ = ws / D.)"
+    : "";
   const wavelengthNm = pick(rng, [
     405, 445, 473, 488, 514, 532, 589, 612, 633, 650, 670,
   ]);
@@ -3353,7 +3360,7 @@ function buildDoubleSlitFringeSpacing(
         stem,
         options: built.options,
         targetQuantityKey: "fringeSpacingM",
-        workedSolution: `Converting to SI units: λ = ${fmtQuantity(wavelengthM, "m")} and slit separation = ${fmtQuantity(slitSeparationM, "m")}. Fringe spacing = λD / (slit separation) = (${fmtSig3(wavelengthM)} × ${screenDistanceM}) / ${fmtSig3(slitSeparationM)} = ${fmtQuantity(sol.fringeSpacingM, "m")}.`,
+        workedSolution: `Converting to SI units: λ = ${fmtQuantity(wavelengthM, "m")} and slit separation = ${fmtQuantity(slitSeparationM, "m")}. Fringe spacing = λD / (slit separation) = (${fmtSig3(wavelengthM)} × ${screenDistanceM}) / ${fmtSig3(slitSeparationM)} = ${fmtQuantity(sol.fringeSpacingM, "m")}.${ncukFringeNote}`,
         markScheme: [
           {
             code: "A1",
@@ -3446,7 +3453,7 @@ function buildDoubleSlitFringeSpacing(
       stem,
       options: built.options,
       targetQuantityKey: "wavelengthM",
-      workedSolution: `Rearranging fringe spacing Δy = λD / d gives λ = Δy × d / D = (${fmtSig3(sol.fringeSpacingM)} × ${fmtSig3(slitSeparationM)}) / ${screenDistanceM} = ${fmtQuantity(wavelengthM, "m")}.`,
+      workedSolution: `Rearranging fringe spacing Δy = λD / d gives λ = Δy × d / D = (${fmtSig3(sol.fringeSpacingM)} × ${fmtSig3(slitSeparationM)}) / ${screenDistanceM} = ${fmtQuantity(wavelengthM, "m")}.${ncukInverseNote}`,
       markScheme: [
         {
           code: "A1",
@@ -3543,7 +3550,7 @@ function buildDoubleSlitFringeSpacing(
     },
     stem,
     parts,
-    workedSolution: `(a) Fringe spacing = λD / d = (${fmtSig3(wavelengthM)} × ${screenDistanceM}) / ${fmtSig3(slitSeparationM)} = ${fmtQuantity(sol.fringeSpacingM, "m")}. (b) First dark fringe distance = ½ × ${fmtSig3(sol.fringeSpacingM)} = ${fmtQuantity(sol.firstDarkPositionM, "m")}. (c) At order n = ${orderN}, path difference = nλ = ${orderN} × ${fmtSig3(wavelengthM)} = ${fmtQuantity(sol.pathDifferenceM, "m")}.`,
+    workedSolution: `(a) Fringe spacing = λD / d = (${fmtSig3(wavelengthM)} × ${screenDistanceM}) / ${fmtSig3(slitSeparationM)} = ${fmtQuantity(sol.fringeSpacingM, "m")}.${ncukFringeNote} (b) First dark fringe distance = ½ × ${fmtSig3(sol.fringeSpacingM)} = ${fmtQuantity(sol.firstDarkPositionM, "m")}. (c) At order n = ${orderN}, path difference = nλ = ${orderN} × ${fmtSig3(wavelengthM)} = ${fmtQuantity(sol.pathDifferenceM, "m")}.`,
     markScheme: [
       {
         code: "M1",
@@ -3603,6 +3610,13 @@ function buildDoubleSlitOffAxisOrders(
     "all-core",
     slotIndex,
   );
+  const hasNcuk = syllabi.some((s) => s.syllabus === "ncuk");
+  const ncukOffAxisNote = hasNcuk
+    ? " (In NCUK/A-Level notation, fringe spacing w = λD / s so y_n = nw = nλD / s.)"
+    : "";
+  const ncukOffAxisInvNote = hasNcuk
+    ? " (In NCUK/A-Level notation, w = λD / s gives slit separation s = nλD / y_n.)"
+    : "";
   const wavelengthNm = pick(rng, [420, 460, 488, 532, 560, 589, 633, 660]);
   const wavelengthM = Number((wavelengthNm * 1e-9).toPrecision(6));
   const slitSeparationM = pick(rng, [
@@ -3728,7 +3742,7 @@ function buildDoubleSlitOffAxisOrders(
         stem,
         options: built.options,
         targetQuantityKey: "nthBrightPositionM",
-        workedSolution: `Single fringe spacing = λD / d = ${fmtSig3(sol.fringeSpacingM)} m. Distance from n = 0 to the n = ${orderN} bright fringe is y_${orderN} = ${orderN} × λD / d = ${fmtQuantity(sol.nthBrightPositionM, "m")}.`,
+        workedSolution: `Single fringe spacing = λD / d = ${fmtSig3(sol.fringeSpacingM)} m. Distance from n = 0 to the n = ${orderN} bright fringe is y_${orderN} = ${orderN} × λD / d = ${fmtQuantity(sol.nthBrightPositionM, "m")}.${ncukOffAxisNote}`,
         markScheme: [
           {
             code: "A1",
@@ -3814,7 +3828,7 @@ function buildDoubleSlitOffAxisOrders(
       stem,
       options: built.options,
       targetQuantityKey: "slitSeparationM",
-      workedSolution: `Since y_n = nλD / d, slit separation d = nλD / y_n = (${orderN} × ${fmtSig3(wavelengthM)} × ${screenDistanceM}) / ${fmtSig3(sol.nthBrightPositionM)} = ${fmtQuantity(slitSeparationM, "m")}.`,
+      workedSolution: `Since y_n = nλD / d, slit separation d = nλD / y_n = (${orderN} × ${fmtSig3(wavelengthM)} × ${screenDistanceM}) / ${fmtSig3(sol.nthBrightPositionM)} = ${fmtQuantity(slitSeparationM, "m")}.${ncukOffAxisInvNote}`,
       markScheme: [
         {
           code: "A1",
@@ -3911,7 +3925,7 @@ function buildDoubleSlitOffAxisOrders(
     },
     stem,
     parts,
-    workedSolution: `(a) Δℓ = nλ = ${orderN} × ${fmtSig3(wavelengthM)} = ${fmtQuantity(sol.pathDifferenceM, "m")}. (b) θ_${orderN} = arcsin(nλ / d) = ${fmtQuantity(sol.nthOrderAngleDegrees, "°")}. (c) y_${orderN} = nλD / d = ${fmtQuantity(sol.nthBrightPositionM, "m")}.`,
+    workedSolution: `(a) Δℓ = nλ = ${orderN} × ${fmtSig3(wavelengthM)} = ${fmtQuantity(sol.pathDifferenceM, "m")}. (b) θ_${orderN} = arcsin(nλ / d) = ${fmtQuantity(sol.nthOrderAngleDegrees, "°")}. (c) y_${orderN} = nλD / d = ${fmtQuantity(sol.nthBrightPositionM, "m")}.${ncukOffAxisNote}`,
     markScheme: [
       {
         code: "M1",

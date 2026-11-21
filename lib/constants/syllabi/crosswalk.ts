@@ -287,7 +287,7 @@ export const SYLLABUS_CROSSWALK: readonly CrosswalkEntry[] = [
         questionFormats: ['mcq', 'structured'],
         equationsUsed: ['Moment = F × d_⊥', 'T = Fd', 'ΣF = 0, ΣM = 0'],
         assumptionAndSignNotes:
-          'Covers 2D vector cosine/parallelogram rules (AC1.3) and hinged-beam/see-saw moments and couples (AC2.3) in Semester 1. Uses g = 9.81 m s^-2.',
+          'Covers 2D vector resolution and parallelogram/cosine rules (AC1.3) and rigid-body statics in AC2.3 (single-pivot beams, two-support overhanging tipping beams with R = 0, hinged bars/trapdoors, two-wire suspended bars, centre of gravity, and torque of a couple) in Semester 1. Uses g = 9.81 m s^-2.',
         calculusOrExponentialRequired: false,
         relativisticRequired: false,
       },
@@ -592,9 +592,14 @@ export const SYLLABUS_CROSSWALK: readonly CrosswalkEntry[] = [
         topicIds: ['ncuk-ac2', 'ncuk-ac3'],
         subtopicIds: ['ncuk-ac2-2', 'ncuk-ac3-1'],
         questionFormats: ['mcq', 'structured'],
-        equationsUsed: ['ρ = m / V', 'Δp = ρgΔh', 'F_upthrust = ρ_fluid V_disp g'],
+        equationsUsed: [
+          'ρ = m / V',
+          'p = F / A',
+          'Δp = ρgΔh',
+          'F_upthrust = ρ_fluid V_disp g',
+        ],
         assumptionAndSignNotes:
-          'NCUK AC3.1 assesses density, gauge/absolute hydrostatic pressure, Archimedes buoyancy, and Brownian motion; AC2.2 assesses drag and terminal velocity without Stokes 6πηrv.',
+          'NCUK AC3.1 (ncuk-ac3-1) assesses density (including alloy mixtures and annular/remelted geometries), gauge and absolute hydrostatic pressure (Δp = ρgh, p_abs = p_atm + ρgh), base force (F = pA), Archimedes buoyancy, states of matter, and Brownian motion; AC2.2 (ncuk-ac2-2) assesses drag and terminal velocity without Stokes 6πηrv. Uses g = 9.81 m s^-2.',
         calculusOrExponentialRequired: false,
         relativisticRequired: false,
       },

@@ -22,15 +22,34 @@ import {
 describe('pdf-paper generator logic', () => {
   const manifest = getFallbackManifest();
 
-  it('provides four course-matched presets for every syllabus', () => {
+  it('provides course-matched presets for every syllabus including official NCUK IFYPH005 papers', () => {
     const syllabi: SyllabusId[] = ['ib', 'alevel', 'ncuk'];
     for (const syllabus of syllabi) {
       const presets = getExamPaperPresetsForSyllabus(syllabus);
-      expect(presets).toHaveLength(4);
+      expect(presets.length).toBeGreaterThanOrEqual(4);
       const recommended = getDefaultPresetForSyllabus(syllabus);
       expect(recommended.syllabus).toBe(syllabus);
       expect(recommended.recommended).toBe(true);
     }
+
+    const ncukPresets = getExamPaperPresetsForSyllabus('ncuk');
+    const eos1 = ncukPresets.find((p) => p.id === 'ncuk-eos1-official');
+    const finalPaper = ncukPresets.find((p) => p.id === 'ncuk-final-official');
+    expect(eos1).toMatchObject({
+      shortTitle: 'NCUK IFY EoS1 Exam',
+      durationMinutes: 90,
+      targetTotalMarks: 60,
+      mcqCount: 10,
+      structuredCount: 12,
+      level: 'IFY-S1',
+    });
+    expect(finalPaper).toMatchObject({
+      shortTitle: 'NCUK IFY Cumulative Final',
+      durationMinutes: 150,
+      targetTotalMarks: 100,
+      mcqCount: 20,
+      structuredCount: 20,
+    });
   });
 
   it('builds a family-deduplicated mixed paper with deterministic seed', () => {
@@ -215,6 +234,61 @@ describe('pdf-paper generator logic', () => {
     expect(ncuk.gravityText).toContain('9.81 m');
     expect(ncuk.formatMarkTag(2)).toBe('(2 marks)');
     expect(buildDefaultPaperTitle('ncuk', 'IFY-S1', 'mcq')).toContain('S1');
+
+    const eos1Meta = getSyllabusExamMetadata(
+      'ncuk',
+      'IFY-S1',
+      { mcqCount: 10, structuredCount: 12, totalMarks: 60 },
+      true,
+      'ncuk-eos1-official'
+    );
+    expect(eos1Meta.boardMasthead).toContain('END OF SEMESTER 1');
+    expect(eos1Meta.sectionATitle).toContain('Section 1');
+    expect(eos1Meta.sectionATitle).toContain('Q1–Q10');
+    expect(eos1Meta.sectionBTitle).toContain('Sections 2–4');
+    expect(eos1Meta.specSubtitle).toContain('90 minutes');
+    expect(eos1Meta.specSubtitle).toContain('60 marks');
+    expect(eos1Meta.officialSections).toHaveLength(4);
+
+    const finalMeta = getSyllabusExamMetadata(
+      'ncuk',
+      'all',
+      { mcqCount: 20, structuredCount: 20, totalMarks: 100 },
+      true,
+      'ncuk-final-official'
+    );
+    expect(finalMeta.boardMasthead).toContain('CUMULATIVE FINAL');
+    expect(finalMeta.sectionATitle).toContain('Q1–Q20');
+    expect(finalMeta.sectionBTitle).toContain('Q21–Q40');
+    expect(finalMeta.specSubtitle).toContain('150 minutes');
+    expect(finalMeta.specSubtitle).toContain('100 marks');
+    expect(finalMeta.officialSections).toHaveLength(4);
+
+    const eos1Draft = buildExamPaperDraft(manifest, {
+      syllabus: 'ncuk',
+      level: 'all',
+      presetId: 'ncuk-eos1-official',
+      formatMode: 'mixed',
+      mcqCount: 10,
+      structuredCount: 12,
+      difficultyMix: 'exam-mix',
+      seed: 2026,
+    });
+    expect(eos1Draft.durationMinutes).toBe(90);
+    expect(eos1Draft.level).toBe('IFY-S1');
+
+    const finalDraft = buildExamPaperDraft(manifest, {
+      syllabus: 'ncuk',
+      level: 'IFY-S1',
+      presetId: 'ncuk-final-official',
+      formatMode: 'mixed',
+      mcqCount: 20,
+      structuredCount: 20,
+      difficultyMix: 'exam-mix',
+      seed: 2026,
+    });
+    expect(finalDraft.durationMinutes).toBe(150);
+    expect(finalDraft.level).toBe('all');
   });
 
   it('selects only in-booklet equations matching the paper topics and level', () => {

@@ -225,10 +225,57 @@ function toSuperscript(expStr: string): string {
 }
 
 function roundClean(val: number, digits = 8): number {
-  if (Object.is(val, -0) || Math.abs(val) < 1e-24) {
+  if (Object.is(val, -0) || Math.abs(val) < 1e-35) {
     return 0;
   }
   return Number(val.toPrecision(digits));
+}
+
+function fixIndefiniteArticles(text: string): string {
+  return text.replace(
+    /\b([Aa])\s+((?:electron|electrostatic|electromagnetic|electric|electrical|electrometer|alpha|ion|isolated|ideal|inkjet|industrial|aerospace|alumina|insulated|insulator|optical|oscilloscope|oscillating|ammeter|acoustic|evacuated)[a-z-]*)\b/gi,
+    (_m, art: string, word: string) =>
+      `${art === "A" ? "An" : "an"} ${word}`,
+  );
+}
+
+function normalizeCandidateArticles(
+  candidate: CandidateQuestionInput,
+): CandidateQuestionInput {
+  return {
+    ...candidate,
+    stem: fixIndefiniteArticles(candidate.stem),
+    workedSolution: fixIndefiniteArticles(candidate.workedSolution),
+    ...(candidate.options
+      ? {
+          options: candidate.options.map((opt) => ({
+            ...opt,
+            text: fixIndefiniteArticles(opt.text),
+            ...(opt.distractorRationale
+              ? {
+                  distractorRationale: fixIndefiniteArticles(
+                    opt.distractorRationale,
+                  ),
+                }
+              : {}),
+          })),
+        }
+      : {}),
+    ...(candidate.parts
+      ? {
+          parts: candidate.parts.map((part) => ({
+            ...part,
+            prompt: fixIndefiniteArticles(part.prompt),
+            expectedAnswer: fixIndefiniteArticles(part.expectedAnswer),
+            workingSteps: part.workingSteps.map(fixIndefiniteArticles),
+          })),
+        }
+      : {}),
+    markScheme: candidate.markScheme.map((pt) => ({
+      ...pt,
+      criterion: fixIndefiniteArticles(pt.criterion),
+    })),
+  };
 }
 
 /**
@@ -240,7 +287,7 @@ export function formatPhysics3sf(value: number, unit = ""): string {
   if (!Number.isFinite(value)) {
     throw new Error(`Cannot format non-finite physics value: ${String(value)}`);
   }
-  if (Math.abs(value) < 1e-15) {
+  if (Math.abs(value) < 1e-35) {
     return `0${suffix}`;
   }
   const abs = Math.abs(value);
@@ -259,7 +306,7 @@ export function formatPhysics3sf(value: number, unit = ""): string {
 
 function formatGivenPlain(value: number, unit = ""): string {
   const suffix = unit ? ` ${unit}` : "";
-  if (Math.abs(value) < 1e-15) {
+  if (Math.abs(value) < 1e-35) {
     return `0${suffix}`;
   }
   const abs = Math.abs(value);
@@ -4677,7 +4724,11 @@ export function generateFieldsCandidates(
       const seed = baseSeed + archIdx * 1000 + mIdx + 1;
       const id = `sp-fields-mcq-${String(globalSeq).padStart(4, "0")}`;
       globalSeq += 1;
-      candidates.push(builder(arch, mIdx, "mcq", seed, id, generatorModel));
+      candidates.push(
+        normalizeCandidateArticles(
+          builder(arch, mIdx, "mcq", seed, id, generatorModel),
+        ),
+      );
     }
 
     for (let sIdx = 0; sIdx < structuredCount; sIdx += 1) {
@@ -4686,7 +4737,9 @@ export function generateFieldsCandidates(
       const id = `sp-fields-struct-${String(globalSeq).padStart(4, "0")}`;
       globalSeq += 1;
       candidates.push(
-        builder(arch, variantIdx, "structured", seed, id, generatorModel),
+        normalizeCandidateArticles(
+          builder(arch, variantIdx, "structured", seed, id, generatorModel),
+        ),
       );
     }
   }

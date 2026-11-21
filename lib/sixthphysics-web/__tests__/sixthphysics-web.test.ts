@@ -30,6 +30,7 @@ import {
   recordCompletedMock,
   recordQuestionAttempt,
   resetBankClientCache,
+  resolveEffectiveNcukLevels,
   saveProgressState,
   scoreMockPaperSession,
   setLastQuestionForSyllabus,
@@ -38,8 +39,17 @@ import {
   type PublicBankChunkFile,
   type PublicBankItem,
   type PublicBankManifest,
+  type PublicQuestionIndexRow,
 } from "../index";
-import { compilePublicBank } from "../../../scripts/static-site/compile-public-bank";
+import {
+  buildPublicBankManifest,
+  capAndInterleaveRecords,
+  compilePublicBank,
+  parseCompileCliArgs,
+  sanitizeStudentText,
+  toPublicBankItem,
+  type RawPublicBankInput,
+} from "../../../scripts/static-site/compile-public-bank";
 
 class MemoryStorage implements Storage {
   private readonly map = new Map<string, string>();
@@ -124,7 +134,7 @@ describe("SixthPhysics Static Web Bank, Loader, Mastery Store & Mock Builder", (
       }
     });
 
-    it("verifies compiled public/sixthphysics-data contains all 7,643+ items stored once across 11 chunks when present", () => {
+    it("verifies compiled public/sixthphysics-data honors capped web chunks stored once across 11 chunks when present", () => {
       const manifestPath = path.resolve(
         process.cwd(),
         "public/sixthphysics-data/manifest.json",
@@ -149,14 +159,43 @@ describe("SixthPhysics Static Web Bank, Loader, Mastery Store & Mock Builder", (
         fs.readFileSync(manifestPath, "utf8"),
       ) as PublicBankManifest;
 
-      expect(manifest.totalItems).toBeGreaterThanOrEqual(7200);
-      expect(manifest.totalItems).toBe(expectedTotal);
-      expect(manifest.items).toHaveLength(expectedTotal);
-      expect(manifest.syllabi.ib.questionCount).toBeGreaterThanOrEqual(6000);
-      expect(manifest.syllabi.alevel.questionCount).toBeGreaterThanOrEqual(
-        6000,
-      );
-      expect(manifest.syllabi.ncuk.questionCount).toBeGreaterThanOrEqual(6000);
+      expect(manifest.totalItems).toBeGreaterThan(0);
+      expect(manifest.totalItems).toBeLessThanOrEqual(expectedTotal);
+      expect(manifest.items).toHaveLength(manifest.totalItems);
+      expect(manifest.syllabi.ib.questionCount).toBeGreaterThan(0);
+      expect(manifest.syllabi.alevel.questionCount).toBeGreaterThan(0);
+      expect(manifest.syllabi.ncuk.questionCount).toBeGreaterThan(0);
+
+      if (
+        typeof manifest.maxItemsPerFamily === "number" &&
+        manifest.maxItemsPerFamily > 0
+      ) {
+        const familyCounts = new Map<string, number>();
+        for (const row of manifest.items) {
+          familyCounts.set(
+            row.familyGroupKey,
+            (familyCounts.get(row.familyGroupKey) ?? 0) + 1,
+          );
+        }
+        for (const count of familyCounts.values()) {
+          expect(count).toBeLessThanOrEqual(manifest.maxItemsPerFamily);
+        }
+
+        const ac4Rows = filterIndexRows(manifest.items, {
+          syllabus: "ncuk",
+          topicId: "ncuk-ac4",
+        });
+        const uniqueAc4Families = new Set(
+          ac4Rows.map((row) => row.familyGroupKey),
+        );
+        if (uniqueAc4Families.size >= 2) {
+          for (let i = 1; i < ac4Rows.length; i += 1) {
+            expect(ac4Rows[i].familyGroupKey).not.toBe(
+              ac4Rows[i - 1].familyGroupKey,
+            );
+          }
+        }
+      }
 
       let totalChunkItems = 0;
       const seenChunkItemIds = new Set<string>();
@@ -183,9 +222,9 @@ describe("SixthPhysics Static Web Bank, Loader, Mastery Store & Mock Builder", (
         }
       }
 
-      // Zero 3x syllabus duplication: all compiled items stored exactly once across chunks
-      expect(totalChunkItems).toBe(expectedTotal);
-      expect(seenChunkItemIds.size).toBe(expectedTotal);
+      // Zero 3x syllabus duplication: every compiled web item stored exactly once across chunks
+      expect(totalChunkItems).toBe(manifest.totalItems);
+      expect(seenChunkItemIds.size).toBe(manifest.totalItems);
     });
 
     it("compiles cleanly from seed-fallback when dataset/sixthphysics-bank is absent", async () => {
@@ -605,6 +644,545 @@ describe("SixthPhysics Static Web Bank, Loader, Mastery Store & Mock Builder", (
       );
       expect(summary.topicBreakdown.length).toBeGreaterThan(0);
       expect(summary.weakTopicIds.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe("NCUK semester level-filter parity, web capping/interleaving, sanitizer & official IFYPH005 mocks", () => {
+    it("resolves NCUK semester levels accurately so AC1.2 appears in IFY-S1 and AC6.2/6.4/6.5 appear in IFY-S2, matching countsByLevel", () => {
+      const ac12Tag = {
+        syllabus: "ncuk" as const,
+        level: "IFY",
+        topicId: "ncuk-ac1",
+        subtopicId: "ncuk-ac1-2",
+      };
+      const ac44Tag = {
+        syllabus: "ncuk" as const,
+        level: "IFY",
+        topicId: "ncuk-ac4",
+        subtopicId: "ncuk-ac4-4",
+      };
+      const ac45Tag = {
+        syllabus: "ncuk" as const,
+        level: "IFY",
+        topicId: "ncuk-ac4",
+        subtopicId: "ncuk-ac4-5",
+      };
+      const ac62Tag = {
+        syllabus: "ncuk" as const,
+        level: "IFY",
+        topicId: "ncuk-ac6",
+        subtopicId: "ncuk-ac6-2",
+      };
+      const ac64Tag = {
+        syllabus: "ncuk" as const,
+        level: "IFY",
+        topicId: "ncuk-ac6",
+        subtopicId: "ncuk-ac6-4",
+      };
+      const ac65Tag = {
+        syllabus: "ncuk" as const,
+        level: "IFY",
+        topicId: "ncuk-ac6",
+        subtopicId: "ncuk-ac6-5",
+      };
+
+      expect(resolveEffectiveNcukLevels(ac12Tag).has("IFY-S1")).toBe(true);
+      expect(resolveEffectiveNcukLevels(ac12Tag).has("IFY")).toBe(true);
+      expect(resolveEffectiveNcukLevels(ac12Tag).has("IFY-S2")).toBe(false);
+
+      expect(resolveEffectiveNcukLevels(ac44Tag).has("IFY-S1")).toBe(true);
+      expect(resolveEffectiveNcukLevels(ac44Tag).has("IFY-S2")).toBe(false);
+      expect(resolveEffectiveNcukLevels(ac45Tag).has("IFY-S2")).toBe(true);
+      expect(resolveEffectiveNcukLevels(ac45Tag).has("IFY-S1")).toBe(false);
+
+      for (const s2Tag of [ac62Tag, ac64Tag, ac65Tag]) {
+        const levels = resolveEffectiveNcukLevels(s2Tag);
+        expect(levels.has("IFY-S2")).toBe(true);
+        expect(levels.has("IFY")).toBe(true);
+        expect(levels.has("IFY-S1")).toBe(false);
+      }
+
+      const rows: PublicQuestionIndexRow[] = [
+        {
+          id: "q-ac1-2",
+          syllabi: [ac12Tag],
+          format: "mcq",
+          difficulty: "standard",
+          visualFamily: "graphs",
+          totalMarks: 1,
+          hasSvg: true,
+          chunkKey: "graphs",
+          conceptId: "graphical-linearization-gradients",
+          familyGroupKey: "g::ac1-2",
+        },
+        {
+          id: "q-ac4-4",
+          syllabi: [ac44Tag],
+          format: "structured",
+          difficulty: "higher",
+          visualFamily: "em-induction",
+          totalMarks: 4,
+          hasSvg: true,
+          chunkKey: "em-induction",
+          conceptId: "capacitor-rc-decay",
+          familyGroupKey: "em::ac4-4",
+        },
+        {
+          id: "q-ac4-5",
+          syllabi: [ac45Tag],
+          format: "mcq",
+          difficulty: "standard",
+          visualFamily: "fields",
+          totalMarks: 1,
+          hasSvg: true,
+          chunkKey: "fields",
+          conceptId: "electrostatic-coulomb-uniform-fields",
+          familyGroupKey: "f::ac4-5",
+        },
+        {
+          id: "q-ac6-2",
+          syllabi: [ac62Tag],
+          format: "mcq",
+          difficulty: "foundation",
+          visualFamily: "waves",
+          totalMarks: 1,
+          hasSvg: true,
+          chunkKey: "waves",
+          conceptId: "superposition-standing-waves",
+          familyGroupKey: "w::ac6-2",
+        },
+        {
+          id: "q-ac6-4",
+          syllabi: [ac64Tag],
+          format: "structured",
+          difficulty: "standard",
+          visualFamily: "waves",
+          totalMarks: 4,
+          hasSvg: true,
+          chunkKey: "waves",
+          conceptId: "diffraction-gratings-interference",
+          familyGroupKey: "w::ac6-4",
+        },
+        {
+          id: "q-ac6-5",
+          syllabi: [ac65Tag],
+          format: "mcq",
+          difficulty: "higher",
+          visualFamily: "optics-shm",
+          totalMarks: 1,
+          hasSvg: true,
+          chunkKey: "optics-shm",
+          conceptId: "refraction-snell-tir",
+          familyGroupKey: "o::ac6-5",
+        },
+      ];
+
+      const s1Rows = filterIndexRows(rows, { syllabus: "ncuk", level: "IFY-S1" });
+      const s2Rows = filterIndexRows(rows, { syllabus: "ncuk", level: "IFY-S2" });
+      const ifyRows = filterIndexRows(rows, { syllabus: "ncuk", level: "IFY" });
+
+      expect(s1Rows.map((r) => r.id)).toEqual(["q-ac1-2", "q-ac4-4"]);
+      expect(s2Rows.map((r) => r.id)).toEqual([
+        "q-ac4-5",
+        "q-ac6-2",
+        "q-ac6-4",
+        "q-ac6-5",
+      ]);
+      expect(ifyRows).toHaveLength(6);
+
+      const manifest = buildPublicBankManifest(rows, "2026-11-20T00:00:00.000Z");
+      expect(manifest.syllabi.ncuk.countsByLevel["IFY-S1"]).toBe(s1Rows.length);
+      expect(manifest.syllabi.ncuk.countsByLevel["IFY-S2"]).toBe(s2Rows.length);
+      expect(manifest.syllabi.ncuk.countsByLevel["IFY"]).toBe(ifyRows.length);
+
+      const ac1Topic = manifest.syllabi.ncuk.topics.find((t) => t.id === "ncuk-ac1")!;
+      expect(ac1Topic.countsByLevel["IFY-S1"]).toBe(1);
+      expect(ac1Topic.countsByLevel["IFY-S2"]).toBe(0);
+
+      const ac4Topic = manifest.syllabi.ncuk.topics.find((t) => t.id === "ncuk-ac4")!;
+      expect(ac4Topic.countsByLevel["IFY-S1"]).toBe(1);
+      expect(ac4Topic.countsByLevel["IFY-S2"]).toBe(1);
+      expect(ac4Topic.countsByLevel["IFY"]).toBe(2);
+
+      const ac6Topic = manifest.syllabi.ncuk.topics.find((t) => t.id === "ncuk-ac6")!;
+      expect(ac6Topic.countsByLevel["IFY-S2"]).toBe(3);
+      expect(ac6Topic.countsByLevel["IFY-S1"]).toBe(0);
+    });
+
+    it("caps each family to <= 12 balanced items and round-robin interleaves with zero consecutive duplicate families", async () => {
+      const difficulties = ["foundation", "standard", "higher"] as const;
+      const families = [
+        "circuits::ohm-ladder",
+        "circuits::kirchhoff-loop",
+        "circuits::divider-sensor",
+        "circuits::internal-resistance",
+        "circuits::power-dissipation",
+      ];
+
+      const syntheticRaw: RawPublicBankInput[] = [];
+      for (const fam of families) {
+        for (let i = 0; i < 24; i += 1) {
+          const isMcq = i < 15;
+          const diff = difficulties[i % 3];
+          syntheticRaw.push({
+            schemaVersion: "sixthphysics-bank-item/1.0.0",
+            id: `${fam.replace(/::/g, "-")}-${String(i).padStart(2, "0")}`,
+            familyGroupKey: fam,
+            syllabi: [
+              {
+                syllabus: "ncuk",
+                level: "IFY-S1",
+                topicId: "ncuk-ac4",
+                subtopicId: "ncuk-ac4-2",
+              },
+            ],
+            format: isMcq ? "mcq" : "structured",
+            difficulty: diff,
+            visualFamily: "circuits",
+            stem: `Synthetic circuit item ${fam} #${i}`,
+            workedSolution: "Worked solution.",
+            markScheme: [{ code: "A1", criterion: "Correct answer.", marks: isMcq ? 1 : 4 }],
+            totalMarks: isMcq ? 1 : 4,
+            verifiedQuantities: {},
+            provenance: {
+              domain: "circuits",
+              conceptId: fam.split("::")[0],
+              templateArchetype: fam.split("::")[1],
+              familyGroupKey: fam,
+              seed: 1000 + i,
+              shardId: "test-shard",
+              generatorModel: "deterministic-test",
+              solverId: "test-solver",
+              stemFingerprint: `fp-${fam}-${i}`,
+              split: "train",
+              createdAt: "2026-11-20T00:00:00.000Z",
+            },
+            questionStyle: i % 2 === 0 ? "qualitative" : "calculation",
+          });
+        }
+      }
+
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "sp-cap-rr-test-"));
+      try {
+        const srcPath = path.join(tmpDir, "all-items.json");
+        fs.writeFileSync(srcPath, JSON.stringify(syntheticRaw), "utf8");
+
+        // Default cap = 12
+        const cappedRes = await compilePublicBank({
+          sourceItemsPath: srcPath,
+          outDir: path.join(tmpDir, "out-capped"),
+          writeSeedFallback: false,
+        });
+        expect(cappedRes.fullBankTotalItems).toBe(120);
+        expect(cappedRes.maxItemsPerFamily).toBe(12);
+        expect(cappedRes.totalItems).toBe(60);
+
+        const manifest = JSON.parse(
+          fs.readFileSync(cappedRes.manifestPath, "utf8"),
+        ) as PublicBankManifest;
+        expect(manifest.fullBankTotalItems).toBe(120);
+        expect(manifest.maxItemsPerFamily).toBe(12);
+        expect(manifest.items).toHaveLength(60);
+
+        // Verify per-family cap, 7 MCQ + 5 Structured split, and all 3 difficulties
+        for (const fam of families) {
+          const famRows = manifest.items.filter((r) => r.familyGroupKey === fam);
+          expect(famRows).toHaveLength(12);
+          expect(famRows.filter((r) => r.format === "mcq")).toHaveLength(7);
+          expect(famRows.filter((r) => r.format === "structured")).toHaveLength(5);
+          const famDiffs = new Set(famRows.map((r) => r.difficulty));
+          expect(famDiffs.size).toBe(3);
+        }
+
+        // Verify ZERO consecutive duplicate families overall AND inside topic/format filters
+        for (let i = 1; i < manifest.items.length; i += 1) {
+          expect(manifest.items[i].familyGroupKey).not.toBe(
+            manifest.items[i - 1].familyGroupKey,
+          );
+        }
+        const mcqOnly = filterIndexRows(manifest.items, {
+          syllabus: "ncuk",
+          topicId: "ncuk-ac4",
+          format: "mcq",
+        });
+        for (let i = 1; i < mcqOnly.length; i += 1) {
+          expect(mcqOnly[i].familyGroupKey).not.toBe(mcqOnly[i - 1].familyGroupKey);
+        }
+
+        // Verify questionStyle propagated to manifest rows
+        expect(manifest.items.some((r) => r.questionStyle === "qualitative")).toBe(true);
+        expect(manifest.items.some((r) => r.questionStyle === "calculation")).toBe(true);
+
+        // Verify CLI flag parsing and unlimited mode (0)
+        expect(parseCompileCliArgs(["--max-per-family", "0"])).toEqual({
+          maxItemsPerFamily: 0,
+        });
+        expect(parseCompileCliArgs(["--max-per-family=8"])).toEqual({
+          maxItemsPerFamily: 8,
+        });
+
+        const unlimitedRes = await compilePublicBank({
+          sourceItemsPath: srcPath,
+          outDir: path.join(tmpDir, "out-unlimited"),
+          writeSeedFallback: false,
+          maxItemsPerFamily: 0,
+        });
+        expect(unlimitedRes.totalItems).toBe(120);
+        expect(unlimitedRes.maxItemsPerFamily).toBe(0);
+
+        // Direct capAndInterleaveRecords smoke check for format backfill (MCQ-only family)
+        const mcqOnlyRecords = syntheticRaw
+          .filter((r) => r.familyGroupKey === families[0] && r.format === "mcq")
+          .map((raw) => ({ item: toPublicBankItem(raw), chunkKey: "circuits" as const }));
+        expect(capAndInterleaveRecords(mcqOnlyRecords, 12)).toHaveLength(12);
+      } finally {
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+      }
+    });
+
+    it("sanitizes student-facing grammar (a electron/electromagnetic/electrostatic) and zero-clamped micro constants without mutating source", () => {
+      expect(
+        sanitizeStudentText(
+          "Inside a electrostatic chamber, a electron enters a electromagnetic rail while acceleration a stays constant.",
+        ),
+      ).toBe(
+        "Inside an electrostatic chamber, an electron enters an electromagnetic rail while acceleration a stays constant.",
+      );
+      expect(sanitizeStudentText("A electron accelerates in vacuum.")).toBe(
+        "An electron accelerates in vacuum.",
+      );
+
+      const rawFieldsBug: RawPublicBankInput = {
+        schemaVersion: "sixthphysics-bank-item/1.0.0",
+        id: "sp-fields-test-001",
+        familyGroupKey:
+          "electrostatic-coulomb-uniform-fields::parallel-plate-ion-acceleration-speed",
+        syllabi: [
+          {
+            syllabus: "ncuk",
+            level: "IFY-S2",
+            topicId: "ncuk-ac4",
+            subtopicId: "ncuk-ac4-5",
+          },
+        ],
+        format: "mcq",
+        difficulty: "standard",
+        visualFamily: "fields",
+        stem: "In a electrostatic gap, a proton (charge +0 C, mass 0 kg) accelerates from +500 V to 0 V.",
+        options: [
+          { label: "A", text: "3.10 × 10⁵ m s⁻¹", isCorrect: true },
+          { label: "B", text: "2.19 × 10⁵ m s⁻¹", isCorrect: false, distractorRationale: "Applies to a electron instead." },
+          { label: "C", text: "4.38 × 10⁵ m s⁻¹", isCorrect: false },
+          { label: "D", text: "1.55 × 10⁵ m s⁻¹", isCorrect: false },
+        ],
+        correctOptionIndex: 0,
+        workedSolution:
+          "By conservation of energy, ½mv² = qV, so v = √(2qV / m) = √(2 × 0 × 500 / 0) = 3.10 × 10⁵ m s⁻¹ (A).",
+        markScheme: [{ code: "A1", criterion: "Uses a electrostatic work relation.", marks: 1 }],
+        totalMarks: 1,
+        verifiedQuantities: {
+          fieldNC: 12500,
+          accelerationMs2: 1197604790419.1614,
+          workJ: 8e-17,
+          finalSpeedMs: 309529.2930136547,
+        },
+        provenance: {
+          domain: "fields",
+          conceptId: "electrostatic-coulomb-uniform-fields",
+          templateArchetype: "parallel-plate-ion-acceleration-speed",
+          familyGroupKey:
+            "electrostatic-coulomb-uniform-fields::parallel-plate-ion-acceleration-speed",
+          seed: 42,
+          shardId: "fields-test",
+          generatorModel: "test",
+          solverId: "test",
+          stemFingerprint: "fp-test",
+          split: "val",
+          createdAt: "2026-11-20T00:00:00.000Z",
+        },
+      };
+
+      const cleaned = toPublicBankItem(rawFieldsBug);
+      // Source raw item stays completely untouched
+      expect(rawFieldsBug.stem).toContain("charge +0 C, mass 0 kg");
+      // Student-facing item is clean
+      expect(cleaned.stem).toContain("an electrostatic gap");
+      expect(cleaned.stem).toContain("charge +1.60 × 10⁻¹⁹ C");
+      expect(cleaned.stem).toContain("mass 1.67 × 10⁻²⁷ kg");
+      expect(cleaned.stem).not.toContain("+0 C");
+      expect(cleaned.stem).not.toContain("mass 0 kg");
+      expect(cleaned.workedSolution).toContain(
+        "√(2 × 1.60 × 10⁻¹⁹ × 500 / 1.67 × 10⁻²⁷)",
+      );
+      expect(cleaned.options?.[1].distractorRationale).toContain("an electron");
+      expect(cleaned.markScheme[0].criterion).toContain("an electrostatic");
+
+      // Also verify quantum-nuclear locked val/test 0.00 J & 0.00 N s cleanup
+      const rawQnBug: RawPublicBankInput = {
+        ...rawFieldsBug,
+        id: "sp-qn-test-001",
+        familyGroupKey: "wave-particle-duality-de-broglie::accelerated-beam-de-broglie-wavelength",
+        stem: "A electron is accelerated across 160 V.",
+        workedSolution:
+          "Kinetic energy Eₖ = qV = 0.00 J. Momentum p = √(2mEₖ) = 0.00 N s. De Broglie wavelength λ = h / p = 97.1 pm.",
+        verifiedQuantities: {
+          kineticEnergyJ: 2.56e-17,
+          momentumNs: 6.829582710532175e-24,
+        },
+      };
+      const cleanedQn = toPublicBankItem(rawQnBug);
+      expect(cleanedQn.stem).toBe("An electron is accelerated across 160 V.");
+      expect(cleanedQn.workedSolution).toContain("2.56 × 10⁻¹⁷ J");
+      expect(cleanedQn.workedSolution).toContain("6.83 × 10⁻²⁴ N s");
+      expect(cleanedQn.workedSolution).not.toContain("0.00 J");
+      expect(cleanedQn.workedSolution).not.toContain("0.00 N s");
+    });
+
+    it("assembles official NCUK IFYPH005 EoS1 (60 marks / 90 min / 22 Qs, S1 only) and Cumulative Final (100 marks / 150 min / 40 Qs) mocks", () => {
+      const s1Topics: Array<{ topicId: string; subtopicId: string }> = [
+        { topicId: "ncuk-ac1", subtopicId: "ncuk-ac1-1" },
+        { topicId: "ncuk-ac2", subtopicId: "ncuk-ac2-1" },
+        { topicId: "ncuk-ac3", subtopicId: "ncuk-ac3-2" },
+        { topicId: "ncuk-ac4", subtopicId: "ncuk-ac4-2" },
+      ];
+      const s2Topics: Array<{ topicId: string; subtopicId: string }> = [
+        { topicId: "ncuk-ac4", subtopicId: "ncuk-ac4-5" },
+        { topicId: "ncuk-ac5", subtopicId: "ncuk-ac5-1" },
+        { topicId: "ncuk-ac6", subtopicId: "ncuk-ac6-2" },
+        { topicId: "ncuk-ac7", subtopicId: "ncuk-ac7-2" },
+        { topicId: "ncuk-ac8", subtopicId: "ncuk-ac8-1" },
+      ];
+
+      const rows: PublicQuestionIndexRow[] = [];
+      let seq = 0;
+      const pushRow = (
+        topicId: string,
+        subtopicId: string,
+        level: string,
+        format: "mcq" | "structured",
+        marks: number,
+        questionStyle: string,
+      ) => {
+        seq += 1;
+        rows.push({
+          id: `ncuk-sim-${seq}`,
+          syllabi: [{ syllabus: "ncuk", level, topicId, subtopicId }],
+          format,
+          difficulty: seq % 3 === 0 ? "higher" : seq % 2 === 0 ? "standard" : "foundation",
+          visualFamily: "circuits",
+          totalMarks: marks,
+          hasSvg: true,
+          chunkKey: "circuits",
+          conceptId: `concept-${topicId}`,
+          familyGroupKey: `fam-${topicId}-${format}-${marks}-${seq}`,
+          questionStyle,
+        });
+      };
+
+      // Populate Semester 1 pool (MCQs qual+calc, 2m, 3m, 4m, 10m)
+      for (const { topicId, subtopicId } of s1Topics) {
+        for (let i = 0; i < 4; i += 1) {
+          pushRow(topicId, subtopicId, "IFY-S1", "mcq", 1, i % 2 === 0 ? "qualitative" : "calculation");
+        }
+        for (let i = 0; i < 3; i += 1) {
+          pushRow(topicId, subtopicId, "IFY-S1", "structured", 2, i % 2 === 0 ? "definition" : "calculation");
+        }
+        for (let i = 0; i < 2; i += 1) {
+          pushRow(topicId, subtopicId, "IFY-S1", "structured", 3, "calculation");
+          pushRow(topicId, subtopicId, "IFY-S1", "structured", 4, "calculation");
+        }
+        pushRow(topicId, subtopicId, "IFY-S1", "structured", 10, "mixed-exam");
+      }
+
+      // Populate Semester 2 pool (MCQs qual+calc, 2m, 3m, 4m, 10m)
+      for (const { topicId, subtopicId } of s2Topics) {
+        for (let i = 0; i < 3; i += 1) {
+          pushRow(topicId, subtopicId, "IFY-S2", "mcq", 1, i % 2 === 0 ? "qualitative" : "calculation");
+        }
+        for (let i = 0; i < 2; i += 1) {
+          pushRow(topicId, subtopicId, "IFY-S2", "structured", 2, i % 2 === 0 ? "qualitative" : "calculation");
+          pushRow(topicId, subtopicId, "IFY-S2", "structured", 3, "calculation");
+          pushRow(topicId, subtopicId, "IFY-S2", "structured", 4, "calculation");
+        }
+        pushRow(topicId, subtopicId, "IFY-S2", "structured", 10, "mixed-exam");
+      }
+
+      const fullNcukManifest = buildPublicBankManifest(
+        rows,
+        "2026-11-20T00:00:00.000Z",
+      );
+
+      const eos1Preset = MOCK_PAPER_PRESETS.find((p) => p.id === "ncuk-eos1-official")!;
+      expect(eos1Preset).toBeDefined();
+      expect(eos1Preset.durationMinutes).toBe(90);
+      expect(eos1Preset.targetTotalMarks).toBe(60);
+      expect(eos1Preset.questionCount).toBe(22);
+
+      // Even if caller passes level: "IFY-S2" from TopNav, EoS1 stays strictly S1
+      const eos1Session = buildMockPaperSession(
+        fullNcukManifest,
+        createConfigFromPreset(eos1Preset, { level: "IFY-S2", seed: 2026 }),
+      );
+      expect(eos1Session.questionRows).toHaveLength(22);
+      expect(eos1Session.totalMarks).toBe(60);
+      expect(eos1Session.durationSeconds).toBe(90 * 60);
+      expect(
+        new Set(eos1Session.questionRows.map((r) => r.familyGroupKey)).size,
+      ).toBe(22);
+
+      // Strictly Semester 1 only (AC1-AC4.4)
+      for (const row of eos1Session.questionRows) {
+        const tag = row.syllabi.find((t) => t.syllabus === "ncuk")!;
+        expect(resolveEffectiveNcukLevels(tag).has("IFY-S1")).toBe(true);
+        expect(resolveEffectiveNcukLevels(tag).has("IFY-S2")).toBe(false);
+      }
+
+      // Exact IFYPH005 EoS1 section mark breakdown: 10x1m + 5x2m + 5x4m + 2x10m
+      const eos1Mcqs = eos1Session.questionRows.slice(0, 10);
+      const eos1Short = eos1Session.questionRows.slice(10, 15);
+      const eos1App = eos1Session.questionRows.slice(15, 20);
+      const eos1Long = eos1Session.questionRows.slice(20, 22);
+      expect(eos1Mcqs.every((r) => r.format === "mcq" && r.totalMarks === 1)).toBe(true);
+      expect(eos1Mcqs.filter((r) => r.questionStyle === "qualitative")).toHaveLength(5);
+      expect(eos1Short.every((r) => r.format === "structured" && r.totalMarks === 2)).toBe(true);
+      expect(eos1App.every((r) => r.format === "structured" && r.totalMarks === 4)).toBe(true);
+      expect(eos1Long.every((r) => r.format === "structured" && r.totalMarks === 10)).toBe(true);
+
+      // Cumulative Final preset (40 Qs, 100 marks, 150 min)
+      const finalPreset = MOCK_PAPER_PRESETS.find((p) => p.id === "ncuk-final-official")!;
+      expect(finalPreset).toBeDefined();
+      expect(finalPreset.durationMinutes).toBe(150);
+      expect(finalPreset.targetTotalMarks).toBe(100);
+      expect(finalPreset.questionCount).toBe(40);
+
+      const finalSession = buildMockPaperSession(
+        fullNcukManifest,
+        createConfigFromPreset(finalPreset, { level: "IFY-S1", seed: 2026 }),
+      );
+      expect(finalSession.questionRows).toHaveLength(40);
+      expect(finalSession.totalMarks).toBe(100);
+      expect(finalSession.durationSeconds).toBe(150 * 60);
+      expect(
+        new Set(finalSession.questionRows.map((r) => r.familyGroupKey)).size,
+      ).toBe(40);
+
+      // Spans both Semester 1 and Semester 2 modules
+      const finalTopics = new Set(
+        finalSession.questionRows.map(
+          (r) => r.syllabi.find((t) => t.syllabus === "ncuk")!.topicId,
+        ),
+      );
+      expect(finalTopics.size).toBe(8);
+      expect(finalSession.questionRows.slice(0, 20).every((r) => r.format === "mcq")).toBe(true);
+      expect(
+        finalSession.questionRows.slice(20, 27).reduce((s, r) => s + r.totalMarks, 0),
+      ).toBe(15);
+      expect(
+        finalSession.questionRows.slice(27, 37).reduce((s, r) => s + r.totalMarks, 0),
+      ).toBe(35);
+      expect(
+        finalSession.questionRows.slice(37, 40).reduce((s, r) => s + r.totalMarks, 0),
+      ).toBe(30);
     });
   });
 });

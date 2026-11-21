@@ -7,7 +7,7 @@ import type { PhysicsDomainId, PublicBankItem, PublicBankManifest } from "./type
  */
 export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
   {
-    "id": "sp-graphs-0277-mcq",
+    "id": "sp-v2-graphs-mcq-0081",
     "syllabi": [
       {
         "syllabus": "ib",
@@ -29,75 +29,75 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
       }
     ],
     "format": "mcq",
-    "difficulty": "foundation",
+    "difficulty": "standard",
     "visualFamily": "cartesian_plot",
-    "stem": "The graph displays the linear momentum of a frictionless puck on an air table (mass 3.2 kg) against time. What resultant force acts on it between t = 3.0 s and t = 8.0 s?",
+    "stem": "Motion sensors track the momentum of a satellite attitude-test mass of mass 3.2 kg. Determine the magnitude of the resultant force acting from t = 3.0 s to t = 8.0 s.",
     "workedSolution": "By Newton's second law, F = Δp / Δt = (22.4 − 6.4) / (8 − 3) = 3.20 N.",
     "markScheme": [
       {
         "code": "A1",
-        "criterion": "Evaluates F = Δp / Δt = (22.4 − 6.4) / (5) = 3.20 N (D).",
+        "criterion": "Evaluates F = Δp / Δt = (22.4 − 6.4) / (5) = 3.20 N (B).",
         "marks": 1
       }
     ],
     "totalMarks": 1,
     "conceptId": "linear-momentum-impulse",
     "familyGroupKey": "linear-momentum-impulse::pt-momentum-gradient-kinetic-work",
-    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"720\" height=\"500\" viewBox=\"0 0 720 500\" role=\"img\" aria-label=\"momentum / kg m s⁻¹ against time / s\"><rect width=\"720\" height=\"500\" fill=\"white\"/><defs><clipPath id=\"plot-sp-graphs-0277-mcq-figure\"><rect x=\"112\" y=\"38\" width=\"528\" height=\"378\"/></clipPath></defs><path d=\"M112 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M156 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M200 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M244 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M288 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M332 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M376 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M420 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M464 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M508 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M552 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M596 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M640 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 416H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 373.8125H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 331.625H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 289.4375H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 247.25H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 205.0625H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 162.875H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 120.6875H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 78.5H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 38V416\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M200 38V416\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M288 38V416\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M376 38V416\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M464 38V416\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M552 38V416\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M640 38V416\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M112 416H640\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M112 331.625H640\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M112 247.25H640\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M112 162.875H640\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M112 78.5H640\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M112 416H640\" fill=\"none\" stroke=\"#202429\" stroke-width=\"1.7\"/><path d=\"M112 416V38\" fill=\"none\" stroke=\"#202429\" stroke-width=\"1.7\"/><path d=\"M112 411v10\" stroke=\"#202429\"/><text x=\"112\" y=\"442\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">0</text><path d=\"M200 411v10\" stroke=\"#202429\"/><text x=\"200\" y=\"442\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">2</text><path d=\"M288 411v10\" stroke=\"#202429\"/><text x=\"288\" y=\"442\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">4</text><path d=\"M376 411v10\" stroke=\"#202429\"/><text x=\"376\" y=\"442\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">6</text><path d=\"M464 411v10\" stroke=\"#202429\"/><text x=\"464\" y=\"442\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">8</text><path d=\"M552 411v10\" stroke=\"#202429\"/><text x=\"552\" y=\"442\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">10</text><path d=\"M640 411v10\" stroke=\"#202429\"/><text x=\"640\" y=\"442\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">12</text><path d=\"M107 416h10\" stroke=\"#202429\"/><text x=\"100\" y=\"421.95\" text-anchor=\"end\" font-size=\"17\" font-family=\"Arial, sans-serif\">0</text><path d=\"M107 331.625h10\" stroke=\"#202429\"/><text x=\"100\" y=\"337.575\" text-anchor=\"end\" font-size=\"17\" font-family=\"Arial, sans-serif\">5</text><path d=\"M107 247.25h10\" stroke=\"#202429\"/><text x=\"100\" y=\"253.2\" text-anchor=\"end\" font-size=\"17\" font-family=\"Arial, sans-serif\">10</text><path d=\"M107 162.875h10\" stroke=\"#202429\"/><text x=\"100\" y=\"168.825\" text-anchor=\"end\" font-size=\"17\" font-family=\"Arial, sans-serif\">15</text><path d=\"M107 78.5h10\" stroke=\"#202429\"/><text x=\"100\" y=\"84.45\" text-anchor=\"end\" font-size=\"17\" font-family=\"Arial, sans-serif\">20</text><path d=\"M112 308 L244 308 L464 38 L640 38\" fill=\"none\" stroke=\"#15191d\" stroke-width=\"2.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\" clip-path=\"url(#plot-sp-graphs-0277-mcq-figure)\"/><text x=\"376\" y=\"480\" text-anchor=\"middle\" font-size=\"20\" font-family=\"Arial, sans-serif\">time / s</text><text transform=\"translate(28 227) rotate(-90)\" text-anchor=\"middle\" font-size=\"20\" font-family=\"Arial, sans-serif\">momentum / kg m s⁻¹</text></svg>",
+    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"720\" height=\"500\" viewBox=\"0 0 720 500\" role=\"img\" aria-label=\"momentum / kg m s⁻¹ against time / s\"><rect width=\"720\" height=\"500\" fill=\"white\"/><defs><clipPath id=\"plot-sp-v2-graphs-mcq-0081-figure\"><rect x=\"112\" y=\"38\" width=\"528\" height=\"378\"/></clipPath></defs><path d=\"M112 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M156 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M200 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M244 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M288 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M332 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M376 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M420 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M464 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M508 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M552 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M596 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M640 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 416H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 373.8125H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 331.625H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 289.4375H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 247.25H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 205.0625H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 162.875H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 120.6875H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 78.5H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 38V416\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M200 38V416\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M288 38V416\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M376 38V416\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M464 38V416\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M552 38V416\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M640 38V416\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M112 416H640\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M112 331.625H640\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M112 247.25H640\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M112 162.875H640\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M112 78.5H640\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M112 416H640\" fill=\"none\" stroke=\"#202429\" stroke-width=\"1.7\"/><path d=\"M112 416V38\" fill=\"none\" stroke=\"#202429\" stroke-width=\"1.7\"/><path d=\"M112 411v10\" stroke=\"#202429\"/><text x=\"112\" y=\"442\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">0</text><path d=\"M200 411v10\" stroke=\"#202429\"/><text x=\"200\" y=\"442\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">2</text><path d=\"M288 411v10\" stroke=\"#202429\"/><text x=\"288\" y=\"442\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">4</text><path d=\"M376 411v10\" stroke=\"#202429\"/><text x=\"376\" y=\"442\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">6</text><path d=\"M464 411v10\" stroke=\"#202429\"/><text x=\"464\" y=\"442\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">8</text><path d=\"M552 411v10\" stroke=\"#202429\"/><text x=\"552\" y=\"442\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">10</text><path d=\"M640 411v10\" stroke=\"#202429\"/><text x=\"640\" y=\"442\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">12</text><path d=\"M107 416h10\" stroke=\"#202429\"/><text x=\"100\" y=\"421.95\" text-anchor=\"end\" font-size=\"17\" font-family=\"Arial, sans-serif\">0</text><path d=\"M107 331.625h10\" stroke=\"#202429\"/><text x=\"100\" y=\"337.575\" text-anchor=\"end\" font-size=\"17\" font-family=\"Arial, sans-serif\">5</text><path d=\"M107 247.25h10\" stroke=\"#202429\"/><text x=\"100\" y=\"253.2\" text-anchor=\"end\" font-size=\"17\" font-family=\"Arial, sans-serif\">10</text><path d=\"M107 162.875h10\" stroke=\"#202429\"/><text x=\"100\" y=\"168.825\" text-anchor=\"end\" font-size=\"17\" font-family=\"Arial, sans-serif\">15</text><path d=\"M107 78.5h10\" stroke=\"#202429\"/><text x=\"100\" y=\"84.45\" text-anchor=\"end\" font-size=\"17\" font-family=\"Arial, sans-serif\">20</text><path d=\"M112 308 L244 308 L464 38 L640 38\" fill=\"none\" stroke=\"#15191d\" stroke-width=\"2.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\" clip-path=\"url(#plot-sp-v2-graphs-mcq-0081-figure)\"/><text x=\"376\" y=\"480\" text-anchor=\"middle\" font-size=\"20\" font-family=\"Arial, sans-serif\">time / s</text><text transform=\"translate(28 227) rotate(-90)\" text-anchor=\"middle\" font-size=\"20\" font-family=\"Arial, sans-serif\">momentum / kg m s⁻¹</text></svg>",
     "options": [
       {
         "label": "A",
-        "text": "1.00 N",
-        "isCorrect": false,
-        "distractorRationale": "Divides Δp / Δt by mass m, obtaining acceleration rather than resultant force."
-      },
-      {
-        "label": "B",
-        "text": "2.80 N",
-        "isCorrect": false,
-        "distractorRationale": "Computes the secant ratio p₂ / t₂ from the origin, ignoring both initial momentum p₁ and start time t₁."
-      },
-      {
-        "label": "C",
         "text": "80.0 N",
         "isCorrect": false,
         "distractorRationale": "Multiplies Δp by Δt instead of evaluating the rate of change of momentum Δp / Δt."
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "3.20 N",
         "isCorrect": true
+      },
+      {
+        "label": "C",
+        "text": "1.00 N",
+        "isCorrect": false,
+        "distractorRationale": "Divides Δp / Δt by mass m, obtaining acceleration rather than resultant force."
+      },
+      {
+        "label": "D",
+        "text": "2.80 N",
+        "isCorrect": false,
+        "distractorRationale": "Computes the secant ratio p₂ / t₂ from the origin, ignoring both initial momentum p₁ and start time t₁."
       }
     ],
-    "correctOptionIndex": 3
+    "correctOptionIndex": 1
   },
   {
-    "id": "sp-circuits-11-structured-234",
+    "id": "sp-circuits-11-structured-235",
     "syllabi": [
       {
         "syllabus": "ib",
-        "level": "SL",
+        "level": "HL",
         "topicId": "ib-theme-b",
         "subtopicId": "ib-b5-current-circuits"
       },
       {
         "syllabus": "alevel",
-        "level": "Y13",
+        "level": "Y12",
         "topicId": "alevel-sec5-electricity",
         "subtopicId": "alevel-3-5-1-current-electricity"
       },
       {
         "syllabus": "ncuk",
-        "level": "IFY-S1",
+        "level": "IFY",
         "topicId": "ncuk-ac4",
         "subtopicId": "ncuk-ac4-2"
       }
     ],
     "format": "structured",
-    "difficulty": "higher",
+    "difficulty": "foundation",
     "visualFamily": "circuit_network",
-    "stem": "The schematic of a surgical cautery wire test fixture shows an ideal 6 V source connected directly across cylindrical titanium wire R_1 (length 2.2 m, diameter 0.76 mm, resistivity 4.20 × 10⁻⁷ Ω m).",
-    "workedSolution": "(a) A = π d² / 4 = 4.54 × 10⁻⁷ m², giving R_1 = ρL / A = 2.04 Ω. (b) I = 6 / 2.04 = 2.95 A. (c) P = V I = 17.7 W.",
+    "stem": "Refer to a seed-germination tray warming wire illustrated: resistive element R_1 is fabricated from 2.55 m of 0.46 mm diameter platinum-iridium wire (resistivity 2.50 × 10⁻⁷ Ω m) on an ideal 24 V supply.",
+    "workedSolution": "(a) A = π d² / 4 = 1.66 × 10⁻⁷ m², giving R_1 = ρL / A = 3.84 Ω. (b) I = 24 / 3.84 = 6.26 A. (c) P = V I = 150 W.",
     "markScheme": [
       {
         "code": "M1",
@@ -108,19 +108,19 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
       {
         "code": "A1",
         "partId": "a",
-        "criterion": "Obtains R_1 = 2.04 Ω.",
+        "criterion": "Obtains R_1 = 3.84 Ω.",
         "marks": 1
       },
       {
         "code": "M1",
         "partId": "b",
-        "criterion": "Divides 6 V by R_1.",
+        "criterion": "Divides 24 V by R_1.",
         "marks": 1
       },
       {
         "code": "A1",
         "partId": "b",
-        "criterion": "Obtains I = 2.95 A.",
+        "criterion": "Obtains I = 6.26 A.",
         "marks": 1
       },
       {
@@ -132,24 +132,24 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
       {
         "code": "A1",
         "partId": "c",
-        "criterion": "Obtains P = 17.7 W.",
+        "criterion": "Obtains P = 150 W.",
         "marks": 1
       }
     ],
     "totalMarks": 6,
     "conceptId": "resistivity-ohmic-conductors",
     "familyGroupKey": "resistivity-ohmic-conductors::cylindrical-wire-resistivity-circuit",
-    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"760\" height=\"500\" viewBox=\"0 0 760 500\" role=\"img\" aria-label=\"Circuit diagram with 2 components\"><rect width=\"760\" height=\"500\" fill=\"white\"/><defs><marker id=\"circuit-arrow-sp-circuits-11-structured-234-figure\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0L10 5L0 10Z\" fill=\"#171b1f\"/></marker></defs><path data-wire-id=\"sp-circuits-11-structured-234-figure-main-wire-1\" d=\"M101.12 142.021818L101.12 250\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><path data-wire-id=\"sp-circuits-11-structured-234-figure-main-wire-2\" d=\"M101.12 250L101.12 357.978182\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><path data-wire-id=\"sp-circuits-11-structured-234-figure-main-wire-3\" d=\"M658.88 142.021818L658.88 250\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><path data-wire-id=\"sp-circuits-11-structured-234-figure-main-wire-4\" d=\"M658.88 250L658.88 357.978182\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><path d=\"M101.12 142.021818L370 142.021818M390 142.021818L658.88 142.021818\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><g transform=\"translate(380 142.021818) rotate(0)\"><g data-component-id=\"supply\" data-component-kind=\"cell\"><path d=\"M-6 -22V22M7 -13V13\" stroke=\"#171b1f\" stroke-width=\"2\"/></g></g><text x=\"380\" y=\"178.021818\" text-anchor=\"middle\" font-size=\"18\" font-family=\"Arial, sans-serif\">6 V</text><path d=\"M101.12 357.978182L340 357.978182M420 357.978182L658.88 357.978182\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><g transform=\"translate(380 357.978182) rotate(0)\"><rect data-component-id=\"r1\" data-component-kind=\"resistor\" x=\"-38\" y=\"-14\" width=\"76\" height=\"28\" fill=\"white\" stroke=\"#171b1f\" stroke-width=\"2\"/></g><text x=\"380\" y=\"393.978182\" text-anchor=\"middle\" font-size=\"18\" font-family=\"Arial, sans-serif\">R_1</text></svg>",
+    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"760\" height=\"500\" viewBox=\"0 0 760 500\" role=\"img\" aria-label=\"Circuit diagram with 2 components\"><rect width=\"760\" height=\"500\" fill=\"white\"/><defs><marker id=\"circuit-arrow-sp-circuits-11-structured-235-figure\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0L10 5L0 10Z\" fill=\"#171b1f\"/></marker></defs><path data-wire-id=\"sp-circuits-11-structured-235-figure-main-wire-1\" d=\"M101.12 142.021818L101.12 250\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><path data-wire-id=\"sp-circuits-11-structured-235-figure-main-wire-2\" d=\"M101.12 250L101.12 357.978182\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><path data-wire-id=\"sp-circuits-11-structured-235-figure-main-wire-3\" d=\"M658.88 142.021818L658.88 250\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><path data-wire-id=\"sp-circuits-11-structured-235-figure-main-wire-4\" d=\"M658.88 250L658.88 357.978182\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><path d=\"M101.12 142.021818L370 142.021818M390 142.021818L658.88 142.021818\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><g transform=\"translate(380 142.021818) rotate(0)\"><g data-component-id=\"supply\" data-component-kind=\"cell\"><path d=\"M-6 -22V22M7 -13V13\" stroke=\"#171b1f\" stroke-width=\"2\"/></g></g><text x=\"380\" y=\"178.021818\" text-anchor=\"middle\" font-size=\"18\" font-family=\"Arial, sans-serif\">24 V</text><path d=\"M101.12 357.978182L340 357.978182M420 357.978182L658.88 357.978182\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><g transform=\"translate(380 357.978182) rotate(0)\"><rect data-component-id=\"r1\" data-component-kind=\"resistor\" x=\"-38\" y=\"-14\" width=\"76\" height=\"28\" fill=\"white\" stroke=\"#171b1f\" stroke-width=\"2\"/></g><text x=\"380\" y=\"393.978182\" text-anchor=\"middle\" font-size=\"18\" font-family=\"Arial, sans-serif\">R_1</text></svg>",
     "parts": [
       {
         "partId": "a",
         "prompt": "Calculate the resistance of the cylindrical wire R_1.",
         "marks": 2,
         "targetQuantityKey": "parallelOhm",
-        "expectedAnswer": "2.04 Ω",
+        "expectedAnswer": "3.84 Ω",
         "workingSteps": [
-          "A = π(d/2)² = π(0.76 × 10⁻³ / 2)² = 4.54 × 10⁻⁷ m².",
-          "R_1 = ρL / A = 2.04 Ω."
+          "A = π(d/2)² = π(0.46 × 10⁻³ / 2)² = 1.66 × 10⁻⁷ m².",
+          "R_1 = ρL / A = 3.84 Ω."
         ]
       },
       {
@@ -160,9 +160,9 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
           "a"
         ],
         "targetQuantityKey": "totalCurrentA",
-        "expectedAnswer": "2.95 A",
+        "expectedAnswer": "6.26 A",
         "workingSteps": [
-          "I = V / R_1 = 6 / 2.04 = 2.95 A."
+          "I = V / R_1 = 24 / 3.84 = 6.26 A."
         ]
       },
       {
@@ -174,19 +174,19 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
           "b"
         ],
         "targetQuantityKey": "branchOnePowerW",
-        "expectedAnswer": "17.7 W",
+        "expectedAnswer": "150 W",
         "workingSteps": [
-          "P = V × I = 6 × 2.95 = 17.7 W."
+          "P = V × I = 24 × 6.26 = 150 W."
         ]
       }
     ]
   },
   {
-    "id": "sp-fields-mcq-0064",
+    "id": "sp-fields-mcq-0071",
     "syllabi": [
       {
         "syllabus": "ib",
-        "level": "SL",
+        "level": "HL",
         "topicId": "ib-theme-d",
         "subtopicId": "ib-d2-electric-magnetic-fields"
       },
@@ -206,48 +206,48 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
     "format": "mcq",
     "difficulty": "higher",
     "visualFamily": "field_map",
-    "stem": "Inside a university physics Van de Graaff calibration tunnel, positive point charges +2Q (on the left) and +4Q (on the right) are fixed a distance 3 x apart in vacuum. Point P lies on the line joining them at a distance 1 x from +2Q (and 2 x from +4Q). Using Coulomb constant k, what is the resultant electric field at P expressed in terms of kQ/x²?",
-    "workedSolution": "At P, +2Q produces (2/1²) kQ/x² = 2.00 kQ/x² to the right, while +4Q at distance 2 x produces (4/2²) kQ/x² = 1.00 kQ/x² to the left. Net field = 1.00 kQ/x² to the right (D).",
+    "stem": "On a low-permittivity PTFE fixture inside an evacuated chamber, on a straight vacuum baseline of total length 3 x between +9Q on the left and +5Q on the right, point P lies 2 x from the left source. Using Coulomb constant k, what is the resultant electric field at P expressed in terms of kQ/x²?",
+    "workedSolution": "At P, +9Q produces (9/2²) kQ/x² = 2.25 kQ/x² to the right, while +5Q at distance 1 x produces (5/1²) kQ/x² = 5.00 kQ/x² to the left. Net field = 2.75 kQ/x² to the left (C).",
     "markScheme": [
       {
         "code": "A1",
-        "criterion": "Subtracts (2/1²) and (4/2²) to obtain 1.00 kQ/x² to the right (D).",
+        "criterion": "Subtracts (9/2²) and (5/1²) to obtain 2.75 kQ/x² to the left (C).",
         "marks": 1
       }
     ],
     "totalMarks": 1,
     "conceptId": "electrostatic-coulomb-uniform-fields",
     "familyGroupKey": "electrostatic-coulomb-uniform-fields::symbolic-superposition-field-multiple",
-    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"500\" viewBox=\"0 0 800 500\" role=\"img\" aria-label=\"Field diagram with 2 source or marker entities\"><rect width=\"800\" height=\"500\" fill=\"white\"/><defs><marker id=\"field-arrow-sp-fields-mcq-0064-figure\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0L10 5L0 10Z\" fill=\"#171b1f\"/></marker><marker id=\"field-reverse-arrow-sp-fields-mcq-0064-figure\" viewBox=\"0 0 10 10\" refX=\"2\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M10 0L0 5L10 10Z\" fill=\"#59656c\"/></marker></defs><path data-path-id=\"baseline\" d=\"M107.68 233.84L706.24 233.84\" fill=\"none\" stroke=\"#59656c\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-dasharray=\"8 6\"/><path data-path-id=\"total\" d=\"M177.28 363.12L622.72 363.12\" fill=\"none\" stroke=\"#59656c\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" marker-start=\"url(#field-reverse-arrow-sp-fields-mcq-0064-figure)\" marker-end=\"url(#field-arrow-sp-fields-mcq-0064-figure)\"/><text x=\"400\" y=\"354.12\" text-anchor=\"middle\" font-size=\"15\" font-family=\"Arial, sans-serif\">d</text><path data-path-id=\"dimension-extension-1\" d=\"M177.28 245.96L177.28 375.24\" fill=\"none\" stroke=\"#59656c\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path data-path-id=\"dimension-extension-2\" d=\"M622.72 245.96L622.72 375.24\" fill=\"none\" stroke=\"#59656c\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><g data-entity-id=\"left-charge\"><circle cx=\"177.28\" cy=\"233.84\" r=\"18\" fill=\"white\" stroke=\"#171b1f\" stroke-width=\"2\"/><text x=\"177.28\" y=\"239.84\" text-anchor=\"middle\" font-size=\"20\" font-family=\"Arial, sans-serif\">+</text><text x=\"177.28\" y=\"262.84\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">q₁</text></g><g data-entity-id=\"right-charge\"><circle cx=\"622.72\" cy=\"233.84\" r=\"18\" fill=\"white\" stroke=\"#171b1f\" stroke-width=\"2\"/><text x=\"622.72\" y=\"239.84\" text-anchor=\"middle\" font-size=\"20\" font-family=\"Arial, sans-serif\">+</text><text x=\"622.72\" y=\"262.84\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">q₂</text></g></svg>",
+    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"500\" viewBox=\"0 0 800 500\" role=\"img\" aria-label=\"Field diagram with 2 source or marker entities\"><rect width=\"800\" height=\"500\" fill=\"white\"/><defs><marker id=\"field-arrow-sp-fields-mcq-0071-figure\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0L10 5L0 10Z\" fill=\"#171b1f\"/></marker><marker id=\"field-reverse-arrow-sp-fields-mcq-0071-figure\" viewBox=\"0 0 10 10\" refX=\"2\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M10 0L0 5L10 10Z\" fill=\"#59656c\"/></marker></defs><path data-path-id=\"baseline\" d=\"M107.68 233.84L706.24 233.84\" fill=\"none\" stroke=\"#59656c\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-dasharray=\"8 6\"/><path data-path-id=\"total\" d=\"M177.28 363.12L622.72 363.12\" fill=\"none\" stroke=\"#59656c\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" marker-start=\"url(#field-reverse-arrow-sp-fields-mcq-0071-figure)\" marker-end=\"url(#field-arrow-sp-fields-mcq-0071-figure)\"/><text x=\"400\" y=\"354.12\" text-anchor=\"middle\" font-size=\"15\" font-family=\"Arial, sans-serif\">d</text><path data-path-id=\"dimension-extension-1\" d=\"M177.28 245.96L177.28 375.24\" fill=\"none\" stroke=\"#59656c\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path data-path-id=\"dimension-extension-2\" d=\"M622.72 245.96L622.72 375.24\" fill=\"none\" stroke=\"#59656c\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><g data-entity-id=\"left-charge\"><circle cx=\"177.28\" cy=\"233.84\" r=\"18\" fill=\"white\" stroke=\"#171b1f\" stroke-width=\"2\"/><text x=\"177.28\" y=\"239.84\" text-anchor=\"middle\" font-size=\"20\" font-family=\"Arial, sans-serif\">+</text><text x=\"177.28\" y=\"262.84\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">q₁</text></g><g data-entity-id=\"right-charge\"><circle cx=\"622.72\" cy=\"233.84\" r=\"18\" fill=\"white\" stroke=\"#171b1f\" stroke-width=\"2\"/><text x=\"622.72\" y=\"239.84\" text-anchor=\"middle\" font-size=\"20\" font-family=\"Arial, sans-serif\">+</text><text x=\"622.72\" y=\"262.84\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">q₂</text></g></svg>",
     "options": [
       {
         "label": "A",
-        "text": "1.00 kQ/x² to the left",
+        "text": "2.75 kQ/x² to the right",
         "isCorrect": false,
         "distractorRationale": "Evaluates the correct inverse-square difference coefficient but reverses the resultant field direction."
       },
       {
         "label": "B",
-        "text": "3.00 kQ/x² to the right",
+        "text": "7.25 kQ/x² to the left",
         "isCorrect": false,
         "distractorRationale": "Adds the two field magnitudes between two positive charges instead of subtracting opposing vectors."
       },
       {
         "label": "C",
-        "text": "0.150 kQ/x² to the right",
-        "isCorrect": false,
-        "distractorRationale": "Divides by unsquared distance ratios instead of squaring the distances from each charge."
+        "text": "2.75 kQ/x² to the left",
+        "isCorrect": true
       },
       {
         "label": "D",
-        "text": "1.00 kQ/x² to the right",
-        "isCorrect": true
+        "text": "0.500 kQ/x² to the left",
+        "isCorrect": false,
+        "distractorRationale": "Divides by unsquared distance ratios instead of squaring the distances from each charge."
       }
     ],
-    "correctOptionIndex": 3
+    "correctOptionIndex": 2
   },
   {
-    "id": "sp-mech-structured-0199",
+    "id": "sp-mech-structured-0057",
     "syllabi": [
       {
         "syllabus": "ib",
@@ -269,97 +269,70 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
       }
     ],
     "format": "structured",
-    "difficulty": "standard",
+    "difficulty": "foundation",
     "visualFamily": "mechanics_scene",
-    "stem": "Along a level low-friction dynamics rail, cart X of mass 2 kg travels to the right at 11 m s⁻¹ and collides with stationary cart Y of mass 2 kg. Immediately after impact, cart Y moves to the right at 8.39 m s⁻¹.",
-    "workedSolution": "(a) v_X = (2 × 11 − 2 × 8.39) / 2. Answer: 2.61 m s⁻¹. (b) K_f = 0.5(2)(2.61)² + 0.5(2)(8.39)². Answer: 77.2 J. (c) K_i = 0.5 × 2 × 11² = 121 J. ΔK_lost = K_i − 77.2. Answer: 43.8 J.",
+    "stem": "On a smooth glass collision groove, trolley X of mass 4 kg moves to the right at 7 m s⁻¹ and collides head-on with trolley Y of mass 2.4 kg moving to the left at 2 m s⁻¹ (arrow on Y not shown). Immediately after impact, trolley Y moves to the right at 5 m s⁻¹. Take motion to the right as positive.",
+    "workedSolution": "(a) p_before = 4 × 7 + 2.4 × (−2) = 23.2 kg m s⁻¹. Answer: 23.2 kg m s⁻¹ to the right. (b) v_X = (23.2 − 2.4 × 5) / 4 = 2.80 m s⁻¹. Answer: 2.80 m s⁻¹ to the right.",
     "markScheme": [
       {
         "code": "M1",
         "partId": "a",
-        "criterion": "Applies m_X u_X = m_X v_X + m_Y v_Y.",
+        "criterion": "Evaluates m_X u_X − m_Y |u_Y| with correct signs.",
         "marks": 1
       },
       {
         "code": "A1",
         "partId": "a",
-        "criterion": "Obtains 2.61 m s⁻¹.",
+        "criterion": "Obtains 23.2 kg m s⁻¹ to the right.",
         "marks": 1
       },
       {
         "code": "M1",
         "partId": "b",
-        "criterion": "Sums ½m_X v_X² + ½m_Y v_Y².",
+        "criterion": "Solves p_before = m_X v_X + m_Y v_Y for v_X.",
         "marks": 1
       },
       {
         "code": "A1",
         "partId": "b",
-        "criterion": "Obtains 77.2 J.",
-        "marks": 1
-      },
-      {
-        "code": "M1",
-        "partId": "c",
-        "criterion": "Subtracts K_f from K_i = ½m_X u_X².",
-        "marks": 1
-      },
-      {
-        "code": "A1",
-        "partId": "c",
-        "criterion": "Obtains 43.8 J.",
+        "criterion": "Obtains 2.80 m s⁻¹ to the right.",
         "marks": 1
       }
     ],
-    "totalMarks": 6,
+    "totalMarks": 4,
     "conceptId": "linear-momentum-impulse",
-    "familyGroupKey": "linear-momentum-impulse::inelastic-cart-collision-energy-loss",
-    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"620\" height=\"430\" viewBox=\"0 0 620 430\" role=\"img\"><title>Mechanics diagram</title><desc>X, 2 kg; Y, 2 kg; 11 m s⁻¹</desc><defs><marker id=\"mechanics-arrow-sp-mech-structured-0199-figure\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M 0 0 L 10 5 L 0 10 z\"/></marker></defs><g font-family=\"Arial, sans-serif\" font-size=\"15\"><polyline points=\"158.8,262.6 461.2,262.6\" fill=\"none\" stroke=\"#202020\" stroke-width=\"2\"/><g transform=\"translate(230.8 241) rotate(0)\"><rect x=\"-19\" y=\"-13\" width=\"38\" height=\"26\" fill=\"white\" stroke=\"#202020\" stroke-width=\"2\"/><circle cx=\"-12\" cy=\"17\" r=\"4\"/><circle cx=\"12\" cy=\"17\" r=\"4\"/></g><text x=\"230.8\" y=\"216\" text-anchor=\"middle\">X, 2 kg</text><g transform=\"translate(392.8 241) rotate(0)\"><rect x=\"-19\" y=\"-13\" width=\"38\" height=\"26\" fill=\"white\" stroke=\"#202020\" stroke-width=\"2\"/><circle cx=\"-12\" cy=\"17\" r=\"4\"/><circle cx=\"12\" cy=\"17\" r=\"4\"/></g><text x=\"392.8\" y=\"216\" text-anchor=\"middle\">Y, 2 kg</text><line x1=\"230.8\" y1=\"241\" x2=\"313.6\" y2=\"241\" stroke=\"#202020\" stroke-width=\"2\" marker-end=\"url(#mechanics-arrow-sp-mech-structured-0199-figure)\"/><text x=\"313.6\" y=\"229\" text-anchor=\"middle\">11 m s⁻¹</text><text x=\"310\" y=\"418\" text-anchor=\"middle\" font-size=\"12\">Diagrams not to scale</text></g></svg>",
+    "familyGroupKey": "linear-momentum-impulse::head-on-signed-momentum-conservation",
+    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"620\" height=\"430\" viewBox=\"0 0 620 430\" role=\"img\"><title>Mechanics diagram</title><desc>X, 4 kg; Y, 2.4 kg; 7 m s⁻¹</desc><defs><marker id=\"mechanics-arrow-sp-mech-structured-0057-figure\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M 0 0 L 10 5 L 0 10 z\"/></marker></defs><g font-family=\"Arial, sans-serif\" font-size=\"15\"><polyline points=\"158.8,262.6 461.2,262.6\" fill=\"none\" stroke=\"#202020\" stroke-width=\"2\"/><g transform=\"translate(230.8 241) rotate(0)\"><rect x=\"-19\" y=\"-13\" width=\"38\" height=\"26\" fill=\"white\" stroke=\"#202020\" stroke-width=\"2\"/><circle cx=\"-12\" cy=\"17\" r=\"4\"/><circle cx=\"12\" cy=\"17\" r=\"4\"/></g><text x=\"230.8\" y=\"216\" text-anchor=\"middle\">X, 4 kg</text><g transform=\"translate(392.8 241) rotate(0)\"><rect x=\"-19\" y=\"-13\" width=\"38\" height=\"26\" fill=\"white\" stroke=\"#202020\" stroke-width=\"2\"/><circle cx=\"-12\" cy=\"17\" r=\"4\"/><circle cx=\"12\" cy=\"17\" r=\"4\"/></g><text x=\"392.8\" y=\"216\" text-anchor=\"middle\">Y, 2.4 kg</text><line x1=\"230.8\" y1=\"241\" x2=\"313.6\" y2=\"241\" stroke=\"#202020\" stroke-width=\"2\" marker-end=\"url(#mechanics-arrow-sp-mech-structured-0057-figure)\"/><text x=\"313.6\" y=\"229\" text-anchor=\"middle\">7 m s⁻¹</text><text x=\"310\" y=\"418\" text-anchor=\"middle\" font-size=\"12\">Diagrams not to scale</text></g></svg>",
     "parts": [
       {
         "partId": "a",
-        "prompt": "Calculate the velocity of cart X immediately after the collision.",
+        "prompt": "Calculate the total momentum of the two-body system before the collision.",
         "marks": 2,
-        "targetQuantityKey": "finalXMs",
-        "expectedAnswer": "2.61 m s⁻¹",
+        "targetQuantityKey": "momentumBeforeKgMs",
+        "expectedAnswer": "23.2 kg m s⁻¹ to the right",
         "workingSteps": [
-          "v_X = (2 × 11 − 2 × 8.39) / 2.",
-          "Result = 2.61 m s⁻¹."
+          "p_before = 4 × 7 + 2.4 × (−2) = 23.2 kg m s⁻¹.",
+          "Result = 23.2 kg m s⁻¹ to the right."
         ]
       },
       {
         "partId": "b",
-        "prompt": "Calculate the total kinetic energy of the two bodies immediately after impact.",
+        "prompt": "Hence determine the velocity (magnitude and direction) of trolley X immediately after the collision.",
         "marks": 2,
         "dependsOnPartIds": [
           "a"
         ],
-        "targetQuantityKey": "finalEnergyJ",
-        "expectedAnswer": "77.2 J",
+        "targetQuantityKey": "finalXMs",
+        "expectedAnswer": "2.80 m s⁻¹ to the right",
         "workingSteps": [
-          "K_f = 0.5(2)(2.61)² + 0.5(2)(8.39)².",
-          "Result = 77.2 J."
-        ]
-      },
-      {
-        "partId": "c",
-        "prompt": "Determine the kinetic energy lost during the collision.",
-        "marks": 2,
-        "dependsOnPartIds": [
-          "b"
-        ],
-        "targetQuantityKey": "lostEnergyJ",
-        "expectedAnswer": "43.8 J",
-        "workingSteps": [
-          "K_i = 0.5 × 2 × 11² = 121 J.",
-          "ΔK_lost = K_i − 77.2.",
-          "Result = 43.8 J."
+          "v_X = (23.2 − 2.4 × 5) / 4 = 2.80 m s⁻¹.",
+          "Result = 2.80 m s⁻¹ to the right."
         ]
       }
     ]
   },
   {
-    "id": "sp-v2-waves-mcq-0125",
+    "id": "sp-v2-waves-mcq-0127",
     "syllabi": [
       {
         "syllabus": "ib",
@@ -381,14 +354,14 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
       }
     ],
     "format": "mcq",
-    "difficulty": "standard",
+    "difficulty": "higher",
     "visualFamily": "waves",
-    "stem": "Figure shows a collimated beam striking a transmission diffraction grating mounted on thevernier table of a spectrometer (500 lines mm⁻¹) normally and producing its n = 2 principal maximum at an angle of 32.1°. Calculate the beam's wavelength.",
-    "workedSolution": "Slit spacing d = 10⁻³ / 500 = 2.00 × 10⁻⁶ m. Rearranging d sin θ = nλ gives λ = d sin(32.1°) / 2 = 5.32 × 10⁻⁷ m.",
+    "stem": "On a transmission diffraction grating mounted on thevernier table of a spectrometer with 500 lines mm⁻¹, the order n = 3 diffraction maximum of a monochromatic beam is measured at θ = 57.1° from the straight-through direction. What is the wavelength of the light?",
+    "workedSolution": "Slit spacing d = 10⁻³ / 500 = 2.00 × 10⁻⁶ m. Rearranging d sin θ = nλ gives λ = d sin(57.1°) / 3 = 5.60 × 10⁻⁷ m.",
     "markScheme": [
       {
         "code": "A1",
-        "criterion": "Computes d = 10⁻³ / N and λ = d sin θ / n = 5.32 × 10⁻⁷ m (A).",
+        "criterion": "Computes d = 10⁻³ / N and λ = d sin θ / n = 5.60 × 10⁻⁷ m (A).",
         "marks": 1
       }
     ],
@@ -399,24 +372,24 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
     "options": [
       {
         "label": "A",
-        "text": "5.32 × 10⁻⁷ m",
+        "text": "5.60 × 10⁻⁷ m",
         "isCorrect": true
       },
       {
         "label": "B",
-        "text": "6.28 × 10⁻⁷ m",
+        "text": "1.03 × 10⁻⁶ m",
         "isCorrect": false,
         "distractorRationale": "Substitutes tan θ instead of sin θ into λ = d sin θ / n."
       },
       {
         "label": "C",
-        "text": "1.06 × 10⁻⁶ m",
+        "text": "1.68 × 10⁻⁶ m",
         "isCorrect": false,
         "distractorRationale": "Omits division by diffraction order n, computing λ = d sin θ."
       },
       {
         "label": "D",
-        "text": "5.32 × 10⁻⁴ m",
+        "text": "5.60 × 10⁻⁴ m",
         "isCorrect": false,
         "distractorRationale": "Forgets to convert lines per mm into lines per metre, computing d = 1 / N in metres instead of 10⁻³ / N."
       }
@@ -424,11 +397,11 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
     "correctOptionIndex": 0
   },
   {
-    "id": "sp-optics-shm-struct-0270",
+    "id": "sp-optics-shm-struct-0110",
     "syllabi": [
       {
         "syllabus": "ib",
-        "level": "SL",
+        "level": "HL",
         "topicId": "ib-theme-c",
         "subtopicId": "ib-c1-shm"
       },
@@ -440,27 +413,27 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
       },
       {
         "syllabus": "ncuk",
-        "level": "IFY-S2",
+        "level": "IFY",
         "topicId": "ncuk-ac6",
         "subtopicId": "ncuk-ac6-1"
       }
     ],
     "format": "structured",
-    "difficulty": "standard",
+    "difficulty": "higher",
     "visualFamily": "optics-shm",
-    "stem": "In a violins bridge laser-Doppler vibration target, a component oscillates in simple harmonic motion at frequency f = 2.5 Hz with amplitude x₀ = 0.1 m. Its instantaneous state is examined when the displacement from equilibrium is x = 0.035 m.",
-    "workedSolution": "(a) ω = 2π(2.5) = 15.7 rad s⁻¹. (b) At x = 0.035 m, a = −ω²x = -8.64 m s⁻². (c) Maximum acceleration magnitude a_max = ω² x₀ = 24.7 m s⁻².",
+    "stem": "In a tall-building tuned mass damper block, a component oscillates in simple harmonic motion at frequency f = 6 Hz with amplitude x₀ = 0.02 m. Its instantaneous state is examined when the displacement from equilibrium is x = 0.012 m.",
+    "workedSolution": "(a) ω = 2π(6) = 37.7 rad s⁻¹. (b) At x = 0.012 m, a = −ω²x = -17.1 m s⁻². (c) Maximum acceleration magnitude a_max = ω² x₀ = 28.4 m s⁻².",
     "markScheme": [
       {
         "code": "M1",
         "partId": "a",
-        "criterion": "Uses ω = 2πf with f = 2.5 Hz.",
+        "criterion": "Uses ω = 2πf with f = 6 Hz.",
         "marks": 1
       },
       {
         "code": "A1",
         "partId": "a",
-        "criterion": "Obtains ω = 15.7 rad s⁻¹.",
+        "criterion": "Obtains ω = 37.7 rad s⁻¹.",
         "marks": 1
       },
       {
@@ -472,7 +445,7 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
       {
         "code": "A1",
         "partId": "b",
-        "criterion": "Obtains a = -8.64 m s⁻².",
+        "criterion": "Obtains a = -17.1 m s⁻².",
         "marks": 1
       },
       {
@@ -484,36 +457,36 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
       {
         "code": "A1",
         "partId": "c",
-        "criterion": "Obtains a_max = 24.7 m s⁻².",
+        "criterion": "Obtains a_max = 28.4 m s⁻².",
         "marks": 1
       }
     ],
     "totalMarks": 6,
     "conceptId": "simple-harmonic-motion",
     "familyGroupKey": "simple-harmonic-motion::shm-defining-acceleration-phase-portrait",
-    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"680\" height=\"400\" viewBox=\"0 0 680 400\" role=\"img\" aria-label=\"Simple harmonic motion graph\"><title>Simple harmonic motion graph</title><desc>Simple harmonic motion kinematic and energy curves</desc><rect width=\"680\" height=\"400\" fill=\"#ffffff\"/><g font-family=\"Arial, Helvetica, sans-serif\"><rect x=\"80\" y=\"46\" width=\"550\" height=\"296\" fill=\"#ffffff\" stroke=\"#cbd5e1\" stroke-width=\"1.2\"/><line x1=\"88\" y1=\"194\" x2=\"622\" y2=\"194\" stroke=\"#64748b\" stroke-width=\"1.3\"/><line x1=\"355\" y1=\"54\" x2=\"355\" y2=\"334\" stroke=\"#64748b\" stroke-width=\"1.3\"/><text x=\"575\" y=\"210\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#475569\">+0.1</text><text x=\"135\" y=\"210\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#475569\">−0.1</text><text x=\"620\" y=\"188\" text-anchor=\"end\" font-size=\"11.5\" font-weight=\"600\" fill=\"#1e293b\">x / m</text><line x1=\"135\" y1=\"78.56\" x2=\"575\" y2=\"309.44\" stroke=\"#b91c1c\" stroke-width=\"2.4\"/><text x=\"363\" y=\"82.56\" font-size=\"10.5\" fill=\"#475569\">+a_max</text><text x=\"363\" y=\"313.44\" font-size=\"10.5\" fill=\"#475569\">−a_max</text><text x=\"363\" y=\"64\" font-size=\"11.5\" font-weight=\"600\" fill=\"#b91c1c\">a</text></g></svg>",
+    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"680\" height=\"400\" viewBox=\"0 0 680 400\" role=\"img\" aria-label=\"Simple harmonic motion graph\"><title>Simple harmonic motion graph</title><desc>Simple harmonic motion kinematic and energy curves</desc><rect width=\"680\" height=\"400\" fill=\"#ffffff\"/><g font-family=\"Arial, Helvetica, sans-serif\"><rect x=\"80\" y=\"46\" width=\"550\" height=\"296\" fill=\"#ffffff\" stroke=\"#cbd5e1\" stroke-width=\"1.2\"/><line x1=\"88\" y1=\"194\" x2=\"622\" y2=\"194\" stroke=\"#64748b\" stroke-width=\"1.3\"/><line x1=\"355\" y1=\"54\" x2=\"355\" y2=\"334\" stroke=\"#64748b\" stroke-width=\"1.3\"/><text x=\"575\" y=\"210\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#475569\">+0.02</text><text x=\"135\" y=\"210\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#475569\">−0.02</text><text x=\"620\" y=\"188\" text-anchor=\"end\" font-size=\"11.5\" font-weight=\"600\" fill=\"#1e293b\">x / m</text><line x1=\"135\" y1=\"78.56\" x2=\"575\" y2=\"309.44\" stroke=\"#b91c1c\" stroke-width=\"2.4\"/><text x=\"363\" y=\"82.56\" font-size=\"10.5\" fill=\"#475569\">+a_max</text><text x=\"363\" y=\"313.44\" font-size=\"10.5\" fill=\"#475569\">−a_max</text><text x=\"363\" y=\"64\" font-size=\"11.5\" font-weight=\"600\" fill=\"#b91c1c\">a</text></g></svg>",
     "parts": [
       {
         "partId": "a",
         "prompt": "Calculate the angular frequency ω of the oscillation.",
         "marks": 2,
         "targetQuantityKey": "angularFrequencyRadS",
-        "expectedAnswer": "15.7 rad s⁻¹",
+        "expectedAnswer": "37.7 rad s⁻¹",
         "workingSteps": [
-          "ω = 2πf = 2π × 2.5 = 15.7 rad s⁻¹."
+          "ω = 2πf = 2π × 6 = 37.7 rad s⁻¹."
         ]
       },
       {
         "partId": "b",
-        "prompt": "Calculate the signed acceleration a when the displacement is x = 0.035 m.",
+        "prompt": "Calculate the signed acceleration a when the displacement is x = 0.012 m.",
         "marks": 2,
         "dependsOnPartIds": [
           "a"
         ],
         "targetQuantityKey": "accelerationAtQueryDisplacementMs2",
-        "expectedAnswer": "-8.64 m s⁻²",
+        "expectedAnswer": "-17.1 m s⁻²",
         "workingSteps": [
-          "a = −ω²x = −(15.71)² × (0.035) = -8.64 m s⁻²."
+          "a = −ω²x = −(37.70)² × (0.012) = -17.1 m s⁻²."
         ]
       },
       {
@@ -524,15 +497,15 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
           "a"
         ],
         "targetQuantityKey": "maxAccelerationMs2",
-        "expectedAnswer": "24.7 m s⁻²",
+        "expectedAnswer": "28.4 m s⁻²",
         "workingSteps": [
-          "a_max = ω² x₀ = (15.71)² × 0.1 = 24.7 m s⁻²."
+          "a_max = ω² x₀ = (37.70)² × 0.02 = 28.4 m s⁻²."
         ]
       }
     ]
   },
   {
-    "id": "sp-thermal-mcq-0220",
+    "id": "sp-thermal-mcq-0030",
     "syllabi": [
       {
         "syllabus": "ib",
@@ -548,7 +521,7 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
       },
       {
         "syllabus": "ncuk",
-        "level": "IFY",
+        "level": "IFY-S1",
         "topicId": "ncuk-ac3",
         "subtopicId": "ncuk-ac3-3"
       }
@@ -556,48 +529,48 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
     "format": "mcq",
     "difficulty": "standard",
     "visualFamily": "thermal",
-    "stem": "During a timed run in a metallurgical vacuum-induction melting pot, a Peltier extraction module rated at 600 W with coupling efficiency 0.9 removes thermal energy on 0.55 kg of water between 333 K and 255 K. Given melting point 273.15 K, L_f = 3.34 × 10⁵ J kg⁻¹, c_s = 2100 J kg⁻¹ K⁻¹, and c_l = 4180 J kg⁻¹ K⁻¹, determine the constant-temperature arrest time.",
-    "workedSolution": "Effective thermal power P_eff = η P = 0.9 × 600 = 540.0 W. Plateau latent energy Q_f = m L_f = 1.837 × 10⁵ J, giving Δt_plateau = Q_f / P_eff = 340 s.",
+    "stem": "Inside a sealed foam-insulated metallurgical quench tank, a 0.3 kg block of melting ice at 273.15 K is placed into 0.28 kg of water initially at 289.15 K (c_water = 4180 J kg⁻¹ K⁻¹, L_f = 3.34 × 10⁵ J kg⁻¹). Because the ice mass is large, the mixture reaches phase-coexistence equilibrium at 273.15 K. What mass of ice melts?",
+    "workedSolution": "Maximum heat released by water cooling to 273.15 K is Q = 0.28 × 4180 × (289.15 − 273.15) = 1.873 × 10⁴ J, which is less than m_ice L_f = 1.002 × 10⁵ J. Mass melted Δm = Q / L_f = 0.0561 kg.",
     "markScheme": [
       {
         "code": "A1",
-        "criterion": "Uses P_eff = η P and divides required thermal energy to obtain 340 s (C).",
+        "criterion": "Evaluates Δm = m_water c_water (T_water − 273.15) / L_f to obtain 0.0561 kg (B).",
         "marks": 1
       }
     ],
     "totalMarks": 1,
     "conceptId": "specific-heat-latent-heat",
-    "familyGroupKey": "specific-heat-latent-heat::electrical-heater-phase-change-power-time",
-    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"720\" height=\"500\" viewBox=\"0 0 720 500\" role=\"img\" aria-label=\"Temperature against time phase-change graph\"><title>Temperature against time phase-change graph</title><desc>Temperature against time phase-change graph</desc><rect width=\"720\" height=\"500\" fill=\"white\"/><line x1=\"96\" y1=\"426\" x2=\"680\" y2=\"426\" stroke=\"#202429\" stroke-width=\"1.8\"/><polygon points=\"685,426 675.75,429.4 675.75,422.6\" fill=\"#202429\"/><line x1=\"96\" y1=\"426\" x2=\"96\" y2=\"34\" stroke=\"#202429\" stroke-width=\"1.8\"/><polygon points=\"96,29 99.4,38.25 92.6,38.25\" fill=\"#202429\"/><text x=\"384\" y=\"482\" text-anchor=\"middle\" font-size=\"16\" font-family=\"Arial, sans-serif\" fill=\"#15191d\">time t</text><text transform=\"translate(26 234) rotate(-90)\" text-anchor=\"middle\" font-size=\"16\" font-family=\"Arial, sans-serif\" fill=\"#15191d\">temperature T</text><line x1=\"96\" y1=\"298.704\" x2=\"279.46\" y2=\"298.704\" stroke=\"#7b8590\" stroke-width=\"1.15\" stroke-dasharray=\"5 4\"/><text x=\"88\" y=\"303.704\" text-anchor=\"end\" font-size=\"14\" font-family=\"Arial, sans-serif\" fill=\"#202429\">T_m</text><line x1=\"279.46\" y1=\"298.704\" x2=\"279.46\" y2=\"426\" stroke=\"#7b8590\" stroke-width=\"1.05\" stroke-dasharray=\"4 4\"/><text x=\"279.46\" y=\"447\" text-anchor=\"middle\" font-size=\"13\" font-family=\"Arial, sans-serif\" fill=\"#202429\">t₁</text><line x1=\"524.394\" y1=\"298.704\" x2=\"524.394\" y2=\"426\" stroke=\"#7b8590\" stroke-width=\"1.05\" stroke-dasharray=\"4 4\"/><text x=\"524.394\" y=\"447\" text-anchor=\"middle\" font-size=\"13\" font-family=\"Arial, sans-serif\" fill=\"#202429\">t₂</text><line x1=\"552.345\" y1=\"368.4\" x2=\"552.345\" y2=\"426\" stroke=\"#7b8590\" stroke-width=\"1.05\" stroke-dasharray=\"4 4\"/><text x=\"552.345\" y=\"447\" text-anchor=\"middle\" font-size=\"13\" font-family=\"Arial, sans-serif\" fill=\"#202429\">t₃</text><path d=\"M96 68.88 L279.46 298.704 L524.394 298.704 L552.345 368.4\" fill=\"none\" stroke=\"#15191d\" stroke-width=\"2.4\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><circle cx=\"96\" cy=\"68.88\" r=\"3.6\" fill=\"#15191d\"/><circle cx=\"279.46\" cy=\"298.704\" r=\"3.6\" fill=\"#15191d\"/><circle cx=\"524.394\" cy=\"298.704\" r=\"3.6\" fill=\"#15191d\"/><circle cx=\"552.345\" cy=\"368.4\" r=\"3.6\" fill=\"#15191d\"/><text x=\"187.73\" y=\"173.792\" text-anchor=\"middle\" font-size=\"12.5\" font-family=\"Arial, sans-serif\" fill=\"#4f5962\">liquid</text><text x=\"401.927\" y=\"288.704\" text-anchor=\"middle\" font-size=\"12.5\" font-family=\"Arial, sans-serif\" fill=\"#4f5962\">liquid + solid</text><text x=\"538.369\" y=\"323.552\" text-anchor=\"middle\" font-size=\"12.5\" font-family=\"Arial, sans-serif\" fill=\"#4f5962\">solid</text></svg>",
+    "familyGroupKey": "specific-heat-latent-heat::ice-water-latent-mixing-and-coexistence",
+    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"720\" height=\"500\" viewBox=\"0 0 720 500\" role=\"img\" aria-label=\"Insulated calorimeter thermal equilibrium diagram\"><title>Insulated calorimeter thermal equilibrium diagram</title><desc>Insulated calorimeter thermal equilibrium diagram</desc><rect width=\"720\" height=\"500\" fill=\"white\"/><rect x=\"104\" y=\"92\" width=\"210\" height=\"290\" rx=\"6\" fill=\"#eceff2\" stroke=\"#202429\" stroke-width=\"2\"/><rect x=\"96\" y=\"78\" width=\"226\" height=\"14\" rx=\"3\" fill=\"#d9dfe5\" stroke=\"#202429\" stroke-width=\"1.8\"/><rect x=\"118\" y=\"106\" width=\"182\" height=\"262\" fill=\"white\" stroke=\"#202429\" stroke-width=\"1.6\"/><rect x=\"119\" y=\"174\" width=\"180\" height=\"193\" fill=\"#e3eef8\"/><line x1=\"119\" y1=\"174\" x2=\"299\" y2=\"174\" stroke=\"#3b5b78\" stroke-width=\"1.6\" stroke-dasharray=\"6 3\"/><rect x=\"169\" y=\"42\" width=\"8\" height=\"250\" rx=\"3\" fill=\"white\" stroke=\"#202429\" stroke-width=\"1.6\"/><circle cx=\"173\" cy=\"296\" r=\"7.5\" fill=\"#4f5962\" stroke=\"#202429\" stroke-width=\"1.6\"/><line x1=\"173\" y1=\"98\" x2=\"173\" y2=\"292\" stroke=\"#4f5962\" stroke-width=\"2.4\"/><line x1=\"253\" y1=\"48\" x2=\"253\" y2=\"309\" stroke=\"#202429\" stroke-width=\"2\"/><ellipse cx=\"253\" cy=\"312\" rx=\"14\" ry=\"4.5\" fill=\"none\" stroke=\"#202429\" stroke-width=\"2\"/><rect x=\"169\" y=\"304\" width=\"56\" height=\"42\" rx=\"4\" fill=\"#cfd6dd\" stroke=\"#202429\" stroke-width=\"1.8\"/><line x1=\"197\" y1=\"300\" x2=\"197\" y2=\"272\" stroke=\"#202429\" stroke-width=\"1.6\"/><polygon points=\"197,267 200.4,276.25 193.6,276.25\" fill=\"#202429\"/><text x=\"209\" y=\"408\" text-anchor=\"middle\" font-size=\"14\" font-family=\"Arial, sans-serif\" fill=\"#343c44\">insulated calorimeter</text><rect x=\"389\" y=\"66\" width=\"299\" height=\"64\" rx=\"6\" fill=\"#f8fafc\" stroke=\"#c5cdd5\" stroke-width=\"1.3\"/><text x=\"403\" y=\"90\" font-size=\"14.5\" font-weight=\"bold\" font-family=\"Arial, sans-serif\" fill=\"#15191d\">Melting ice</text><text x=\"403\" y=\"113\" font-size=\"13\" font-family=\"Arial, sans-serif\" fill=\"#343c44\">m = 0.3 kg  |  T_i = 273 K</text><rect x=\"389\" y=\"144\" width=\"299\" height=\"64\" rx=\"6\" fill=\"#f8fafc\" stroke=\"#c5cdd5\" stroke-width=\"1.3\"/><text x=\"403\" y=\"168\" font-size=\"14.5\" font-weight=\"bold\" font-family=\"Arial, sans-serif\" fill=\"#15191d\">Water bath</text><text x=\"403\" y=\"191\" font-size=\"13\" font-family=\"Arial, sans-serif\" fill=\"#343c44\">m = 0.28 kg  |  T_i = 289 K  |  c = 4180 J kg⁻¹ K⁻¹</text><rect x=\"389\" y=\"228\" width=\"299\" height=\"48\" rx=\"6\" fill=\"#eef3f8\" stroke=\"#8a99a8\" stroke-width=\"1.4\"/><text x=\"403\" y=\"257\" font-size=\"14\" font-weight=\"bold\" font-family=\"Arial, sans-serif\" fill=\"#15191d\">Thermal equilibrium: T_eq</text></svg>",
     "options": [
       {
         "label": "A",
-        "text": "276 s",
+        "text": "8.29 × 10⁻³ kg",
         "isCorrect": false,
-        "distractorRationale": "Multiplies time by efficiency η instead of dividing energy by effective power η P."
+        "distractorRationale": "Divides available thermal energy by the latent heat of vaporization (2.26 × 10⁶ J kg⁻¹) instead of fusion."
       },
       {
         "label": "B",
-        "text": "306 s",
-        "isCorrect": false,
-        "distractorRationale": "Divides thermal energy by the nominal electrical rating P rather than the effective thermal power η P."
-      },
-      {
-        "label": "C",
-        "text": "340 s",
+        "text": "0.0561 kg",
         "isCorrect": true
       },
       {
-        "label": "D",
-        "text": "634 s",
+        "label": "C",
+        "text": "0.187 kg",
         "isCorrect": false,
-        "distractorRationale": "Calculates the total multi-stage duration rather than the isothermal fusion plateau duration alone."
+        "distractorRationale": "Calculates the dimensionless melted fraction Δm / m_ice instead of the melted mass Δm in kg."
+      },
+      {
+        "label": "D",
+        "text": "0.244 kg",
+        "isCorrect": false,
+        "distractorRationale": "Computes the mass of unmelted ice remaining at 273.15 K rather than the mass of ice that melts."
       }
     ],
-    "correctOptionIndex": 2
+    "correctOptionIndex": 1
   },
   {
-    "id": "ga-circular-orbit-energy-str-008",
+    "id": "ga-circular-orbit-energy-str-104",
     "syllabi": [
       {
         "syllabus": "ib",
@@ -619,10 +592,10 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
       }
     ],
     "format": "structured",
-    "difficulty": "foundation",
+    "difficulty": "standard",
     "visualFamily": "grav-astro",
-    "stem": "A synthetic-aperture radar satellite of mass 220 kg orbits a spherical terrestrial planet of mass 3.58 × 10²⁴ kg and radius 5.1 × 10⁶ m in a circular path at constant altitude 1.79 × 10⁶ m above the surface. Take G = 6.67 × 10⁻¹¹ N m² kg⁻².",
-    "workedSolution": "(a) With orbital radius r = 6.89 × 10⁶ m, g = GM/r² = 5.03 N kg⁻¹. (b) Orbital speed v = √(GM/r) = 5.89 × 10³ m s⁻¹. (c) Period T = 2πr/v = 7.35 × 10³ s.",
+    "stem": "Orbital telemetry tracks a 1150 kg magnetospheric plasma observatory maintaining circular motion at height h = 1.37 × 10⁷ m above a spherical planetary body of mass 1.73 × 10²⁵ kg and radius 5.25 × 10⁶ m (G = 6.67 × 10⁻¹¹ N m² kg⁻²).",
+    "workedSolution": "(a) With orbital radius r = 1.895 × 10⁷ m, g = GM/r² = 3.21 N kg⁻¹. (b) Orbital speed v = √(GM/r) = 7.80 × 10³ m s⁻¹. (c) Period T = 2πr/v = 1.53 × 10⁴ s.",
     "markScheme": [
       {
         "code": "M1",
@@ -633,7 +606,7 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
       {
         "code": "A1",
         "partId": "a",
-        "criterion": "Obtains g = 5.03 N kg⁻¹.",
+        "criterion": "Obtains g = 3.21 N kg⁻¹.",
         "marks": 1
       },
       {
@@ -645,7 +618,7 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
       {
         "code": "A1",
         "partId": "b",
-        "criterion": "Obtains v = 5.89 × 10³ m s⁻¹.",
+        "criterion": "Obtains v = 7.80 × 10³ m s⁻¹.",
         "marks": 1
       },
       {
@@ -657,57 +630,57 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
       {
         "code": "A1",
         "partId": "c",
-        "criterion": "Obtains T = 7.35 × 10³ s.",
+        "criterion": "Obtains T = 1.53 × 10⁴ s.",
         "marks": 1
       }
     ],
     "totalMarks": 6,
     "conceptId": "gravitational-force-field",
     "familyGroupKey": "gravitational-force-field::circular-orbit-velocity-and-kepler",
-    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"720\" height=\"460\" viewBox=\"0 0 720 460\" role=\"img\" aria-label=\"Orbital mechanics and energy profile diagram\"><title>Orbital mechanics and energy profile diagram</title><desc>v; r</desc><defs><marker id=\"ga-circular-orbit-energy-str-008-arrow-dark\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M 0 0 L 10 5 L 0 10 z\" fill=\"#1f2937\"/></marker><marker id=\"ga-circular-orbit-energy-str-008-arrow-blue\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M 0 0 L 10 5 L 0 10 z\" fill=\"#1d4ed8\"/></marker><marker id=\"ga-circular-orbit-energy-str-008-arrow-red\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M 0 0 L 10 5 L 0 10 z\" fill=\"#b91c1c\"/></marker><marker id=\"ga-circular-orbit-energy-str-008-arrow-green\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M 0 0 L 10 5 L 0 10 z\" fill=\"#047857\"/></marker><marker id=\"ga-circular-orbit-energy-str-008-arrow-amber\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M 0 0 L 10 5 L 0 10 z\" fill=\"#b45309\"/></marker></defs><rect width=\"720\" height=\"460\" fill=\"#ffffff\"/><g font-family=\"Arial, sans-serif\"><circle cx=\"360\" cy=\"239.2\" r=\"60.996\" fill=\"#e5e7eb\" stroke=\"#1f2937\" stroke-width=\"2\"/><text x=\"360\" y=\"243.2\" text-anchor=\"middle\" font-size=\"12\" fill=\"#1f2937\" font-weight=\"bold\">M</text><circle cx=\"360\" cy=\"239.2\" r=\"179.4\" fill=\"none\" stroke=\"#1d4ed8\" stroke-width=\"1.8\" stroke-dasharray=\"6 4\"/><circle cx=\"539.4\" cy=\"239.2\" r=\"5.5\" fill=\"#1f2937\"/><line x1=\"539.4\" y1=\"239.2\" x2=\"539.4\" y2=\"187.2\" stroke=\"#1d4ed8\" stroke-width=\"2\" marker-end=\"url(#ga-circular-orbit-energy-str-008-arrow-blue)\"/><text x=\"547.4\" y=\"193.2\" text-anchor=\"start\" font-size=\"11\" fill=\"#1d4ed8\">v</text><line x1=\"539.4\" y1=\"239.2\" x2=\"495.4\" y2=\"239.2\" stroke=\"#b91c1c\" stroke-width=\"2\" marker-end=\"url(#ga-circular-orbit-energy-str-008-arrow-red)\"/><text x=\"517.4\" y=\"254.2\" text-anchor=\"middle\" font-size=\"11\" fill=\"#b91c1c\">F_g</text><text x=\"360\" y=\"51.8\" text-anchor=\"middle\" font-size=\"12\" fill=\"#1d4ed8\">r</text></g></svg>",
+    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"720\" height=\"460\" viewBox=\"0 0 720 460\" role=\"img\" aria-label=\"Orbital mechanics and energy profile diagram\"><title>Orbital mechanics and energy profile diagram</title><desc>v; r</desc><defs><marker id=\"ga-circular-orbit-energy-str-104-arrow-dark\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M 0 0 L 10 5 L 0 10 z\" fill=\"#1f2937\"/></marker><marker id=\"ga-circular-orbit-energy-str-104-arrow-blue\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M 0 0 L 10 5 L 0 10 z\" fill=\"#1d4ed8\"/></marker><marker id=\"ga-circular-orbit-energy-str-104-arrow-red\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M 0 0 L 10 5 L 0 10 z\" fill=\"#b91c1c\"/></marker><marker id=\"ga-circular-orbit-energy-str-104-arrow-green\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M 0 0 L 10 5 L 0 10 z\" fill=\"#047857\"/></marker><marker id=\"ga-circular-orbit-energy-str-104-arrow-amber\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M 0 0 L 10 5 L 0 10 z\" fill=\"#b45309\"/></marker></defs><rect width=\"720\" height=\"460\" fill=\"#ffffff\"/><g font-family=\"Arial, sans-serif\"><circle cx=\"360\" cy=\"239.2\" r=\"49.702\" fill=\"#e5e7eb\" stroke=\"#1f2937\" stroke-width=\"2\"/><text x=\"360\" y=\"243.2\" text-anchor=\"middle\" font-size=\"12\" fill=\"#1f2937\" font-weight=\"bold\">M</text><circle cx=\"360\" cy=\"239.2\" r=\"179.4\" fill=\"none\" stroke=\"#1d4ed8\" stroke-width=\"1.8\" stroke-dasharray=\"6 4\"/><circle cx=\"539.4\" cy=\"239.2\" r=\"5.5\" fill=\"#1f2937\"/><line x1=\"539.4\" y1=\"239.2\" x2=\"539.4\" y2=\"187.2\" stroke=\"#1d4ed8\" stroke-width=\"2\" marker-end=\"url(#ga-circular-orbit-energy-str-104-arrow-blue)\"/><text x=\"547.4\" y=\"193.2\" text-anchor=\"start\" font-size=\"11\" fill=\"#1d4ed8\">v</text><line x1=\"539.4\" y1=\"239.2\" x2=\"495.4\" y2=\"239.2\" stroke=\"#b91c1c\" stroke-width=\"2\" marker-end=\"url(#ga-circular-orbit-energy-str-104-arrow-red)\"/><text x=\"517.4\" y=\"254.2\" text-anchor=\"middle\" font-size=\"11\" fill=\"#b91c1c\">F_g</text><text x=\"360\" y=\"51.8\" text-anchor=\"middle\" font-size=\"12\" fill=\"#1d4ed8\">r</text></g></svg>",
     "parts": [
       {
         "partId": "a",
         "prompt": "Calculate the gravitational field strength at the satellite's orbit.",
         "marks": 2,
         "targetQuantityKey": "fieldStrengthNkg",
-        "expectedAnswer": "5.03 N kg⁻¹",
+        "expectedAnswer": "3.21 N kg⁻¹",
         "workingSteps": [
-          "r = R_p + h = 5.1 × 10⁶ + 1.79 × 10⁶ = 6.89 × 10⁶ m.",
-          "g = G M / r² = (6.67 × 10⁻¹¹ × 3.58 × 10²⁴) / (6.89 × 10⁶)² = 5.03 N kg⁻¹."
+          "r = R_p + h = 5.25 × 10⁶ + 1.37 × 10⁷ = 1.895 × 10⁷ m.",
+          "g = G M / r² = (6.67 × 10⁻¹¹ × 1.73 × 10²⁵) / (1.895 × 10⁷)² = 3.21 N kg⁻¹."
         ]
       },
       {
         "partId": "b",
-        "prompt": "Determine the circular orbital speed of the synthetic-aperture radar satellite.",
+        "prompt": "Determine the circular orbital speed of the magnetospheric plasma observatory.",
         "marks": 2,
         "dependsOnPartIds": [
           "a"
         ],
         "targetQuantityKey": "orbitalSpeedMs",
-        "expectedAnswer": "5.89 × 10³ m s⁻¹",
+        "expectedAnswer": "7.80 × 10³ m s⁻¹",
         "workingSteps": [
           "Setting centripetal acceleration v² / r = g gives v = √(g r) = √(G M / r).",
-          "v = 5.89 × 10³ m s⁻¹."
+          "v = 7.80 × 10³ m s⁻¹."
         ]
       },
       {
         "partId": "c",
-        "prompt": "Calculate the orbital period of the synthetic-aperture radar satellite.",
+        "prompt": "Calculate the orbital period of the magnetospheric plasma observatory.",
         "marks": 2,
         "dependsOnPartIds": [
           "b"
         ],
         "targetQuantityKey": "orbitalPeriodS",
-        "expectedAnswer": "7.35 × 10³ s",
+        "expectedAnswer": "1.53 × 10⁴ s",
         "workingSteps": [
-          "T = 2π r / v = 2π × 6.89 × 10⁶ / 5.89 × 10³ = 7.35 × 10³ s."
+          "T = 2π r / v = 2π × 1.895 × 10⁷ / 7.80 × 10³ = 1.53 × 10⁴ s."
         ]
       }
     ]
   },
   {
-    "id": "sp-v2-em-induction-mcq-0100",
+    "id": "sp-v2-em-induction-mcq-0095",
     "syllabi": [
       {
         "syllabus": "ib",
@@ -729,50 +702,50 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
       }
     ],
     "format": "mcq",
-    "difficulty": "standard",
+    "difficulty": "higher",
     "visualFamily": "em-induction",
-    "stem": "Connected to a charge integrator of total loop resistance 12 Ω, a flat electromagnet pole-gap calibration search coil containing 100 turns of area 0.01 m² faces normal to a field that reverses from +0.18 T to −0.108 T in 0.08 s. What is the magnitude of the average emf induced in the coil during the reversal?",
-    "workedSolution": "|ΔB| = |-0.108 − 0.18| = 0.288 T. By Faraday's law, |ε| = N|ΔB|A / Δt = (100 × 0.288 × 0.01) / 0.08 = 3.60 V.",
+    "stem": "Connected to a charge integrator of total loop resistance 2 Ω, a flat earth-inductor compass loop containing 140 turns of area 0.022 m² faces normal to a field that reverses from +0.12 T to −0.120 T in 0.2 s. What total magnitude of electric charge ΔQ flows around the circuit during this reversal?",
+    "workedSolution": "Signed field change |ΔB| = |-0.12 − 0.12| = 0.24 T, so |Δ(NΦ)| = 140 × 0.24 × 0.022 = 0.739 Wb. Induced charge ΔQ = |Δ(NΦ)| / R = 0.370 C.",
     "markScheme": [
       {
         "code": "A1",
-        "criterion": "Evaluates |ΔB| across sign reversal to obtain |ε| = 3.60 V (C).",
+        "criterion": "Accounts for field sign reversal in |Δ(NΦ)| and evaluates ΔQ = |Δ(NΦ)|/R = 0.370 C (A).",
         "marks": 1
       }
     ],
     "totalMarks": 1,
     "conceptId": "electromagnetic-induction-faraday-lenz",
     "familyGroupKey": "electromagnetic-induction-faraday-lenz::faraday-field-reversal-induced-charge",
-    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"760\" height=\"430\" viewBox=\"0 0 760 430\" role=\"img\" aria-label=\"Magnetic flux linkage and Faraday electromagnetic induction diagram\" data-scenario-kind=\"flux-faraday\"><title>Magnetic flux linkage and Faraday electromagnetic induction diagram</title><rect width=\"760\" height=\"430\" fill=\"white\"/><defs><marker id=\"em-arrow-flux-faraday\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0L10 5L0 10Z\" fill=\"#171b1f\"/></marker></defs><g font-family=\"Arial, sans-serif\"><line x1=\"90\" y1=\"86\" x2=\"670\" y2=\"86\" stroke=\"#486581\" stroke-width=\"1.6\" marker-end=\"url(#em-arrow-flux-faraday)\"/><line x1=\"90\" y1=\"150.5\" x2=\"670\" y2=\"150.5\" stroke=\"#486581\" stroke-width=\"1.6\" marker-end=\"url(#em-arrow-flux-faraday)\"/><line x1=\"90\" y1=\"215\" x2=\"670\" y2=\"215\" stroke=\"#486581\" stroke-width=\"1.6\" marker-end=\"url(#em-arrow-flux-faraday)\"/><line x1=\"90\" y1=\"279.5\" x2=\"670\" y2=\"279.5\" stroke=\"#486581\" stroke-width=\"1.6\" marker-end=\"url(#em-arrow-flux-faraday)\"/><line x1=\"90\" y1=\"344\" x2=\"670\" y2=\"344\" stroke=\"#486581\" stroke-width=\"1.6\" marker-end=\"url(#em-arrow-flux-faraday)\"/><line x1=\"380\" y1=\"139.6\" x2=\"380\" y2=\"307.6\" stroke=\"#171b1f\" stroke-width=\"5\" stroke-linecap=\"round\"/><line x1=\"380\" y1=\"223.6\" x2=\"476\" y2=\"223.6\" stroke=\"#171b1f\" stroke-width=\"1.8\" stroke-dasharray=\"5 4\" marker-end=\"url(#em-arrow-flux-faraday)\"/><text x=\"486\" y=\"219.6\" font-size=\"14\" font-style=\"italic\" fill=\"#171b1f\">n̂</text><text x=\"90\" y=\"52\" font-size=\"14\" fill=\"#171b1f\">N = 100,  A = 0.0100 m²</text><text x=\"670\" y=\"52\" text-anchor=\"end\" font-size=\"14\" fill=\"#171b1f\">B₁ → B₂ in Δt = 80.0 ms</text></g></svg>",
+    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"760\" height=\"430\" viewBox=\"0 0 760 430\" role=\"img\" aria-label=\"Magnetic flux linkage and Faraday electromagnetic induction diagram\" data-scenario-kind=\"flux-faraday\"><title>Magnetic flux linkage and Faraday electromagnetic induction diagram</title><rect width=\"760\" height=\"430\" fill=\"white\"/><defs><marker id=\"em-arrow-flux-faraday\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0L10 5L0 10Z\" fill=\"#171b1f\"/></marker></defs><g font-family=\"Arial, sans-serif\"><line x1=\"90\" y1=\"86\" x2=\"670\" y2=\"86\" stroke=\"#486581\" stroke-width=\"1.6\" marker-end=\"url(#em-arrow-flux-faraday)\"/><line x1=\"90\" y1=\"150.5\" x2=\"670\" y2=\"150.5\" stroke=\"#486581\" stroke-width=\"1.6\" marker-end=\"url(#em-arrow-flux-faraday)\"/><line x1=\"90\" y1=\"215\" x2=\"670\" y2=\"215\" stroke=\"#486581\" stroke-width=\"1.6\" marker-end=\"url(#em-arrow-flux-faraday)\"/><line x1=\"90\" y1=\"279.5\" x2=\"670\" y2=\"279.5\" stroke=\"#486581\" stroke-width=\"1.6\" marker-end=\"url(#em-arrow-flux-faraday)\"/><line x1=\"90\" y1=\"344\" x2=\"670\" y2=\"344\" stroke=\"#486581\" stroke-width=\"1.6\" marker-end=\"url(#em-arrow-flux-faraday)\"/><line x1=\"380\" y1=\"139.6\" x2=\"380\" y2=\"307.6\" stroke=\"#171b1f\" stroke-width=\"5\" stroke-linecap=\"round\"/><line x1=\"380\" y1=\"223.6\" x2=\"476\" y2=\"223.6\" stroke=\"#171b1f\" stroke-width=\"1.8\" stroke-dasharray=\"5 4\" marker-end=\"url(#em-arrow-flux-faraday)\"/><text x=\"486\" y=\"219.6\" font-size=\"14\" font-style=\"italic\" fill=\"#171b1f\">n̂</text><text x=\"90\" y=\"52\" font-size=\"14\" fill=\"#171b1f\">N = 140,  A = 0.0220 m²</text><text x=\"670\" y=\"52\" text-anchor=\"end\" font-size=\"14\" fill=\"#171b1f\">B₁ = 120 mT → B₂ = -120 mT in Δt = 200 ms</text></g></svg>",
     "options": [
       {
         "label": "A",
-        "text": "0.300 V",
-        "isCorrect": false,
-        "distractorRationale": "Divides emf by resistance R, reporting induced current instead of induced emf."
-      },
-      {
-        "label": "B",
-        "text": "0.900 V",
-        "isCorrect": false,
-        "distractorRationale": "Subtracts the field magnitudes |B₁| − |B₂| instead of taking the signed vector difference |B₂ − B₁|."
-      },
-      {
-        "label": "C",
-        "text": "3.60 V",
+        "text": "0.370 C",
         "isCorrect": true
       },
       {
-        "label": "D",
-        "text": "2.25 V",
+        "label": "B",
+        "text": "1.85 C",
         "isCorrect": false,
-        "distractorRationale": "Treats the field as dropping only to zero (ΔB = B₁) rather than reversing sign to B₂."
+        "distractorRationale": "Divides by Δt and reports average induced current I instead of total charge ΔQ = N|ΔΦ|/R."
+      },
+      {
+        "label": "C",
+        "text": "0.185 C",
+        "isCorrect": false,
+        "distractorRationale": "Uses B₁ alone instead of the full signed change |B₂ − B₁| across the field polarity reversal."
+      },
+      {
+        "label": "D",
+        "text": "1.48 C",
+        "isCorrect": false,
+        "distractorRationale": "Multiplies |Δ(NΦ)| by resistance R instead of dividing by R."
       }
     ],
-    "correctOptionIndex": 2
+    "correctOptionIndex": 0
   },
   {
-    "id": "sp-qn-structured-245",
+    "id": "sp-qn-structured-251",
     "syllabi": [
       {
         "syllabus": "ib",
@@ -796,8 +769,8 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
     "format": "structured",
     "difficulty": "foundation",
     "visualFamily": "quantum-nuclear",
-    "stem": "A nuclear data benchmark for a blanket-breeding fusion energetics calculation specifies lithium-6 nucleus (6.013477 u) + deuteron (2.013553 u) → 2 alpha particles (each of mass 4.001506 u) (with mass-energy equivalent u = 931.5 MeV c⁻² and e = 1.60 × 10⁻¹⁹ C).",
-    "workedSolution": "(a) Δm = Σm_reactants − Σm_products = 0.0240 u. Final answer: 0.0240 u. (b) Q = 0.0240 × 931.5 = 22.4 MeV. Final answer: 22.4 MeV. (c) Total nucleon number A = 8. Final answer: 8.",
+    "stem": "Calorimetric analysis of a spherical-tokamak deuterium-burn diagnostic shot evaluates the single-event nuclear fusion step 2 deuterons (each of mass 2.013553 u) → triton (3.015501 u) + proton (1.007276 u) (take u = 931.5 MeV c⁻², e = 1.60 × 10⁻¹⁹ C).",
+    "workedSolution": "(a) Δm = Σm_reactants − Σm_products = 4.33 × 10⁻³ u. Final answer: 4.33 × 10⁻³ u. (b) Q = 4.33 × 10⁻³ × 931.5 = 4.03 MeV. Final answer: 4.03 MeV. (c) Total nucleon number A = 4. Final answer: 4.",
     "markScheme": [
       {
         "code": "M1",
@@ -808,7 +781,7 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
       {
         "code": "A1",
         "partId": "a",
-        "criterion": "Evaluates correctly to 0.0240 u.",
+        "criterion": "Evaluates correctly to 4.33 × 10⁻³ u.",
         "marks": 1
       },
       {
@@ -820,13 +793,13 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
       {
         "code": "A1",
         "partId": "b",
-        "criterion": "Evaluates correctly to 22.4 MeV.",
+        "criterion": "Evaluates correctly to 4.03 MeV.",
         "marks": 1
       },
       {
         "code": "A1",
         "partId": "c",
-        "criterion": "Sums nucleon numbers across reactants (or products) to obtain 8.",
+        "criterion": "Sums nucleon numbers across reactants (or products) to obtain 4.",
         "marks": 1
       }
     ],
@@ -840,9 +813,9 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
         "prompt": "Calculate the rest-mass decrease Δm, in atomic mass units (u), for one fusion event.",
         "marks": 2,
         "targetQuantityKey": "massDifferenceU",
-        "expectedAnswer": "0.0240 u",
+        "expectedAnswer": "4.33 × 10⁻³ u",
         "workingSteps": [
-          "Δm = Σm_reactants − Σm_products = 0.0240 u."
+          "Δm = Σm_reactants − Σm_products = 4.33 × 10⁻³ u."
         ]
       },
       {
@@ -853,9 +826,9 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
           "a"
         ],
         "targetQuantityKey": "qValueMeV",
-        "expectedAnswer": "22.4 MeV",
+        "expectedAnswer": "4.03 MeV",
         "workingSteps": [
-          "Q = 0.0240 × 931.5 = 22.4 MeV."
+          "Q = 4.33 × 10⁻³ × 931.5 = 4.03 MeV."
         ]
       },
       {
@@ -863,178 +836,179 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
         "prompt": "State the total nucleon number conserved on each side of this fusion equation.",
         "marks": 1,
         "targetQuantityKey": "totalReactantA",
-        "expectedAnswer": "8",
+        "expectedAnswer": "4",
         "workingSteps": [
-          "Total nucleon number A = 8."
+          "Total nucleon number A = 4."
         ]
       }
     ]
   },
   {
-    "id": "sp-graphs-0193-struct",
+    "id": "sp-v3-ncuk-ac4-ivcurve-09",
     "syllabi": [
       {
-        "syllabus": "ib",
-        "level": "SL",
-        "topicId": "ib-theme-a",
-        "subtopicId": "ib-a1-kinematics"
+        "syllabus": "ncuk",
+        "level": "IFY-S1",
+        "topicId": "ncuk-ac4",
+        "subtopicId": "ncuk-ac4-2"
       },
       {
         "syllabus": "alevel",
         "level": "Y12",
-        "topicId": "alevel-sec4-mechanics-materials",
-        "subtopicId": "alevel-3-4-1-force-energy-momentum"
-      },
-      {
-        "syllabus": "ncuk",
-        "level": "IFY-S1",
-        "topicId": "ncuk-ac2",
-        "subtopicId": "ncuk-ac2-1"
+        "topicId": "alevel-sec5-electricity",
+        "subtopicId": "alevel-3-5-1-current-electricity"
       }
     ],
     "format": "structured",
-    "difficulty": "foundation",
-    "visualFamily": "cartesian_plot",
-    "stem": "In a laboratory motion trial, a robotic warehouse retrieval carriage travels along a straight aisle rail with forward taken as positive. The velocity–time graph records its motion from t = 0.0 s to t = 12.0 s, including uniform reversal thrust from t = 6.0 s to t = 10.0 s.",
-    "workedSolution": "(a) Zero-velocity crossing is at t = 9 s. Positive area = 108 m and unsigned negative area = 15.0 m, giving total distance = 123 m. (b) Net displacement = 108 − 15.0 = 93.0 m; average velocity = 93.0 / 12 = 7.75 m s⁻¹. (c) Acceleration = (−6 − 18) / (10 − 6) = -6.00 m s⁻².",
+    "difficulty": "higher",
+    "visualFamily": "graphs",
+    "stem": "The graph shows the I–V characteristic recorded for an amber LED in an optics rig in an NCUK laboratory investigation, with current plotted on the vertical axis and potential difference on the horizontal axis. At the highlighted operating point, V = 2.20 V and I = 20 mA.",
+    "workedSolution": "(a) R = V / I = 110.0 Ω ≈ 110 Ω. (b) connect a potential divider with a series protective resistor an ammeter in series and a voltmeter in parallel across the component and reverse the supply connections for negative readings. (c) conducts sharply above the forward threshold voltage and has very high resistance in reverse bias.",
     "markScheme": [
       {
         "code": "M1",
         "partId": "a",
-        "criterion": "Finds zero-crossing t = 9 s and evaluates both unsigned areas (108 m and 15.0 m).",
+        "criterion": "Substitutes operating-point values into R = V / I (converting mA to A if needed).",
         "marks": 1
       },
       {
         "code": "A1",
         "partId": "a",
-        "criterion": "Obtains total distance = 123 m.",
+        "criterion": "Correct static resistance 110 Ω.",
         "marks": 1
       },
       {
-        "code": "M1",
+        "code": "B1",
         "partId": "b",
-        "criterion": "Subtracts areas for net displacement (93.0 m) and divides by 12 s.",
+        "criterion": "Specifies potential divider (or variable supply) with series ammeter and parallel voltmeter.",
         "marks": 1
       },
       {
-        "code": "A1",
+        "code": "B1",
         "partId": "b",
-        "criterion": "Obtains average velocity = 7.75 m s⁻¹.",
+        "criterion": "Includes a series protective resistor and reversing supply connections for negative voltages.",
         "marks": 1
       },
       {
-        "code": "A1",
+        "code": "B1",
         "partId": "c",
-        "criterion": "Obtains acceleration = -6.00 m s⁻² including negative sign.",
+        "criterion": "Correctly describes how resistance changes across the graph.",
+        "marks": 1
+      },
+      {
+        "code": "B1",
+        "partId": "c",
+        "criterion": "Correct microscopic explanation: conducts sharply above the forward threshold voltage and has very high resistance in reverse bias.",
         "marks": 1
       }
     ],
-    "totalMarks": 5,
-    "conceptId": "motion-graphs",
-    "familyGroupKey": "motion-graphs::vt-signed-rebound-distance",
-    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"720\" height=\"500\" viewBox=\"0 0 720 500\" role=\"img\" aria-label=\"velocity / m s⁻¹ against time / s\"><rect width=\"720\" height=\"500\" fill=\"white\"/><defs><clipPath id=\"plot-sp-graphs-0193-struct-figure\"><rect x=\"112\" y=\"38\" width=\"528\" height=\"378\"/></clipPath></defs><path d=\"M112 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M156 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M200 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M244 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M288 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M332 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M376 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M420 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M464 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M508 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M552 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M596 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M640 38V416\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 400.25H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 360.875H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 321.5H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 282.125H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 242.75H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 203.375H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 164H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 124.625H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 85.25H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 45.875H640\" stroke=\"#d9dde1\" stroke-width=\"0.7\"/><path d=\"M112 38V416\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M200 38V416\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M288 38V416\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M376 38V416\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M464 38V416\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M552 38V416\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M640 38V416\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M112 400.25H640\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M112 321.5H640\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M112 242.75H640\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M112 164H640\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M112 85.25H640\" stroke=\"#a0a7ad\" stroke-width=\"1\"/><path d=\"M112 321.5H640\" fill=\"none\" stroke=\"#202429\" stroke-width=\"1.7\"/><path d=\"M112 416V38\" fill=\"none\" stroke=\"#202429\" stroke-width=\"1.7\"/><path d=\"M112 316.5v10\" stroke=\"#202429\"/><text x=\"112\" y=\"347.5\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">0</text><path d=\"M200 316.5v10\" stroke=\"#202429\"/><text x=\"200\" y=\"347.5\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">2</text><path d=\"M288 316.5v10\" stroke=\"#202429\"/><text x=\"288\" y=\"347.5\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">4</text><path d=\"M376 316.5v10\" stroke=\"#202429\"/><text x=\"376\" y=\"347.5\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">6</text><path d=\"M464 316.5v10\" stroke=\"#202429\"/><text x=\"464\" y=\"347.5\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">8</text><path d=\"M552 316.5v10\" stroke=\"#202429\"/><text x=\"552\" y=\"347.5\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">10</text><path d=\"M640 316.5v10\" stroke=\"#202429\"/><text x=\"640\" y=\"347.5\" text-anchor=\"middle\" font-size=\"17\" font-family=\"Arial, sans-serif\">12</text><path d=\"M107 400.25h10\" stroke=\"#202429\"/><text x=\"100\" y=\"406.2\" text-anchor=\"end\" font-size=\"17\" font-family=\"Arial, sans-serif\">-5</text><path d=\"M107 321.5h10\" stroke=\"#202429\"/><text x=\"100\" y=\"327.45\" text-anchor=\"end\" font-size=\"17\" font-family=\"Arial, sans-serif\">0</text><path d=\"M107 242.75h10\" stroke=\"#202429\"/><text x=\"100\" y=\"248.7\" text-anchor=\"end\" font-size=\"17\" font-family=\"Arial, sans-serif\">5</text><path d=\"M107 164h10\" stroke=\"#202429\"/><text x=\"100\" y=\"169.95\" text-anchor=\"end\" font-size=\"17\" font-family=\"Arial, sans-serif\">10</text><path d=\"M107 85.25h10\" stroke=\"#202429\"/><text x=\"100\" y=\"91.2\" text-anchor=\"end\" font-size=\"17\" font-family=\"Arial, sans-serif\">15</text><path d=\"M112 321.5 L244 38 L376 38 L552 416 L640 416\" fill=\"none\" stroke=\"#15191d\" stroke-width=\"2.2\" stroke-linejoin=\"round\" stroke-linecap=\"round\" clip-path=\"url(#plot-sp-graphs-0193-struct-figure)\"/><text x=\"376\" y=\"480\" text-anchor=\"middle\" font-size=\"20\" font-family=\"Arial, sans-serif\">time / s</text><text transform=\"translate(28 227) rotate(-90)\" text-anchor=\"middle\" font-size=\"20\" font-family=\"Arial, sans-serif\">velocity / m s⁻¹</text></svg>",
+    "totalMarks": 6,
+    "conceptId": "ohms-law-iv-characteristics",
+    "familyGroupKey": "ohms-law-iv-characteristics::ncuk-component-iv-curve-characteristic",
+    "questionStyle": "mixed-exam",
+    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"400\" viewBox=\"0 0 640 400\" role=\"img\" aria-label=\"Current against potential difference characteristic curve\"><title>Current against potential difference characteristic curve</title><defs><marker id=\"arr-iv-sp-v3-ncuk-ac4-ivcurve-0\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M 0 1 L 9 5 L 0 9 z\" fill=\"#171b1f\"/></marker></defs><rect width=\"640\" height=\"400\" fill=\"#ffffff\"/><g font-family=\"'Plus Jakarta Sans', 'Segoe UI', Helvetica, Arial, sans-serif\"><rect x=\"88\" y=\"38\" width=\"502\" height=\"294\" fill=\"#fbfcfd\" stroke=\"#cbd5e1\" stroke-width=\"1\"/><line x1=\"255.33\" y1=\"38\" x2=\"255.33\" y2=\"332\" stroke=\"#eef2f6\" stroke-width=\"1\"/><line x1=\"422.67\" y1=\"38\" x2=\"422.67\" y2=\"332\" stroke=\"#eef2f6\" stroke-width=\"1\"/><line x1=\"88\" y1=\"234\" x2=\"590\" y2=\"234\" stroke=\"#eef2f6\" stroke-width=\"1\"/><line x1=\"88\" y1=\"136\" x2=\"590\" y2=\"136\" stroke=\"#eef2f6\" stroke-width=\"1\"/><line x1=\"171.67\" y1=\"38\" x2=\"171.67\" y2=\"332\" stroke=\"#d8e1ea\" stroke-width=\"1.1\"/><line x1=\"339\" y1=\"38\" x2=\"339\" y2=\"332\" stroke=\"#d8e1ea\" stroke-width=\"1.1\"/><line x1=\"506.33\" y1=\"38\" x2=\"506.33\" y2=\"332\" stroke=\"#d8e1ea\" stroke-width=\"1.1\"/><line x1=\"88\" y1=\"283\" x2=\"590\" y2=\"283\" stroke=\"#d8e1ea\" stroke-width=\"1.1\"/><line x1=\"88\" y1=\"185\" x2=\"590\" y2=\"185\" stroke=\"#d8e1ea\" stroke-width=\"1.1\"/><line x1=\"88\" y1=\"87\" x2=\"590\" y2=\"87\" stroke=\"#d8e1ea\" stroke-width=\"1.1\"/><line x1=\"88\" y1=\"185\" x2=\"602\" y2=\"185\" stroke=\"#171b1f\" stroke-width=\"2\" marker-end=\"url(#arr-iv-sp-v3-ncuk-ac4-ivcurve-0)\"/><line x1=\"339\" y1=\"332\" x2=\"339\" y2=\"26\" stroke=\"#171b1f\" stroke-width=\"2\" marker-end=\"url(#arr-iv-sp-v3-ncuk-ac4-ivcurve-0)\"/><line x1=\"171.67\" y1=\"332\" x2=\"171.67\" y2=\"338\" stroke=\"#171b1f\" stroke-width=\"1.5\"/><text x=\"171.67\" y=\"354\" text-anchor=\"middle\" font-size=\"12\" fill=\"#334155\">−2</text><line x1=\"339\" y1=\"332\" x2=\"339\" y2=\"338\" stroke=\"#171b1f\" stroke-width=\"1.5\"/><text x=\"339\" y=\"354\" text-anchor=\"middle\" font-size=\"12\" fill=\"#334155\">0</text><line x1=\"506.33\" y1=\"332\" x2=\"506.33\" y2=\"338\" stroke=\"#171b1f\" stroke-width=\"1.5\"/><text x=\"506.33\" y=\"354\" text-anchor=\"middle\" font-size=\"12\" fill=\"#334155\">2</text><line x1=\"82\" y1=\"283\" x2=\"88\" y2=\"283\" stroke=\"#171b1f\" stroke-width=\"1.5\"/><text x=\"77\" y=\"287\" text-anchor=\"end\" font-size=\"12\" fill=\"#334155\">−20</text><line x1=\"82\" y1=\"185\" x2=\"88\" y2=\"185\" stroke=\"#171b1f\" stroke-width=\"1.5\"/><text x=\"77\" y=\"189\" text-anchor=\"end\" font-size=\"12\" fill=\"#334155\">0</text><line x1=\"82\" y1=\"87\" x2=\"88\" y2=\"87\" stroke=\"#171b1f\" stroke-width=\"1.5\"/><text x=\"77\" y=\"91\" text-anchor=\"end\" font-size=\"12\" fill=\"#334155\">20</text><text x=\"339\" y=\"378\" text-anchor=\"middle\" font-size=\"14\" fill=\"#171b1f\" font-weight=\"600\">Potential difference V / V</text><text x=\"24\" y=\"185\" text-anchor=\"middle\" font-size=\"14\" fill=\"#171b1f\" font-weight=\"600\" transform=\"rotate(-90 24 185)\">Current I / mA</text><path d=\"M88 185 L96.37 185 L104.73 185 L113.1 185 L121.47 185 L129.83 185 L138.2 185 L146.57 185 L154.93 185 L163.3 185 L171.67 185 L180.03 185 L188.4 185 L196.77 185 L205.13 185 L213.5 185 L221.87 185 L230.23 185 L238.6 185 L246.97 185 L255.33 185 L263.7 185 L272.07 185 L280.43 185 L288.8 185 L297.17 185 L305.53 185 L313.9 185 L322.27 185 L330.63 185 L339 185 L347.37 185 L355.73 185 L364.1 185 L372.47 185 L380.83 185 L389.2 185 L397.57 185 L405.93 185 L414.3 185 L422.67 185 L431.03 185 L439.4 185 L447.77 185 L456.13 185 L464.5 184.86 L472.87 181.97 L481.23 175.39 L489.6 165.11 L497.97 151.13 L506.33 133.45 L514.7 112.07 L523.07 87 L531.43 58.23 L539.8 43.88 L548.17 43.88 L556.53 43.88 L564.9 43.88 L573.27 43.88 L581.63 43.88 L590 43.88\" fill=\"none\" stroke=\"#1d4ed8\" stroke-width=\"2.6\"/><circle cx=\"523.07\" cy=\"87\" r=\"4.5\" fill=\"#b91c1c\" stroke=\"#ffffff\" stroke-width=\"1.5\"/></g></svg>",
     "parts": [
       {
         "partId": "a",
-        "prompt": "Calculate the total distance travelled between t = 0.0 s and t = 12.0 s.",
+        "prompt": "Calculate the static resistance of the component at the highlighted operating point.",
         "marks": 2,
-        "targetQuantityKey": "unsignedArea",
-        "expectedAnswer": "123 m",
+        "targetMode": "quantitative",
+        "targetQuantityKey": "staticResistanceOhm",
+        "expectedAnswer": "110 Ω",
         "workingSteps": [
-          "Velocity crosses zero at t = 9 s; forward area = 108 m.",
-          "Unsigned reverse area = 15.0 m, so total distance = 108 + 15.0 = 123 m."
+          "Recall that static resistance at a point is R = V / I (not the inverse of the local tangent).",
+          "Substitute V = 2.200 V and I = 0.02000 A to obtain R = 110.0 Ω ≈ 110 Ω."
         ]
       },
       {
         "partId": "b",
-        "prompt": "Determine the net displacement and hence calculate the average velocity over the 12.0 s interval.",
+        "prompt": "Describe the circuit arrangement and experimental procedure used to obtain a complete I–V characteristic safely across positive and negative potential differences.",
         "marks": 2,
-        "dependsOnPartIds": [
-          "a"
-        ],
-        "targetQuantityKey": "meanRate",
-        "expectedAnswer": "7.75 m s⁻¹",
+        "targetMode": "qualitative",
+        "targetQuantityKey": "ledProcedureSummary",
+        "expectedAnswer": "To obtain the full characteristic safely, connect a potential divider with a series protective resistor an ammeter in series and a voltmeter in parallel across the component and reverse the supply connections for negative readings.",
         "workingSteps": [
-          "Net displacement Δs = 108 − 15.0 = 93.0 m.",
-          "Average velocity = Δs / Δt = 93.0 / 12 = 7.75 m s⁻¹."
+          "Use a potential divider to vary potential difference smoothly from zero while limiting excessive current with a protective resistor.",
+          "Measure current with a series ammeter, potential difference with a parallel voltmeter, and reverse the supply leads for negative polarity."
         ]
       },
       {
         "partId": "c",
-        "prompt": "Calculate the acceleration between t = 6.0 s and t = 10.0 s.",
-        "marks": 1,
-        "targetQuantityKey": "gradient",
-        "expectedAnswer": "-6.00 m s⁻²",
+        "prompt": "Explain the physical shape of the I–V characteristic in terms of charge carriers and resistance.",
+        "marks": 2,
+        "targetMode": "qualitative",
+        "targetQuantityKey": "behaviorSummary",
+        "expectedAnswer": "The curve shows that the component conducts sharply above the forward threshold voltage and has very high resistance in reverse bias.",
         "workingSteps": [
-          "a = (−6 − 18) / (10 − 6) = -6.00 m s⁻²."
+          "Link the changing ratio of potential difference to current directly to the microscopic conduction mechanism."
         ]
       }
     ]
   },
   {
-    "id": "sp-circuits-09-mcq-176",
+    "id": "sp-v2-circuits-mcq-0090",
     "syllabi": [
       {
         "syllabus": "ib",
-        "level": "SL",
+        "level": "HL",
         "topicId": "ib-theme-b",
         "subtopicId": "ib-b5-current-circuits"
       },
       {
         "syllabus": "alevel",
-        "level": "Y13",
+        "level": "Y12",
         "topicId": "alevel-sec5-electricity",
         "subtopicId": "alevel-3-5-1-current-electricity"
       },
       {
         "syllabus": "ncuk",
-        "level": "IFY-S1",
+        "level": "IFY",
         "topicId": "ncuk-ac4",
         "subtopicId": "ncuk-ac4-3"
       }
     ],
     "format": "mcq",
-    "difficulty": "foundation",
+    "difficulty": "standard",
     "visualFamily": "circuit_network",
-    "stem": "During a variable-resistor cell characterisation practical (modelled by source V with internal and load resistances R in series), terminal p.d. is 23.4 V at current 1.2 A and drops to 10.2 V when current increases to 5.6 A. What is the internal resistance of the source?",
-    "workedSolution": "Using V = ε − I r, internal resistance r = (V_1 − V_2)/(I_2 − I_1) = (23.4 − 10.2)/(5.6 − 1.2) = 3.00 Ω. Substituting back gives ε = V_1 + I_1 r = 23.4 + (1.2)(3.00) = 27.0 V.",
+    "stem": "In an MPPT solar-module bench test, ideal meters across a constant-r source record V_1 = 19.6 V when I_1 = 1.2 A, and V_2 = 12.6 V when I_2 = 4 A. What is the electromotive force (emf) of the source?",
+    "workedSolution": "Using V = ε − I r, internal resistance r = (V_1 − V_2)/(I_2 − I_1) = (19.6 − 12.6)/(4 − 1.2) = 2.50 Ω. Substituting back gives ε = V_1 + I_1 r = 19.6 + (1.2)(2.50) = 22.6 V.",
     "markScheme": [
       {
         "code": "A1",
-        "criterion": "Solves simultaneous V = ε − I r equations to obtain 3.00 Ω.",
+        "criterion": "Solves simultaneous V = ε − I r equations to obtain 22.6 V.",
         "marks": 1
       }
     ],
     "totalMarks": 1,
     "conceptId": "emf-internal-resistance",
     "familyGroupKey": "emf-internal-resistance::two-point-vi-emf-internal-resistance",
-    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"760\" height=\"500\" viewBox=\"0 0 760 500\" role=\"img\" aria-label=\"Circuit diagram with 3 components\"><rect width=\"760\" height=\"500\" fill=\"white\"/><defs><marker id=\"circuit-arrow-sp-circuits-09-mcq-176-figure\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0L10 5L0 10Z\" fill=\"#171b1f\"/></marker></defs><path data-wire-id=\"sp-circuits-09-mcq-176-figure-main-wire-1\" d=\"M101.12 142.021818L101.12 250\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><path data-wire-id=\"sp-circuits-09-mcq-176-figure-main-wire-2\" d=\"M101.12 250L101.12 357.978182\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><path data-wire-id=\"sp-circuits-09-mcq-176-figure-main-wire-3\" d=\"M658.88 142.021818L658.88 250\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><path data-wire-id=\"sp-circuits-09-mcq-176-figure-main-wire-4\" d=\"M658.88 250L658.88 357.978182\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><path d=\"M101.12 142.021818L370 142.021818M390 142.021818L658.88 142.021818\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><g transform=\"translate(380 142.021818) rotate(0)\"><g data-component-id=\"supply\" data-component-kind=\"cell\"><path d=\"M-6 -22V22M7 -13V13\" stroke=\"#171b1f\" stroke-width=\"2\"/></g></g><text x=\"380\" y=\"178.021818\" text-anchor=\"middle\" font-size=\"18\" font-family=\"Arial, sans-serif\">V</text><path d=\"M101.12 357.978182L200.56 357.978182M280.56 357.978182L380 357.978182\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><g transform=\"translate(240.56 357.978182) rotate(0)\"><rect data-component-id=\"r1\" data-component-kind=\"resistor\" x=\"-38\" y=\"-14\" width=\"76\" height=\"28\" fill=\"white\" stroke=\"#171b1f\" stroke-width=\"2\"/></g><text x=\"240.56\" y=\"393.978182\" text-anchor=\"middle\" font-size=\"18\" font-family=\"Arial, sans-serif\">R</text><path d=\"M380 357.978182L479.44 357.978182M559.44 357.978182L658.88 357.978182\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><g transform=\"translate(519.44 357.978182) rotate(0)\"><rect data-component-id=\"r2\" data-component-kind=\"resistor\" x=\"-38\" y=\"-14\" width=\"76\" height=\"28\" fill=\"white\" stroke=\"#171b1f\" stroke-width=\"2\"/></g><text x=\"519.44\" y=\"393.978182\" text-anchor=\"middle\" font-size=\"18\" font-family=\"Arial, sans-serif\">R</text></svg>",
+    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"760\" height=\"500\" viewBox=\"0 0 760 500\" role=\"img\" aria-label=\"Circuit diagram with 3 components\"><rect width=\"760\" height=\"500\" fill=\"white\"/><defs><marker id=\"circuit-arrow-sp-v2-circuits-mcq-0090-figure\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0L10 5L0 10Z\" fill=\"#171b1f\"/></marker></defs><path data-wire-id=\"sp-v2-circuits-mcq-0090-figure-main-wire-1\" d=\"M101.12 142.021818L101.12 250\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><path data-wire-id=\"sp-v2-circuits-mcq-0090-figure-main-wire-2\" d=\"M101.12 250L101.12 357.978182\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><path data-wire-id=\"sp-v2-circuits-mcq-0090-figure-main-wire-3\" d=\"M658.88 142.021818L658.88 250\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><path data-wire-id=\"sp-v2-circuits-mcq-0090-figure-main-wire-4\" d=\"M658.88 250L658.88 357.978182\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><path d=\"M101.12 142.021818L370 142.021818M390 142.021818L658.88 142.021818\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><g transform=\"translate(380 142.021818) rotate(0)\"><g data-component-id=\"supply\" data-component-kind=\"cell\"><path d=\"M-6 -22V22M7 -13V13\" stroke=\"#171b1f\" stroke-width=\"2\"/></g></g><text x=\"380\" y=\"178.021818\" text-anchor=\"middle\" font-size=\"18\" font-family=\"Arial, sans-serif\">V</text><path d=\"M101.12 357.978182L200.56 357.978182M280.56 357.978182L380 357.978182\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><g transform=\"translate(240.56 357.978182) rotate(0)\"><rect data-component-id=\"r1\" data-component-kind=\"resistor\" x=\"-38\" y=\"-14\" width=\"76\" height=\"28\" fill=\"white\" stroke=\"#171b1f\" stroke-width=\"2\"/></g><text x=\"240.56\" y=\"393.978182\" text-anchor=\"middle\" font-size=\"18\" font-family=\"Arial, sans-serif\">R</text><path d=\"M380 357.978182L479.44 357.978182M559.44 357.978182L658.88 357.978182\" fill=\"none\" stroke=\"#171b1f\" stroke-width=\"2\"/><g transform=\"translate(519.44 357.978182) rotate(0)\"><rect data-component-id=\"r2\" data-component-kind=\"resistor\" x=\"-38\" y=\"-14\" width=\"76\" height=\"28\" fill=\"white\" stroke=\"#171b1f\" stroke-width=\"2\"/></g><text x=\"519.44\" y=\"393.978182\" text-anchor=\"middle\" font-size=\"18\" font-family=\"Arial, sans-serif\">R</text></svg>",
     "options": [
       {
         "label": "A",
-        "text": "0.333 Ω",
+        "text": "16.1 V",
         "isCorrect": false,
-        "distractorRationale": "Inverts the gradient to calculate |ΔI / ΔV| instead of |ΔV / ΔI|."
+        "distractorRationale": "Takes the arithmetic mean of the two terminal voltages instead of extrapolating V = ε − I r to I = 0."
       },
       {
         "label": "B",
-        "text": "3.00 Ω",
-        "isCorrect": true
+        "text": "20.1 V",
+        "isCorrect": false,
+        "distractorRationale": "Uses the inverted slope ΔI / ΔV in place of internal resistance r when computing ε = V_1 + I_1 r."
       },
       {
         "label": "C",
-        "text": "4.94 Ω",
-        "isCorrect": false,
-        "distractorRationale": "Divides the sum of voltages by the sum of currents instead of evaluating the magnitude of the V–I gradient."
+        "text": "22.6 V",
+        "isCorrect": true
       },
       {
         "label": "D",
-        "text": "19.5 Ω",
+        "text": "32.2 V",
         "isCorrect": false,
-        "distractorRationale": "Computes static ratio V_1 / I_1 (19.5 Ω), which is the external load resistance at the first setting rather than internal resistance."
+        "distractorRationale": "Adds the two measured terminal potential differences directly."
       }
     ],
-    "correctOptionIndex": 1
+    "correctOptionIndex": 2
   },
   {
     "id": "sp-fields-struct-0330",
@@ -1146,7 +1120,7 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
     ]
   },
   {
-    "id": "sp-mech-mcq-0329",
+    "id": "sp-mech-mcq-0216",
     "syllabi": [
       {
         "syllabus": "ib",
@@ -1168,50 +1142,50 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
       }
     ],
     "format": "mcq",
-    "difficulty": "foundation",
+    "difficulty": "standard",
     "visualFamily": "mechanics_scene",
-    "stem": "Along a polished ice test channel, sled X of mass 2 kg travelling right at 8 m s⁻¹ meets sled Y of mass 3 kg travelling left at 3 m s⁻¹ (not drawn). After impact sled Y rebounds right at 4 m s⁻¹. What is the post-collision velocity of sled X?",
-    "workedSolution": "Taking rightward as positive: p_before = (2)(8) + (3)(−3) = 7.00 kg m s⁻¹. From p_before = (2)v_X + (3)(4), v_X = -2.50 m s⁻¹, which is 2.50 m s⁻¹ to the left.",
+    "stem": "On a precision gas-bearing trough, lighter rider X of mass 1 kg moving right at 7 m s⁻¹ strikes stationary heavier rider Y of mass 3.2 kg, causing rider Y to move right at 2.82 m s⁻¹ while rider X rebounds to the left. How much kinetic energy is dissipated in this rebound collision?",
+    "workedSolution": "Taking rightward positive, (1)(7) = (1)v_X + (3.2)(2.82) gives v_X = -2.02 m s⁻¹ (2.02 m s⁻¹ to the left). Scalar final kinetic energies add: K_f = ½(1)(2.02)² + ½(3.2)(2.82)² = 14.8 J. Energy lost = 24.5 J − K_f = 9.73 J. Target = 9.73 J.",
     "markScheme": [
       {
         "code": "A1",
-        "criterion": "Uses signed head-on momentum p_before = 7.00 kg m s⁻¹ to obtain 2.50 m s⁻¹ to the left (D).",
+        "criterion": "Finds rebound speed 2.02 m s⁻¹ and sums scalar kinetic energies to obtain 9.73 J (B).",
         "marks": 1
       }
     ],
     "totalMarks": 1,
     "conceptId": "linear-momentum-impulse",
-    "familyGroupKey": "linear-momentum-impulse::head-on-signed-momentum-conservation",
-    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"620\" height=\"430\" viewBox=\"0 0 620 430\" role=\"img\"><title>Mechanics diagram</title><desc>X, 2 kg; Y, 3 kg; 8 m s⁻¹</desc><defs><marker id=\"mechanics-arrow-sp-mech-mcq-0329-figure\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M 0 0 L 10 5 L 0 10 z\"/></marker></defs><g font-family=\"Arial, sans-serif\" font-size=\"15\"><polyline points=\"158.8,262.6 461.2,262.6\" fill=\"none\" stroke=\"#202020\" stroke-width=\"2\"/><g transform=\"translate(230.8 241) rotate(0)\"><rect x=\"-19\" y=\"-13\" width=\"38\" height=\"26\" fill=\"white\" stroke=\"#202020\" stroke-width=\"2\"/><circle cx=\"-12\" cy=\"17\" r=\"4\"/><circle cx=\"12\" cy=\"17\" r=\"4\"/></g><text x=\"230.8\" y=\"216\" text-anchor=\"middle\">X, 2 kg</text><g transform=\"translate(392.8 241) rotate(0)\"><rect x=\"-19\" y=\"-13\" width=\"38\" height=\"26\" fill=\"white\" stroke=\"#202020\" stroke-width=\"2\"/><circle cx=\"-12\" cy=\"17\" r=\"4\"/><circle cx=\"12\" cy=\"17\" r=\"4\"/></g><text x=\"392.8\" y=\"216\" text-anchor=\"middle\">Y, 3 kg</text><line x1=\"230.8\" y1=\"241\" x2=\"313.6\" y2=\"241\" stroke=\"#202020\" stroke-width=\"2\" marker-end=\"url(#mechanics-arrow-sp-mech-mcq-0329-figure)\"/><text x=\"313.6\" y=\"229\" text-anchor=\"middle\">8 m s⁻¹</text><text x=\"310\" y=\"418\" text-anchor=\"middle\" font-size=\"12\">Diagrams not to scale</text></g></svg>",
+    "familyGroupKey": "linear-momentum-impulse::coalescing-and-rebound-collision-energetics",
+    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"620\" height=\"430\" viewBox=\"0 0 620 430\" role=\"img\"><title>Mechanics diagram</title><desc>X, 1 kg; Y, 3.2 kg; 7 m s⁻¹</desc><defs><marker id=\"mechanics-arrow-sp-mech-mcq-0216-figure\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M 0 0 L 10 5 L 0 10 z\"/></marker></defs><g font-family=\"Arial, sans-serif\" font-size=\"15\"><polyline points=\"158.8,262.6 461.2,262.6\" fill=\"none\" stroke=\"#202020\" stroke-width=\"2\"/><g transform=\"translate(230.8 241) rotate(0)\"><rect x=\"-19\" y=\"-13\" width=\"38\" height=\"26\" fill=\"white\" stroke=\"#202020\" stroke-width=\"2\"/><circle cx=\"-12\" cy=\"17\" r=\"4\"/><circle cx=\"12\" cy=\"17\" r=\"4\"/></g><text x=\"230.8\" y=\"216\" text-anchor=\"middle\">X, 1 kg</text><g transform=\"translate(392.8 241) rotate(0)\"><rect x=\"-19\" y=\"-13\" width=\"38\" height=\"26\" fill=\"white\" stroke=\"#202020\" stroke-width=\"2\"/><circle cx=\"-12\" cy=\"17\" r=\"4\"/><circle cx=\"12\" cy=\"17\" r=\"4\"/></g><text x=\"392.8\" y=\"216\" text-anchor=\"middle\">Y, 3.2 kg</text><line x1=\"230.8\" y1=\"241\" x2=\"313.6\" y2=\"241\" stroke=\"#202020\" stroke-width=\"2\" marker-end=\"url(#mechanics-arrow-sp-mech-mcq-0216-figure)\"/><text x=\"313.6\" y=\"229\" text-anchor=\"middle\">7 m s⁻¹</text><text x=\"310\" y=\"418\" text-anchor=\"middle\" font-size=\"12\">Diagrams not to scale</text></g></svg>",
     "options": [
       {
         "label": "A",
-        "text": "2.50 m s⁻¹ to the right",
+        "text": "13.8 J",
         "isCorrect": false,
-        "distractorRationale": "Computes the correct post-collision speed magnitude for X but reverses its direction."
+        "distractorRationale": "Treats the rebounding kinetic energy of X as negative because v_X < 0, subtracting ½m_X v_X² instead of adding scalar kinetic energies."
       },
       {
         "label": "B",
-        "text": "6.50 m s⁻¹ to the right",
-        "isCorrect": false,
-        "distractorRationale": "Adds initial momentum magnitudes m_X |u_X| + m_Y |u_Y| instead of assigning a negative sign to Y's leftward approach velocity."
+        "text": "9.73 J",
+        "isCorrect": true
       },
       {
         "label": "C",
-        "text": "9.50 m s⁻¹ to the right",
+        "text": "11.8 J",
         "isCorrect": false,
-        "distractorRationale": "Commits a sign error on Y's post-collision rightward momentum when rearranging for v_X."
+        "distractorRationale": "Ignores the rebound kinetic energy of X completely after impact."
       },
       {
         "label": "D",
-        "text": "2.50 m s⁻¹ to the left",
-        "isCorrect": true
+        "text": "14.8 J",
+        "isCorrect": false,
+        "distractorRationale": "Reports total post-collision kinetic energy instead of kinetic energy lost."
       }
     ],
-    "correctOptionIndex": 3
+    "correctOptionIndex": 1
   },
   {
-    "id": "waves-malus-polarization-structured-303",
+    "id": "waves-malus-polarization-structured-305",
     "syllabi": [
       {
         "syllabus": "alevel",
@@ -1227,10 +1201,10 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
       }
     ],
     "format": "structured",
-    "difficulty": "foundation",
+    "difficulty": "standard",
     "visualFamily": "waves",
-    "stem": "Linearly polarized waves of intensity 240 W m⁻² on a laser power-attenuation stage feeding a calibrated silicon photodiode detector pass normally through an ideal analyzer oriented at θ = 60° relative to the incident polarization axis (where I = I₀ cos²θ).",
-    "workedSolution": "(a) E / E₀ = cos(60°) = 0.500. (b) I = I₀ cos²(60°) = 60.0 W m⁻². (c) Absorbed intensity = 240 − 60.0 = 180 W m⁻².",
+    "stem": "On a photographic filter-transmission test bench with high-extinction linear polarizers, a vertically plane-polarized beam of intensity 240 W m⁻² is incident normally on an ideal linear analyzer whose transmission axis makes an angle θ = 30° with the vertical (for plane-polarized light, Malus's law gives transmitted intensity I = I₀ cos²θ).",
+    "workedSolution": "(a) E / E₀ = cos(30°) = 0.866. (b) I = I₀ cos²(30°) = 180 W m⁻². (c) Absorbed intensity = 240 − 180 = 60.0 W m⁻².",
     "markScheme": [
       {
         "code": "M1",
@@ -1241,7 +1215,7 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
       {
         "code": "A1",
         "partId": "a",
-        "criterion": "Obtains 0.500.",
+        "criterion": "Obtains 0.866.",
         "marks": 1
       },
       {
@@ -1253,7 +1227,7 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
       {
         "code": "A1",
         "partId": "b",
-        "criterion": "Obtains I = 60.0 W m⁻².",
+        "criterion": "Obtains I = 180 W m⁻².",
         "marks": 1
       },
       {
@@ -1265,24 +1239,24 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
       {
         "code": "A1",
         "partId": "c",
-        "criterion": "Obtains 180 W m⁻².",
+        "criterion": "Obtains 60.0 W m⁻².",
         "marks": 1
       }
     ],
     "totalMarks": 6,
     "conceptId": "progressive-waves-polarization",
     "familyGroupKey": "progressive-waves-polarization::malus-polarized-analyzer-transmission",
-    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"680\" height=\"420\" viewBox=\"0 0 680 420\" role=\"img\" aria-label=\"Malus&apos;s law polarization diagram\"><title>Malus&apos;s law polarization diagram</title><desc>I₀ = 240 W m⁻²; I; θ</desc><defs><marker id=\"waves-arrow-waves-malus-polarization-structu\" viewBox=\"0 0 10 10\" refX=\"8.5\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M 0 0.5 L 10 5 L 0 9.5 z\" fill=\"#1f2937\"/></marker></defs><rect x=\"0\" y=\"0\" width=\"680\" height=\"420\" fill=\"#ffffff\"/><g font-family=\"Arial, Helvetica, sans-serif\" font-size=\"13\"><line x1=\"42\" y1=\"227\" x2=\"360\" y2=\"227\" stroke=\"#6b7280\" stroke-width=\"1.5\" stroke-dasharray=\"5 4\" marker-end=\"url(#waves-arrow-waves-malus-polarization-structu)\"/><line x1=\"82\" y1=\"189\" x2=\"82\" y2=\"265\" stroke=\"#2563eb\" stroke-width=\"2\" marker-start=\"url(#waves-arrow-waves-malus-polarization-structu)\" marker-end=\"url(#waves-arrow-waves-malus-polarization-structu)\"/><line x1=\"122\" y1=\"189\" x2=\"122\" y2=\"265\" stroke=\"#2563eb\" stroke-width=\"2\" marker-start=\"url(#waves-arrow-waves-malus-polarization-structu)\" marker-end=\"url(#waves-arrow-waves-malus-polarization-structu)\"/><text x=\"90\" y=\"171\" text-anchor=\"middle\" font-size=\"12.5\" font-weight=\"600\" fill=\"#1d4ed8\">I₀ = 240 W m⁻²</text><ellipse cx=\"196\" cy=\"227\" rx=\"16\" ry=\"54\" fill=\"#fef2f2\" stroke=\"#991b1b\" stroke-width=\"2\"/><line x1=\"187.3397\" y1=\"248\" x2=\"204.6603\" y2=\"206\" stroke=\"#b91c1c\" stroke-width=\"2\"/><text x=\"196\" y=\"299\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"600\" fill=\"#991b1b\">Analyzer A</text><line x1=\"278\" y1=\"208\" x2=\"278\" y2=\"246\" stroke=\"#059669\" stroke-width=\"2.2\" marker-start=\"url(#waves-arrow-waves-malus-polarization-structu)\" marker-end=\"url(#waves-arrow-waves-malus-polarization-structu)\"/><text x=\"278\" y=\"171\" text-anchor=\"middle\" font-size=\"12.5\" font-weight=\"600\" fill=\"#065f46\">I</text><circle cx=\"532\" cy=\"227\" r=\"92\" fill=\"#f9fafb\" stroke=\"#d1d5db\" stroke-width=\"1.4\"/><text x=\"532\" y=\"119\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"600\" fill=\"#374151\">Front view (along beam)</text><line x1=\"532\" y1=\"227\" x2=\"532\" y2=\"135\" stroke=\"#2563eb\" stroke-width=\"2.2\" marker-end=\"url(#waves-arrow-waves-malus-polarization-structu)\"/><text x=\"522\" y=\"147\" text-anchor=\"end\" font-size=\"12\" font-weight=\"600\" fill=\"#1d4ed8\">E₀</text><line x1=\"452.3257\" y1=\"273\" x2=\"611.6743\" y2=\"181\" stroke=\"#b91c1c\" stroke-width=\"1.6\" stroke-dasharray=\"5 3\"/><line x1=\"532\" y1=\"135\" x2=\"571.8372\" y2=\"204\" stroke=\"#6b7280\" stroke-width=\"1.2\" stroke-dasharray=\"3 3\"/><line x1=\"532\" y1=\"227\" x2=\"571.8372\" y2=\"204\" stroke=\"#059669\" stroke-width=\"2.6\" marker-end=\"url(#waves-arrow-waves-malus-polarization-structu)\"/><text x=\"581.8372\" y=\"208\" text-anchor=\"start\" font-size=\"12\" font-weight=\"700\" fill=\"#065f46\">E</text><path d=\"M 532 189 A 38 38 0 0 1 564.909 208\" fill=\"none\" stroke=\"#991b1b\" stroke-width=\"1.5\"/><text x=\"562\" y=\"181.9667\" text-anchor=\"start\" font-size=\"12\" font-weight=\"600\" fill=\"#991b1b\">θ</text><text x=\"664\" y=\"408\" text-anchor=\"end\" font-size=\"11\" fill=\"#6b7280\">Diagram not to scale</text></g></svg>",
+    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"680\" height=\"420\" viewBox=\"0 0 680 420\" role=\"img\" aria-label=\"Malus&apos;s law polarization diagram\"><title>Malus&apos;s law polarization diagram</title><desc>I₀ = 240 W m⁻²; I; θ</desc><defs><marker id=\"waves-arrow-waves-malus-polarization-structu\" viewBox=\"0 0 10 10\" refX=\"8.5\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M 0 0.5 L 10 5 L 0 9.5 z\" fill=\"#1f2937\"/></marker></defs><rect x=\"0\" y=\"0\" width=\"680\" height=\"420\" fill=\"#ffffff\"/><g font-family=\"Arial, Helvetica, sans-serif\" font-size=\"13\"><line x1=\"42\" y1=\"227\" x2=\"360\" y2=\"227\" stroke=\"#6b7280\" stroke-width=\"1.5\" stroke-dasharray=\"5 4\" marker-end=\"url(#waves-arrow-waves-malus-polarization-structu)\"/><line x1=\"82\" y1=\"189\" x2=\"82\" y2=\"265\" stroke=\"#2563eb\" stroke-width=\"2\" marker-start=\"url(#waves-arrow-waves-malus-polarization-structu)\" marker-end=\"url(#waves-arrow-waves-malus-polarization-structu)\"/><line x1=\"122\" y1=\"189\" x2=\"122\" y2=\"265\" stroke=\"#2563eb\" stroke-width=\"2\" marker-start=\"url(#waves-arrow-waves-malus-polarization-structu)\" marker-end=\"url(#waves-arrow-waves-malus-polarization-structu)\"/><text x=\"90\" y=\"171\" text-anchor=\"middle\" font-size=\"12.5\" font-weight=\"600\" fill=\"#1d4ed8\">I₀ = 240 W m⁻²</text><ellipse cx=\"196\" cy=\"227\" rx=\"16\" ry=\"54\" fill=\"#fef2f2\" stroke=\"#991b1b\" stroke-width=\"2\"/><line x1=\"191\" y1=\"263.3731\" x2=\"201\" y2=\"190.6269\" stroke=\"#b91c1c\" stroke-width=\"2\"/><text x=\"196\" y=\"299\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"600\" fill=\"#991b1b\">Analyzer A</text><line x1=\"278\" y1=\"194.091\" x2=\"278\" y2=\"259.909\" stroke=\"#059669\" stroke-width=\"2.2\" marker-start=\"url(#waves-arrow-waves-malus-polarization-structu)\" marker-end=\"url(#waves-arrow-waves-malus-polarization-structu)\"/><text x=\"278\" y=\"171\" text-anchor=\"middle\" font-size=\"12.5\" font-weight=\"600\" fill=\"#065f46\">I</text><circle cx=\"532\" cy=\"227\" r=\"92\" fill=\"#f9fafb\" stroke=\"#d1d5db\" stroke-width=\"1.4\"/><text x=\"532\" y=\"119\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"600\" fill=\"#374151\">Front view (along beam)</text><line x1=\"532\" y1=\"227\" x2=\"532\" y2=\"135\" stroke=\"#2563eb\" stroke-width=\"2.2\" marker-end=\"url(#waves-arrow-waves-malus-polarization-structu)\"/><text x=\"522\" y=\"147\" text-anchor=\"end\" font-size=\"12\" font-weight=\"600\" fill=\"#1d4ed8\">E₀</text><line x1=\"486\" y1=\"306.6743\" x2=\"578\" y2=\"147.3257\" stroke=\"#b91c1c\" stroke-width=\"1.6\" stroke-dasharray=\"5 3\"/><line x1=\"532\" y1=\"135\" x2=\"571.8372\" y2=\"158\" stroke=\"#6b7280\" stroke-width=\"1.2\" stroke-dasharray=\"3 3\"/><line x1=\"532\" y1=\"227\" x2=\"571.8372\" y2=\"158\" stroke=\"#059669\" stroke-width=\"2.6\" marker-end=\"url(#waves-arrow-waves-malus-polarization-structu)\"/><text x=\"581.8372\" y=\"162\" text-anchor=\"start\" font-size=\"12\" font-weight=\"700\" fill=\"#065f46\">E</text><path d=\"M 532 189 A 38 38 0 0 1 551 194.091\" fill=\"none\" stroke=\"#991b1b\" stroke-width=\"1.5\"/><text x=\"549.4586\" y=\"176.7719\" text-anchor=\"start\" font-size=\"12\" font-weight=\"600\" fill=\"#991b1b\">θ</text><text x=\"664\" y=\"408\" text-anchor=\"end\" font-size=\"11\" fill=\"#6b7280\">Diagram not to scale</text></g></svg>",
     "parts": [
       {
         "partId": "a",
         "prompt": "Calculate the ratio E / E₀ of the transmitted electric-field amplitude to the incident electric-field amplitude.",
         "marks": 2,
         "targetQuantityKey": "amplitudeTransmissionFactor",
-        "expectedAnswer": "0.500",
+        "expectedAnswer": "0.866",
         "workingSteps": [
           "Only the electric-field component parallel to the analyzer axis is transmitted: E / E₀ = cos θ.",
-          "cos(60°) = 0.500."
+          "cos(30°) = 0.866."
         ]
       },
       {
@@ -1293,10 +1267,10 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
           "a"
         ],
         "targetQuantityKey": "transmittedIntensityWm2",
-        "expectedAnswer": "60.0 W m⁻²",
+        "expectedAnswer": "180 W m⁻²",
         "workingSteps": [
           "Use I = I₀ cos²θ.",
-          "I = 240 × cos²(60°) = 60.0 W m⁻²."
+          "I = 240 × cos²(30°) = 180 W m⁻²."
         ]
       },
       {
@@ -1307,16 +1281,16 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
           "b"
         ],
         "targetQuantityKey": "absorbedIntensityAtAnalyzerWm2",
-        "expectedAnswer": "180 W m⁻²",
+        "expectedAnswer": "60.0 W m⁻²",
         "workingSteps": [
           "I_abs = I₀ − I.",
-          "I_abs = 240 − 60.0 = 180 W m⁻²."
+          "I_abs = 240 − 180 = 60.0 W m⁻²."
         ]
       }
     ]
   },
   {
-    "id": "sp-optics-shm-mcq-0111",
+    "id": "sp-optics-shm-mcq-0223",
     "syllabi": [
       {
         "syllabus": "ib",
@@ -1338,14 +1312,14 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
       }
     ],
     "format": "mcq",
-    "difficulty": "standard",
+    "difficulty": "higher",
     "visualFamily": "optics-shm",
-    "stem": "A harmonic oscillator in a dynamic mechanical thermal-analyzer probe moves with amplitude x₀ = 0.1 m and angular frequency ω = 8 rad s⁻¹. Calculate its speed when passing through displacement x = 0.036 m.",
-    "workedSolution": "Using v = ω√(x₀² − x²) gives v = 8 × √(0.1² − 0.036²) = 0.746 m s⁻¹.",
+    "stem": "The velocity–displacement phase portrait shown represents an ultrasonic surgical transducer tip oscillating with ω = 30 rad s⁻¹ and x₀ = 0.1 m. Find the oscillator's speed at x = 0.028 m.",
+    "workedSolution": "Using v = ω√(x₀² − x²) gives v = 30 × √(0.1² − 0.028²) = 2.88 m s⁻¹.",
     "markScheme": [
       {
         "code": "A1",
-        "criterion": "Substitutes into v = ω√(x₀² − x²) to obtain 0.746 m s⁻¹ (A).",
+        "criterion": "Substitutes into v = ω√(x₀² − x²) to obtain 2.88 m s⁻¹ (B).",
         "marks": 1
       }
     ],
@@ -1356,36 +1330,36 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
     "options": [
       {
         "label": "A",
-        "text": "0.746 m s⁻¹",
-        "isCorrect": true
+        "text": "3.00 m s⁻¹",
+        "isCorrect": false,
+        "distractorRationale": "Calculates the maximum speed ωx₀ at equilibrium (x = 0) instead of the speed at x."
       },
       {
         "label": "B",
-        "text": "0.288 m s⁻¹",
-        "isCorrect": false,
-        "distractorRationale": "Uses ωx instead of ω√(x₀² − x²), mistakenly assuming speed is directly proportional to displacement."
+        "text": "2.88 m s⁻¹",
+        "isCorrect": true
       },
       {
         "label": "C",
-        "text": "0.512 m s⁻¹",
+        "text": "2.16 m s⁻¹",
         "isCorrect": false,
         "distractorRationale": "Evaluates ω(x₀ − x) linearly instead of taking √(x₀² − x²)."
       },
       {
         "label": "D",
-        "text": "0.800 m s⁻¹",
+        "text": "0.840 m s⁻¹",
         "isCorrect": false,
-        "distractorRationale": "Calculates the maximum speed ωx₀ at equilibrium (x = 0) instead of the speed at x."
+        "distractorRationale": "Uses ωx instead of ω√(x₀² − x²), mistakenly assuming speed is directly proportional to displacement."
       }
     ],
-    "correctOptionIndex": 0
+    "correctOptionIndex": 1
   },
   {
-    "id": "sp-thermal-struct-0094",
+    "id": "sp-thermal-struct-0205",
     "syllabi": [
       {
         "syllabus": "ib",
-        "level": "HL",
+        "level": "SL",
         "topicId": "ib-theme-b",
         "subtopicId": "ib-b1-thermal-energy-transfers"
       },
@@ -1403,103 +1377,104 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
       }
     ],
     "format": "structured",
-    "difficulty": "standard",
+    "difficulty": "foundation",
     "visualFamily": "thermal",
-    "stem": "An insulated run in a thermally isolated materials-testing bath combines 0.3 kg of pure ice at 273.15 K with 0.18 kg of tepid water at 289.15 K. Adopt c_w = 4180 J kg⁻¹ K⁻¹ and fusion enthalpy L_f = 3.34 × 10⁵ J kg⁻¹.",
-    "workedSolution": "(a) Q_water = m_water c_water (289.15 − 273.15) = 1.20 × 10⁴ J, which is below m_ice L_f. (b) Melted mass Δm = Q_water / L_f = 0.0360 kg. (c) Melted fraction f = Δm / m_ice = 0.120.",
+    "stem": "Inside a thick-walled cork-lagged enthalpy cell, a copper calorimeter vessel of mass 0.16 kg (c_cup = 385 J kg⁻¹ K⁻¹) holds 0.55 kg of water (c_liq = 4180 J kg⁻¹ K⁻¹), both initially at 294 K. A 0.28 kg iron block (c_s = 450 J kg⁻¹ K⁻¹) at 440 K is lowered into the bath; heat loss to the outside air is negligible.",
+    "workedSolution": "(a) Solving the enthalpy balance yields T_eq = 301 K. (b) Heat released by the hot solid Q_lost = m_s c_s (T_s − T_eq) = 1.75 × 10⁴ J. (c) Heat gained by the water Q_liq = m_l c_liq (T_eq − T_l) = 1.70 × 10⁴ J.",
     "markScheme": [
       {
         "code": "M1",
         "partId": "a",
-        "criterion": "Computes m_water c_water (T_water − 273.15).",
+        "criterion": "Sets up full calorimetry heat-balance equation.",
         "marks": 1
       },
       {
         "code": "A1",
         "partId": "a",
-        "criterion": "Obtains 1.20 × 10⁴ J.",
+        "criterion": "Obtains 301 K.",
         "marks": 1
       },
       {
         "code": "M1",
         "partId": "b",
-        "criterion": "Divides Q_water by L_f.",
+        "criterion": "Evaluates m_s c_s (T_s − T_eq).",
         "marks": 1
       },
       {
         "code": "A1",
         "partId": "b",
-        "criterion": "Obtains 0.0360 kg.",
+        "criterion": "Obtains 1.75 × 10⁴ J.",
         "marks": 1
       },
       {
         "code": "M1",
         "partId": "c",
-        "criterion": "Divides Δm by initial ice mass m_ice.",
+        "criterion": "Evaluates m_l c_liq (T_eq − T_l).",
         "marks": 1
       },
       {
         "code": "A1",
         "partId": "c",
-        "criterion": "Obtains 0.120.",
+        "criterion": "Obtains 1.70 × 10⁴ J.",
         "marks": 1
       }
     ],
     "totalMarks": 6,
     "conceptId": "specific-heat-latent-heat",
-    "familyGroupKey": "specific-heat-latent-heat::ice-water-latent-mixing-and-coexistence",
-    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"720\" height=\"500\" viewBox=\"0 0 720 500\" role=\"img\" aria-label=\"Insulated calorimeter thermal equilibrium diagram\"><title>Insulated calorimeter thermal equilibrium diagram</title><desc>Insulated calorimeter thermal equilibrium diagram</desc><rect width=\"720\" height=\"500\" fill=\"white\"/><rect x=\"104\" y=\"92\" width=\"210\" height=\"290\" rx=\"6\" fill=\"#eceff2\" stroke=\"#202429\" stroke-width=\"2\"/><rect x=\"96\" y=\"78\" width=\"226\" height=\"14\" rx=\"3\" fill=\"#d9dfe5\" stroke=\"#202429\" stroke-width=\"1.8\"/><rect x=\"118\" y=\"106\" width=\"182\" height=\"262\" fill=\"white\" stroke=\"#202429\" stroke-width=\"1.6\"/><rect x=\"119\" y=\"174\" width=\"180\" height=\"193\" fill=\"#e3eef8\"/><line x1=\"119\" y1=\"174\" x2=\"299\" y2=\"174\" stroke=\"#3b5b78\" stroke-width=\"1.6\" stroke-dasharray=\"6 3\"/><rect x=\"169\" y=\"42\" width=\"8\" height=\"250\" rx=\"3\" fill=\"white\" stroke=\"#202429\" stroke-width=\"1.6\"/><circle cx=\"173\" cy=\"296\" r=\"7.5\" fill=\"#4f5962\" stroke=\"#202429\" stroke-width=\"1.6\"/><line x1=\"173\" y1=\"98\" x2=\"173\" y2=\"292\" stroke=\"#4f5962\" stroke-width=\"2.4\"/><line x1=\"253\" y1=\"48\" x2=\"253\" y2=\"309\" stroke=\"#202429\" stroke-width=\"2\"/><ellipse cx=\"253\" cy=\"312\" rx=\"14\" ry=\"4.5\" fill=\"none\" stroke=\"#202429\" stroke-width=\"2\"/><rect x=\"169\" y=\"304\" width=\"56\" height=\"42\" rx=\"4\" fill=\"#cfd6dd\" stroke=\"#202429\" stroke-width=\"1.8\"/><line x1=\"197\" y1=\"300\" x2=\"197\" y2=\"272\" stroke=\"#202429\" stroke-width=\"1.6\"/><polygon points=\"197,267 200.4,276.25 193.6,276.25\" fill=\"#202429\"/><text x=\"209\" y=\"408\" text-anchor=\"middle\" font-size=\"14\" font-family=\"Arial, sans-serif\" fill=\"#343c44\">insulated calorimeter</text><rect x=\"389\" y=\"66\" width=\"299\" height=\"64\" rx=\"6\" fill=\"#f8fafc\" stroke=\"#c5cdd5\" stroke-width=\"1.3\"/><text x=\"403\" y=\"90\" font-size=\"14.5\" font-weight=\"bold\" font-family=\"Arial, sans-serif\" fill=\"#15191d\">Melting ice</text><text x=\"403\" y=\"113\" font-size=\"13\" font-family=\"Arial, sans-serif\" fill=\"#343c44\">m = 0.3 kg  |  T_i = 273 K</text><rect x=\"389\" y=\"144\" width=\"299\" height=\"64\" rx=\"6\" fill=\"#f8fafc\" stroke=\"#c5cdd5\" stroke-width=\"1.3\"/><text x=\"403\" y=\"168\" font-size=\"14.5\" font-weight=\"bold\" font-family=\"Arial, sans-serif\" fill=\"#15191d\">Water bath</text><text x=\"403\" y=\"191\" font-size=\"13\" font-family=\"Arial, sans-serif\" fill=\"#343c44\">m = 0.18 kg  |  T_i = 289 K  |  c = 4180 J kg⁻¹ K⁻¹</text><rect x=\"389\" y=\"228\" width=\"299\" height=\"48\" rx=\"6\" fill=\"#eef3f8\" stroke=\"#8a99a8\" stroke-width=\"1.4\"/><text x=\"403\" y=\"257\" font-size=\"14\" font-weight=\"bold\" font-family=\"Arial, sans-serif\" fill=\"#15191d\">Thermal equilibrium: T_eq</text></svg>",
+    "familyGroupKey": "specific-heat-latent-heat::calorimetry-solid-liquid-equilibrium",
+    "svgMarkup": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"720\" height=\"500\" viewBox=\"0 0 720 500\" role=\"img\" aria-label=\"Insulated calorimeter thermal equilibrium diagram\"><title>Insulated calorimeter thermal equilibrium diagram</title><desc>Insulated calorimeter thermal equilibrium diagram</desc><rect width=\"720\" height=\"500\" fill=\"white\"/><rect x=\"104\" y=\"92\" width=\"210\" height=\"290\" rx=\"6\" fill=\"#eceff2\" stroke=\"#202429\" stroke-width=\"2\"/><rect x=\"96\" y=\"78\" width=\"226\" height=\"14\" rx=\"3\" fill=\"#d9dfe5\" stroke=\"#202429\" stroke-width=\"1.8\"/><rect x=\"118\" y=\"106\" width=\"182\" height=\"262\" fill=\"white\" stroke=\"#202429\" stroke-width=\"1.6\"/><rect x=\"119\" y=\"174\" width=\"180\" height=\"193\" fill=\"#e3eef8\"/><line x1=\"119\" y1=\"174\" x2=\"299\" y2=\"174\" stroke=\"#3b5b78\" stroke-width=\"1.6\" stroke-dasharray=\"6 3\"/><rect x=\"169\" y=\"42\" width=\"8\" height=\"250\" rx=\"3\" fill=\"white\" stroke=\"#202429\" stroke-width=\"1.6\"/><circle cx=\"173\" cy=\"296\" r=\"7.5\" fill=\"#4f5962\" stroke=\"#202429\" stroke-width=\"1.6\"/><line x1=\"173\" y1=\"98\" x2=\"173\" y2=\"292\" stroke=\"#4f5962\" stroke-width=\"2.4\"/><line x1=\"253\" y1=\"48\" x2=\"253\" y2=\"309\" stroke=\"#202429\" stroke-width=\"2\"/><ellipse cx=\"253\" cy=\"312\" rx=\"14\" ry=\"4.5\" fill=\"none\" stroke=\"#202429\" stroke-width=\"2\"/><rect x=\"169\" y=\"304\" width=\"56\" height=\"42\" rx=\"4\" fill=\"#cfd6dd\" stroke=\"#202429\" stroke-width=\"1.8\"/><line x1=\"197\" y1=\"300\" x2=\"197\" y2=\"272\" stroke=\"#202429\" stroke-width=\"1.6\"/><polygon points=\"197,267 200.4,276.25 193.6,276.25\" fill=\"#202429\"/><text x=\"209\" y=\"408\" text-anchor=\"middle\" font-size=\"14\" font-family=\"Arial, sans-serif\" fill=\"#343c44\">insulated calorimeter</text><rect x=\"389\" y=\"66\" width=\"299\" height=\"64\" rx=\"6\" fill=\"#f8fafc\" stroke=\"#c5cdd5\" stroke-width=\"1.3\"/><text x=\"403\" y=\"90\" font-size=\"14.5\" font-weight=\"bold\" font-family=\"Arial, sans-serif\" fill=\"#15191d\">Iron specimen</text><text x=\"403\" y=\"113\" font-size=\"13\" font-family=\"Arial, sans-serif\" fill=\"#343c44\">m = 0.28 kg  |  T_i = 440 K  |  c = 450 J kg⁻¹ K⁻¹</text><rect x=\"389\" y=\"144\" width=\"299\" height=\"64\" rx=\"6\" fill=\"#f8fafc\" stroke=\"#c5cdd5\" stroke-width=\"1.3\"/><text x=\"403\" y=\"168\" font-size=\"14.5\" font-weight=\"bold\" font-family=\"Arial, sans-serif\" fill=\"#15191d\">Water bath</text><text x=\"403\" y=\"191\" font-size=\"13\" font-family=\"Arial, sans-serif\" fill=\"#343c44\">m = 0.55 kg  |  T_i = 294 K  |  c = 4180 J kg⁻¹ K⁻¹</text><rect x=\"389\" y=\"222\" width=\"299\" height=\"64\" rx=\"6\" fill=\"#f8fafc\" stroke=\"#c5cdd5\" stroke-width=\"1.3\"/><text x=\"403\" y=\"246\" font-size=\"14.5\" font-weight=\"bold\" font-family=\"Arial, sans-serif\" fill=\"#15191d\">Copper vessel</text><text x=\"403\" y=\"269\" font-size=\"13\" font-family=\"Arial, sans-serif\" fill=\"#343c44\">m = 0.16 kg  |  T_i = 294 K  |  c = 385 J kg⁻¹ K⁻¹</text><rect x=\"389\" y=\"306\" width=\"299\" height=\"48\" rx=\"6\" fill=\"#eef3f8\" stroke=\"#8a99a8\" stroke-width=\"1.4\"/><text x=\"403\" y=\"335\" font-size=\"14\" font-weight=\"bold\" font-family=\"Arial, sans-serif\" fill=\"#15191d\">Thermal equilibrium: T_eq</text></svg>",
     "parts": [
       {
         "partId": "a",
-        "prompt": "Show that not all the ice melts by calculating the thermal energy released when the warm water cools to 273.15 K.",
+        "prompt": "Calculate the final thermal equilibrium temperature T_eq of the system.",
         "marks": 2,
-        "targetQuantityKey": "heatLostByHotJ",
-        "expectedAnswer": "1.20 × 10⁴ J",
+        "targetQuantityKey": "equilibriumTemperatureK",
+        "expectedAnswer": "301 K",
         "workingSteps": [
-          "Q_water = m_water c_water (289.15 − 273.15) = 1.20 × 10⁴ J (< m_ice L_f = 1.00 × 10⁵ J)."
+          "m_s c_s (440 − T_eq) = (m_l c_liq + m_cup c_cup)(T_eq − 294).",
+          "Solving for T_eq gives 301 K."
         ]
       },
       {
         "partId": "b",
-        "prompt": "Calculate the mass of ice that melts by the time thermal equilibrium is reached.",
+        "prompt": "Calculate the thermal energy released by the iron block.",
         "marks": 2,
         "dependsOnPartIds": [
           "a"
         ],
-        "targetQuantityKey": "meltedMassKg",
-        "expectedAnswer": "0.0360 kg",
+        "targetQuantityKey": "heatLostByHotJ",
+        "expectedAnswer": "1.75 × 10⁴ J",
         "workingSteps": [
-          "Δm = Q_water / L_f = 1.204 × 10⁴ / (3.34 × 10⁵) = 0.0360 kg."
+          "Q_lost = m_s c_s (440 − T_eq) = 1.75 × 10⁴ J."
         ]
       },
       {
         "partId": "c",
-        "prompt": "Determine the fraction of the initial ice sample that has melted at equilibrium.",
+        "prompt": "Determine the thermal energy absorbed specifically by the water.",
         "marks": 2,
         "dependsOnPartIds": [
-          "b"
+          "a"
         ],
-        "targetQuantityKey": "meltedFraction",
-        "expectedAnswer": "0.120",
+        "targetQuantityKey": "component:liquid:signedHeatJ",
+        "expectedAnswer": "1.70 × 10⁴ J",
         "workingSteps": [
-          "f = Δm / m_ice = 0.03604 / 0.3 = 0.120."
+          "Q_liq = m_l c_liq (T_eq − 294) = 1.70 × 10⁴ J."
         ]
       }
     ]
   },
   {
-    "id": "sp-pure-calc-0001",
+    "id": "sp-pure-calc-0002",
     "syllabi": [
       {
         "syllabus": "ib",
-        "level": "SL",
+        "level": "HL",
         "topicId": "ib-tools",
         "subtopicId": "ib-tools-measurement-uncertainties"
       },
       {
         "syllabus": "alevel",
-        "level": "Y12",
+        "level": "Y13",
         "topicId": "alevel-sec1-measurements-errors",
         "subtopicId": "alevel-3-1-si-uncertainties-estimation"
       },
@@ -1511,14 +1486,14 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
       }
     ],
     "format": "mcq",
-    "difficulty": "foundation",
+    "difficulty": "standard",
     "visualFamily": "none",
-    "stem": "In a materials metrology audit, a machined titanium-aluminide reference cube records a mass of 59.4 g ± 1.2 g on a digital balance and an edge length of 3 cm ± 0.04 cm using vernier callipers. What is the bulk density of the cube expressed in coherent SI base units (kg m⁻³)?",
-    "workedSolution": "Convert to SI base units: m = 59.4 × 10⁻³ = 0.0594 kg and L = 3 × 10⁻² = 0.03 m. Volume V = L³ = (0.03)³ m³. Bulk density ρ = m / L³ = 2.20 × 10³ kg m⁻³.",
+    "stem": "During quality inspection of a syntactic-foam subsea buoyancy block, a technician measures the cubic specimen to have edge length 3.2 cm ± 0.04 cm and mass 147 g ± 1.5 g. What is the percentage uncertainty in the calculated density of the cube?",
+    "workedSolution": "Since ρ = m L⁻³, Δρ / ρ = Δm / m + 3(ΔL / L) = (1.5/147) + 3(0.04/3.2). Expressing as a percentage gives 4.77%.",
     "markScheme": [
       {
         "code": "A1",
-        "criterion": "Converts mass to kg and cubed edge length to m³ to obtain ρ = 2.20 × 10³ kg m⁻³.",
+        "criterion": "Applies Δρ/ρ = Δm/m + 3(ΔL/L) to obtain 4.77%.",
         "marks": 1
       }
     ],
@@ -1528,51 +1503,51 @@ export const SEED_FALLBACK_ITEMS: readonly PublicBankItem[] = [
     "options": [
       {
         "label": "A",
-        "text": "2.20 × 10³ kg m⁻³",
-        "isCorrect": true
+        "text": "2.27%",
+        "isCorrect": false,
+        "distractorRationale": "Adds the percentage uncertainty in edge length once instead of multiplying it by the power exponent 3 for L³."
       },
       {
         "label": "B",
-        "text": "2.20 kg m⁻³",
-        "isCorrect": false,
-        "distractorRationale": "Evaluates density in g cm⁻³ without applying the factor of 1000 needed to convert g cm⁻³ into kg m⁻³."
+        "text": "4.77%",
+        "isCorrect": true
       },
       {
         "label": "C",
-        "text": "1.98 kg m⁻³",
+        "text": "2.73%",
         "isCorrect": false,
-        "distractorRationale": "Divides mass in kilograms by a single edge length in metres instead of cubing the converted length."
+        "distractorRationale": "Subtracts percentage uncertainties in the quotient m / L³ instead of adding worst-case contributions."
       },
       {
         "label": "D",
-        "text": "0.220 kg m⁻³",
+        "text": "2.97%",
         "isCorrect": false,
-        "distractorRationale": "Applies the centimetre prefix 10⁻² once rather than cubing it to (10⁻²)³ = 10⁻⁶ when converting cm³ to m³."
+        "distractorRationale": "Cubes the percentage uncertainty in L rather than multiplying the fractional uncertainty by 3."
       }
     ],
-    "correctOptionIndex": 0
+    "correctOptionIndex": 1
   }
 ];
 
 export const SEED_FALLBACK_CHUNK_BY_ID: Readonly<Record<string, PhysicsDomainId>> = {
-  "sp-graphs-0277-mcq": "graphs",
-  "sp-circuits-11-structured-234": "circuits",
-  "sp-fields-mcq-0064": "fields",
-  "sp-mech-structured-0199": "mechanics",
-  "sp-v2-waves-mcq-0125": "waves",
-  "sp-optics-shm-struct-0270": "optics-shm",
-  "sp-thermal-mcq-0220": "thermal",
-  "ga-circular-orbit-energy-str-008": "grav-astro",
-  "sp-v2-em-induction-mcq-0100": "em-induction",
-  "sp-qn-structured-245": "quantum-nuclear",
-  "sp-graphs-0193-struct": "graphs",
-  "sp-circuits-09-mcq-176": "circuits",
+  "sp-v2-graphs-mcq-0081": "graphs",
+  "sp-circuits-11-structured-235": "circuits",
+  "sp-fields-mcq-0071": "fields",
+  "sp-mech-structured-0057": "mechanics",
+  "sp-v2-waves-mcq-0127": "waves",
+  "sp-optics-shm-struct-0110": "optics-shm",
+  "sp-thermal-mcq-0030": "thermal",
+  "ga-circular-orbit-energy-str-104": "grav-astro",
+  "sp-v2-em-induction-mcq-0095": "em-induction",
+  "sp-qn-structured-251": "quantum-nuclear",
+  "sp-v3-ncuk-ac4-ivcurve-09": "graphs",
+  "sp-v2-circuits-mcq-0090": "circuits",
   "sp-fields-struct-0330": "fields",
-  "sp-mech-mcq-0329": "mechanics",
-  "waves-malus-polarization-structured-303": "waves",
-  "sp-optics-shm-mcq-0111": "optics-shm",
-  "sp-thermal-struct-0094": "thermal",
-  "sp-pure-calc-0001": "pure-calculation"
+  "sp-mech-mcq-0216": "mechanics",
+  "waves-malus-polarization-structured-305": "waves",
+  "sp-optics-shm-mcq-0223": "optics-shm",
+  "sp-thermal-struct-0205": "thermal",
+  "sp-pure-calc-0002": "pure-calculation"
 };
 
 export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
@@ -1590,12 +1565,12 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
         "HL"
       ],
       "gravityConvention": "g = 9.8 m s⁻²",
-      "questionCount": 17,
+      "questionCount": 16,
       "mcqCount": 9,
-      "structuredCount": 8,
+      "structuredCount": 7,
       "countsByLevel": {
-        "SL": 11,
-        "HL": 6
+        "SL": 6,
+        "HL": 10
       },
       "topics": [
         {
@@ -1611,8 +1586,8 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
           "mcqCount": 1,
           "structuredCount": 0,
           "countsByLevel": {
-            "SL": 1,
-            "HL": 0
+            "SL": 0,
+            "HL": 1
           },
           "subtopics": [
             {
@@ -1628,8 +1603,8 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
               "mcqCount": 1,
               "structuredCount": 0,
               "countsByLevel": {
-                "SL": 1,
-                "HL": 0
+                "SL": 0,
+                "HL": 1
               }
             }
           ]
@@ -1643,11 +1618,11 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
             "SL",
             "HL"
           ],
-          "questionCount": 4,
+          "questionCount": 3,
           "mcqCount": 2,
-          "structuredCount": 2,
+          "structuredCount": 1,
           "countsByLevel": {
-            "SL": 3,
+            "SL": 2,
             "HL": 1
           },
           "subtopics": [
@@ -1660,11 +1635,11 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
                 "SL",
                 "HL"
               ],
-              "questionCount": 1,
+              "questionCount": 0,
               "mcqCount": 0,
-              "structuredCount": 1,
+              "structuredCount": 0,
               "countsByLevel": {
-                "SL": 1,
+                "SL": 0,
                 "HL": 0
               }
             },
@@ -1749,8 +1724,8 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
           "mcqCount": 2,
           "structuredCount": 2,
           "countsByLevel": {
-            "SL": 3,
-            "HL": 1
+            "SL": 2,
+            "HL": 2
           },
           "subtopics": [
             {
@@ -1766,8 +1741,8 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
               "mcqCount": 1,
               "structuredCount": 1,
               "countsByLevel": {
-                "SL": 1,
-                "HL": 1
+                "SL": 2,
+                "HL": 0
               }
             },
             {
@@ -1833,8 +1808,8 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
               "mcqCount": 1,
               "structuredCount": 1,
               "countsByLevel": {
-                "SL": 2,
-                "HL": 0
+                "SL": 0,
+                "HL": 2
               }
             }
           ]
@@ -1852,8 +1827,8 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
           "mcqCount": 2,
           "structuredCount": 1,
           "countsByLevel": {
-            "SL": 1,
-            "HL": 2
+            "SL": 0,
+            "HL": 3
           },
           "subtopics": [
             {
@@ -1869,8 +1844,8 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
               "mcqCount": 1,
               "structuredCount": 1,
               "countsByLevel": {
-                "SL": 1,
-                "HL": 1
+                "SL": 0,
+                "HL": 2
               }
             },
             {
@@ -1956,8 +1931,8 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
           "mcqCount": 2,
           "structuredCount": 2,
           "countsByLevel": {
-            "SL": 2,
-            "HL": 2
+            "SL": 1,
+            "HL": 3
           },
           "subtopics": [
             {
@@ -1990,8 +1965,8 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
               "mcqCount": 1,
               "structuredCount": 1,
               "countsByLevel": {
-                "SL": 1,
-                "HL": 1
+                "SL": 0,
+                "HL": 2
               }
             },
             {
@@ -2148,8 +2123,8 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
       "mcqCount": 9,
       "structuredCount": 9,
       "countsByLevel": {
-        "Y12": 4,
-        "Y13": 14
+        "Y12": 5,
+        "Y13": 13
       },
       "topics": [
         {
@@ -2165,8 +2140,8 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
           "mcqCount": 1,
           "structuredCount": 0,
           "countsByLevel": {
-            "Y12": 1,
-            "Y13": 0
+            "Y12": 0,
+            "Y13": 1
           },
           "subtopics": [
             {
@@ -2182,8 +2157,8 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
               "mcqCount": 1,
               "structuredCount": 0,
               "countsByLevel": {
-                "Y12": 1,
-                "Y13": 0
+                "Y12": 0,
+                "Y13": 1
               }
             }
           ]
@@ -2303,11 +2278,11 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
             "Y12",
             "Y13"
           ],
-          "questionCount": 4,
+          "questionCount": 3,
           "mcqCount": 2,
-          "structuredCount": 2,
+          "structuredCount": 1,
           "countsByLevel": {
-            "Y12": 2,
+            "Y12": 1,
             "Y13": 2
           },
           "subtopics": [
@@ -2320,11 +2295,11 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
                 "Y12",
                 "Y13"
               ],
-              "questionCount": 4,
+              "questionCount": 3,
               "mcqCount": 2,
-              "structuredCount": 2,
+              "structuredCount": 1,
               "countsByLevel": {
-                "Y12": 2,
+                "Y12": 1,
                 "Y13": 2
               }
             },
@@ -2356,12 +2331,12 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
             "Y12",
             "Y13"
           ],
-          "questionCount": 2,
+          "questionCount": 3,
           "mcqCount": 1,
-          "structuredCount": 1,
+          "structuredCount": 2,
           "countsByLevel": {
-            "Y12": 0,
-            "Y13": 2
+            "Y12": 3,
+            "Y13": 0
           },
           "subtopics": [
             {
@@ -2373,12 +2348,12 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
                 "Y12",
                 "Y13"
               ],
-              "questionCount": 2,
+              "questionCount": 3,
               "mcqCount": 1,
-              "structuredCount": 1,
+              "structuredCount": 2,
               "countsByLevel": {
-                "Y12": 0,
-                "Y13": 2
+                "Y12": 3,
+                "Y13": 0
               }
             }
           ]
@@ -2670,9 +2645,9 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
       "mcqCount": 9,
       "structuredCount": 9,
       "countsByLevel": {
-        "IFY": 7,
-        "IFY-S1": 5,
-        "IFY-S2": 6
+        "IFY": 18,
+        "IFY-S1": 9,
+        "IFY-S2": 9
       },
       "topics": [
         {
@@ -2689,7 +2664,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
           "structuredCount": 0,
           "countsByLevel": {
             "IFY": 1,
-            "IFY-S1": 0,
+            "IFY-S1": 1,
             "IFY-S2": 0
           },
           "subtopics": [
@@ -2707,7 +2682,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
               "structuredCount": 0,
               "countsByLevel": {
                 "IFY": 1,
-                "IFY-S1": 0,
+                "IFY-S1": 1,
                 "IFY-S2": 0
               }
             },
@@ -2758,11 +2733,11 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
             "IFY-S1",
             "IFY"
           ],
-          "questionCount": 4,
+          "questionCount": 3,
           "mcqCount": 2,
-          "structuredCount": 2,
+          "structuredCount": 1,
           "countsByLevel": {
-            "IFY": 1,
+            "IFY": 3,
             "IFY-S1": 3,
             "IFY-S2": 0
           },
@@ -2776,12 +2751,12 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
                 "IFY-S1",
                 "IFY"
               ],
-              "questionCount": 1,
+              "questionCount": 0,
               "mcqCount": 0,
-              "structuredCount": 1,
+              "structuredCount": 0,
               "countsByLevel": {
                 "IFY": 0,
-                "IFY-S1": 1,
+                "IFY-S1": 0,
                 "IFY-S2": 0
               }
             },
@@ -2870,8 +2845,8 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
               "mcqCount": 2,
               "structuredCount": 1,
               "countsByLevel": {
-                "IFY": 1,
-                "IFY-S1": 2,
+                "IFY": 3,
+                "IFY-S1": 3,
                 "IFY-S2": 0
               }
             }
@@ -2891,7 +2866,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
           "structuredCount": 1,
           "countsByLevel": {
             "IFY": 2,
-            "IFY-S1": 0,
+            "IFY-S1": 2,
             "IFY-S2": 0
           },
           "subtopics": [
@@ -2945,7 +2920,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
               "structuredCount": 1,
               "countsByLevel": {
                 "IFY": 2,
-                "IFY-S1": 0,
+                "IFY-S1": 2,
                 "IFY-S2": 0
               }
             },
@@ -2979,12 +2954,12 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
             "IFY-S2",
             "IFY"
           ],
-          "questionCount": 5,
+          "questionCount": 6,
           "mcqCount": 3,
-          "structuredCount": 2,
+          "structuredCount": 3,
           "countsByLevel": {
-            "IFY": 0,
-            "IFY-S1": 2,
+            "IFY": 6,
+            "IFY-S1": 3,
             "IFY-S2": 3
           },
           "subtopics": [
@@ -3015,12 +2990,12 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
                 "IFY-S1",
                 "IFY"
               ],
-              "questionCount": 1,
+              "questionCount": 2,
               "mcqCount": 0,
-              "structuredCount": 1,
+              "structuredCount": 2,
               "countsByLevel": {
-                "IFY": 0,
-                "IFY-S1": 1,
+                "IFY": 2,
+                "IFY-S1": 2,
                 "IFY-S2": 0
               }
             },
@@ -3037,7 +3012,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
               "mcqCount": 1,
               "structuredCount": 0,
               "countsByLevel": {
-                "IFY": 0,
+                "IFY": 1,
                 "IFY-S1": 1,
                 "IFY-S2": 0
               }
@@ -3073,7 +3048,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
               "mcqCount": 1,
               "structuredCount": 1,
               "countsByLevel": {
-                "IFY": 0,
+                "IFY": 2,
                 "IFY-S1": 0,
                 "IFY-S2": 2
               }
@@ -3091,7 +3066,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
               "mcqCount": 1,
               "structuredCount": 0,
               "countsByLevel": {
-                "IFY": 0,
+                "IFY": 1,
                 "IFY-S1": 0,
                 "IFY-S2": 1
               }
@@ -3111,7 +3086,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
           "mcqCount": 0,
           "structuredCount": 1,
           "countsByLevel": {
-            "IFY": 0,
+            "IFY": 1,
             "IFY-S1": 0,
             "IFY-S2": 1
           },
@@ -3129,7 +3104,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
               "mcqCount": 0,
               "structuredCount": 1,
               "countsByLevel": {
-                "IFY": 0,
+                "IFY": 1,
                 "IFY-S1": 0,
                 "IFY-S2": 1
               }
@@ -3185,9 +3160,9 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
           "mcqCount": 2,
           "structuredCount": 2,
           "countsByLevel": {
-            "IFY": 3,
+            "IFY": 4,
             "IFY-S1": 0,
-            "IFY-S2": 1
+            "IFY-S2": 4
           },
           "subtopics": [
             {
@@ -3203,9 +3178,9 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
               "mcqCount": 1,
               "structuredCount": 1,
               "countsByLevel": {
-                "IFY": 1,
+                "IFY": 2,
                 "IFY-S1": 0,
-                "IFY-S2": 1
+                "IFY-S2": 2
               }
             },
             {
@@ -3223,7 +3198,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
               "countsByLevel": {
                 "IFY": 1,
                 "IFY-S1": 0,
-                "IFY-S2": 0
+                "IFY-S2": 1
               }
             },
             {
@@ -3259,7 +3234,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
               "countsByLevel": {
                 "IFY": 1,
                 "IFY-S1": 0,
-                "IFY-S2": 0
+                "IFY-S2": 1
               }
             },
             {
@@ -3295,7 +3270,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
           "mcqCount": 0,
           "structuredCount": 1,
           "countsByLevel": {
-            "IFY": 0,
+            "IFY": 1,
             "IFY-S1": 0,
             "IFY-S2": 1
           },
@@ -3349,7 +3324,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
               "mcqCount": 0,
               "structuredCount": 1,
               "countsByLevel": {
-                "IFY": 0,
+                "IFY": 1,
                 "IFY-S1": 0,
                 "IFY-S2": 1
               }
@@ -3435,7 +3410,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
   },
   "items": [
     {
-      "id": "sp-graphs-0277-mcq",
+      "id": "sp-v2-graphs-mcq-0081",
       "syllabi": [
         {
           "syllabus": "ib",
@@ -3457,7 +3432,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
         }
       ],
       "format": "mcq",
-      "difficulty": "foundation",
+      "difficulty": "standard",
       "visualFamily": "cartesian_plot",
       "totalMarks": 1,
       "hasSvg": true,
@@ -3466,29 +3441,29 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
       "familyGroupKey": "linear-momentum-impulse::pt-momentum-gradient-kinetic-work"
     },
     {
-      "id": "sp-circuits-11-structured-234",
+      "id": "sp-circuits-11-structured-235",
       "syllabi": [
         {
           "syllabus": "ib",
-          "level": "SL",
+          "level": "HL",
           "topicId": "ib-theme-b",
           "subtopicId": "ib-b5-current-circuits"
         },
         {
           "syllabus": "alevel",
-          "level": "Y13",
+          "level": "Y12",
           "topicId": "alevel-sec5-electricity",
           "subtopicId": "alevel-3-5-1-current-electricity"
         },
         {
           "syllabus": "ncuk",
-          "level": "IFY-S1",
+          "level": "IFY",
           "topicId": "ncuk-ac4",
           "subtopicId": "ncuk-ac4-2"
         }
       ],
       "format": "structured",
-      "difficulty": "higher",
+      "difficulty": "foundation",
       "visualFamily": "circuit_network",
       "totalMarks": 6,
       "hasSvg": true,
@@ -3497,11 +3472,11 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
       "familyGroupKey": "resistivity-ohmic-conductors::cylindrical-wire-resistivity-circuit"
     },
     {
-      "id": "sp-fields-mcq-0064",
+      "id": "sp-fields-mcq-0071",
       "syllabi": [
         {
           "syllabus": "ib",
-          "level": "SL",
+          "level": "HL",
           "topicId": "ib-theme-d",
           "subtopicId": "ib-d2-electric-magnetic-fields"
         },
@@ -3528,7 +3503,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
       "familyGroupKey": "electrostatic-coulomb-uniform-fields::symbolic-superposition-field-multiple"
     },
     {
-      "id": "sp-mech-structured-0199",
+      "id": "sp-mech-structured-0057",
       "syllabi": [
         {
           "syllabus": "ib",
@@ -3550,16 +3525,16 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
         }
       ],
       "format": "structured",
-      "difficulty": "standard",
+      "difficulty": "foundation",
       "visualFamily": "mechanics_scene",
-      "totalMarks": 6,
+      "totalMarks": 4,
       "hasSvg": true,
       "chunkKey": "mechanics",
       "conceptId": "linear-momentum-impulse",
-      "familyGroupKey": "linear-momentum-impulse::inelastic-cart-collision-energy-loss"
+      "familyGroupKey": "linear-momentum-impulse::head-on-signed-momentum-conservation"
     },
     {
-      "id": "sp-v2-waves-mcq-0125",
+      "id": "sp-v2-waves-mcq-0127",
       "syllabi": [
         {
           "syllabus": "ib",
@@ -3581,7 +3556,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
         }
       ],
       "format": "mcq",
-      "difficulty": "standard",
+      "difficulty": "higher",
       "visualFamily": "waves",
       "totalMarks": 1,
       "hasSvg": true,
@@ -3590,11 +3565,11 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
       "familyGroupKey": "single-slit-diffraction-gratings::grating-lines-per-mm-diffraction-angle"
     },
     {
-      "id": "sp-optics-shm-struct-0270",
+      "id": "sp-optics-shm-struct-0110",
       "syllabi": [
         {
           "syllabus": "ib",
-          "level": "SL",
+          "level": "HL",
           "topicId": "ib-theme-c",
           "subtopicId": "ib-c1-shm"
         },
@@ -3606,13 +3581,13 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
         },
         {
           "syllabus": "ncuk",
-          "level": "IFY-S2",
+          "level": "IFY",
           "topicId": "ncuk-ac6",
           "subtopicId": "ncuk-ac6-1"
         }
       ],
       "format": "structured",
-      "difficulty": "standard",
+      "difficulty": "higher",
       "visualFamily": "optics-shm",
       "totalMarks": 6,
       "hasSvg": true,
@@ -3621,7 +3596,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
       "familyGroupKey": "simple-harmonic-motion::shm-defining-acceleration-phase-portrait"
     },
     {
-      "id": "sp-thermal-mcq-0220",
+      "id": "sp-thermal-mcq-0030",
       "syllabi": [
         {
           "syllabus": "ib",
@@ -3637,7 +3612,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
         },
         {
           "syllabus": "ncuk",
-          "level": "IFY",
+          "level": "IFY-S1",
           "topicId": "ncuk-ac3",
           "subtopicId": "ncuk-ac3-3"
         }
@@ -3649,10 +3624,10 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
       "hasSvg": true,
       "chunkKey": "thermal",
       "conceptId": "specific-heat-latent-heat",
-      "familyGroupKey": "specific-heat-latent-heat::electrical-heater-phase-change-power-time"
+      "familyGroupKey": "specific-heat-latent-heat::ice-water-latent-mixing-and-coexistence"
     },
     {
-      "id": "ga-circular-orbit-energy-str-008",
+      "id": "ga-circular-orbit-energy-str-104",
       "syllabi": [
         {
           "syllabus": "ib",
@@ -3674,7 +3649,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
         }
       ],
       "format": "structured",
-      "difficulty": "foundation",
+      "difficulty": "standard",
       "visualFamily": "grav-astro",
       "totalMarks": 6,
       "hasSvg": true,
@@ -3683,7 +3658,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
       "familyGroupKey": "gravitational-force-field::circular-orbit-velocity-and-kepler"
     },
     {
-      "id": "sp-v2-em-induction-mcq-0100",
+      "id": "sp-v2-em-induction-mcq-0095",
       "syllabi": [
         {
           "syllabus": "ib",
@@ -3705,7 +3680,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
         }
       ],
       "format": "mcq",
-      "difficulty": "standard",
+      "difficulty": "higher",
       "visualFamily": "em-induction",
       "totalMarks": 1,
       "hasSvg": true,
@@ -3714,7 +3689,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
       "familyGroupKey": "electromagnetic-induction-faraday-lenz::faraday-field-reversal-induced-charge"
     },
     {
-      "id": "sp-qn-structured-245",
+      "id": "sp-qn-structured-251",
       "syllabi": [
         {
           "syllabus": "ib",
@@ -3745,60 +3720,55 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
       "familyGroupKey": "nuclear-fission-fusion::fission-fusion-reaction-q-value"
     },
     {
-      "id": "sp-graphs-0193-struct",
+      "id": "sp-v3-ncuk-ac4-ivcurve-09",
       "syllabi": [
         {
-          "syllabus": "ib",
-          "level": "SL",
-          "topicId": "ib-theme-a",
-          "subtopicId": "ib-a1-kinematics"
+          "syllabus": "ncuk",
+          "level": "IFY-S1",
+          "topicId": "ncuk-ac4",
+          "subtopicId": "ncuk-ac4-2"
         },
         {
           "syllabus": "alevel",
           "level": "Y12",
-          "topicId": "alevel-sec4-mechanics-materials",
-          "subtopicId": "alevel-3-4-1-force-energy-momentum"
-        },
-        {
-          "syllabus": "ncuk",
-          "level": "IFY-S1",
-          "topicId": "ncuk-ac2",
-          "subtopicId": "ncuk-ac2-1"
+          "topicId": "alevel-sec5-electricity",
+          "subtopicId": "alevel-3-5-1-current-electricity"
         }
       ],
       "format": "structured",
-      "difficulty": "foundation",
-      "visualFamily": "cartesian_plot",
-      "totalMarks": 5,
+      "difficulty": "higher",
+      "visualFamily": "graphs",
+      "totalMarks": 6,
       "hasSvg": true,
       "chunkKey": "graphs",
-      "conceptId": "motion-graphs",
-      "familyGroupKey": "motion-graphs::vt-signed-rebound-distance"
+      "conceptId": "ohms-law-iv-characteristics",
+      "familyGroupKey": "ohms-law-iv-characteristics::ncuk-component-iv-curve-characteristic",
+      "questionStyle": "mixed-exam"
     },
     {
-      "id": "sp-circuits-09-mcq-176",
+      "id": "sp-v2-circuits-mcq-0090",
       "syllabi": [
         {
           "syllabus": "ib",
-          "level": "SL",
+          "level": "HL",
           "topicId": "ib-theme-b",
           "subtopicId": "ib-b5-current-circuits"
         },
         {
           "syllabus": "alevel",
-          "level": "Y13",
+          "level": "Y12",
           "topicId": "alevel-sec5-electricity",
           "subtopicId": "alevel-3-5-1-current-electricity"
         },
         {
           "syllabus": "ncuk",
-          "level": "IFY-S1",
+          "level": "IFY",
           "topicId": "ncuk-ac4",
           "subtopicId": "ncuk-ac4-3"
         }
       ],
       "format": "mcq",
-      "difficulty": "foundation",
+      "difficulty": "standard",
       "visualFamily": "circuit_network",
       "totalMarks": 1,
       "hasSvg": true,
@@ -3838,7 +3808,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
       "familyGroupKey": "electric-potential-equipotentials::coulomb-nuclear-potential-barrier"
     },
     {
-      "id": "sp-mech-mcq-0329",
+      "id": "sp-mech-mcq-0216",
       "syllabi": [
         {
           "syllabus": "ib",
@@ -3860,16 +3830,16 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
         }
       ],
       "format": "mcq",
-      "difficulty": "foundation",
+      "difficulty": "standard",
       "visualFamily": "mechanics_scene",
       "totalMarks": 1,
       "hasSvg": true,
       "chunkKey": "mechanics",
       "conceptId": "linear-momentum-impulse",
-      "familyGroupKey": "linear-momentum-impulse::head-on-signed-momentum-conservation"
+      "familyGroupKey": "linear-momentum-impulse::coalescing-and-rebound-collision-energetics"
     },
     {
-      "id": "waves-malus-polarization-structured-303",
+      "id": "waves-malus-polarization-structured-305",
       "syllabi": [
         {
           "syllabus": "alevel",
@@ -3885,7 +3855,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
         }
       ],
       "format": "structured",
-      "difficulty": "foundation",
+      "difficulty": "standard",
       "visualFamily": "waves",
       "totalMarks": 6,
       "hasSvg": true,
@@ -3894,7 +3864,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
       "familyGroupKey": "progressive-waves-polarization::malus-polarized-analyzer-transmission"
     },
     {
-      "id": "sp-optics-shm-mcq-0111",
+      "id": "sp-optics-shm-mcq-0223",
       "syllabi": [
         {
           "syllabus": "ib",
@@ -3916,7 +3886,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
         }
       ],
       "format": "mcq",
-      "difficulty": "standard",
+      "difficulty": "higher",
       "visualFamily": "optics-shm",
       "totalMarks": 1,
       "hasSvg": true,
@@ -3925,11 +3895,11 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
       "familyGroupKey": "simple-harmonic-motion::shm-velocity-displacement-phase-ellipse"
     },
     {
-      "id": "sp-thermal-struct-0094",
+      "id": "sp-thermal-struct-0205",
       "syllabi": [
         {
           "syllabus": "ib",
-          "level": "HL",
+          "level": "SL",
           "topicId": "ib-theme-b",
           "subtopicId": "ib-b1-thermal-energy-transfers"
         },
@@ -3947,26 +3917,26 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
         }
       ],
       "format": "structured",
-      "difficulty": "standard",
+      "difficulty": "foundation",
       "visualFamily": "thermal",
       "totalMarks": 6,
       "hasSvg": true,
       "chunkKey": "thermal",
       "conceptId": "specific-heat-latent-heat",
-      "familyGroupKey": "specific-heat-latent-heat::ice-water-latent-mixing-and-coexistence"
+      "familyGroupKey": "specific-heat-latent-heat::calorimetry-solid-liquid-equilibrium"
     },
     {
-      "id": "sp-pure-calc-0001",
+      "id": "sp-pure-calc-0002",
       "syllabi": [
         {
           "syllabus": "ib",
-          "level": "SL",
+          "level": "HL",
           "topicId": "ib-tools",
           "subtopicId": "ib-tools-measurement-uncertainties"
         },
         {
           "syllabus": "alevel",
-          "level": "Y12",
+          "level": "Y13",
           "topicId": "alevel-sec1-measurements-errors",
           "subtopicId": "alevel-3-1-si-uncertainties-estimation"
         },
@@ -3978,7 +3948,7 @@ export const SEED_FALLBACK_MANIFEST: PublicBankManifest = {
         }
       ],
       "format": "mcq",
-      "difficulty": "foundation",
+      "difficulty": "standard",
       "visualFamily": "none",
       "totalMarks": 1,
       "hasSvg": false,

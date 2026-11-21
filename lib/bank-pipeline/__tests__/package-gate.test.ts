@@ -1,13 +1,21 @@
 import {
+  buildQwenDistillationTrace,
+} from "@/lib/bank-pipeline/distillation-trace";
+import {
   registerVisualModule,
   resetDomainRegistryToDefaults,
 } from "@/lib/bank-pipeline/domain-registry";
-import { extractNumbersFromPhysicsText } from "@/lib/bank-pipeline/numeric-checker";
+import {
+  computeStemFingerprint,
+  extractNumbersFromPhysicsText,
+} from "@/lib/bank-pipeline/numeric-checker";
 import { verifyCandidateWithGate } from "@/lib/bank-pipeline/package-gate";
 import { buildSampleCandidates } from "@/lib/bank-pipeline/sample-candidates";
 import {
   CandidateQuestionInput,
   PhysicsDomainId,
+  SIXTHPHYSICS_BANK_ITEM_SCHEMA_VERSION,
+  SixthPhysicsBankItem,
 } from "@/lib/bank-pipeline/types";
 
 describe("package-gate", () => {
@@ -662,5 +670,577 @@ describe("package-gate", () => {
     expect(verifyCandidateWithGate(structWithQualSubpart).evaluation.valid).toBe(
       true,
     );
+  });
+
+  it("NCUK v3 qualitative MCQ: allows incidental prose numerals when primaryKey resolves to verified string (>= 3 chars) and option has >= 3 prose words, while still rejecting numeric bypasses", () => {
+    registerVisualModule("graphs", {
+      validate: () => ({ valid: true, issues: [] }),
+      solve: () => ({
+        ivBehavior: "straight line through the origin with constant gradient",
+        diodeFeature: "sharp rise in forward current above threshold",
+        shortTag: "ok",
+        bareTag: "units",
+      }),
+      render: () =>
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><line x1="20" y1="180" x2="280" y2="20"/></svg>',
+    });
+
+    const ohmicIvMcq: CandidateQuestionInput = {
+      id: "sp-v3-ncuk-qual-iv-001",
+      conceptId: "ohms-law-iv-characteristics",
+      templateArchetype: "component-iv-curve-and-led-procedure",
+      seed: 72_000_001,
+      syllabi: [
+        {
+          syllabus: "ncuk",
+          level: "IFY-S1",
+          topicId: "ncuk-ac4",
+          subtopicId: "ncuk-ac4-2",
+        },
+      ],
+      format: "mcq",
+      questionStyle: "qualitative",
+      targetMode: "qualitative",
+      targetQuantityKey: "ivBehavior",
+      difficulty: "foundation",
+      domain: "graphs",
+      scenarioSpec: { kind: "iv-curve" },
+      hiddenQuantities: ["ivBehavior"],
+      requiredGivens: [],
+      stem: "An ohmic metallic conductor at constant temperature is plotted with current I on the y-axis and potential difference V on the x-axis. Which description matches its I–V graph?",
+      options: [
+        {
+          label: "A",
+          text: "A straight line through the origin with constant gradient = 1/R",
+          isCorrect: true,
+        },
+        {
+          label: "B",
+          text: "A straight line through the origin with constant gradient = R",
+          isCorrect: false,
+          distractorRationale:
+            "Inverts the gradient of an I–V plot (gradient is I/V = 1/R, not V/I).",
+        },
+        {
+          label: "C",
+          text: "An S-shaped curve flattening toward the voltage axis at high current",
+          isCorrect: false,
+          distractorRationale:
+            "Describes a non-ohmic filament lamp whose lattice temperature increases.",
+        },
+        {
+          label: "D",
+          text: "Negligible current below a 0.6 V knee followed by a steep vertical rise",
+          isCorrect: false,
+          distractorRationale:
+            "Describes a semiconductor diode rather than an ohmic metallic resistor.",
+        },
+      ],
+      workedSolution:
+        "For an ohmic conductor at constant temperature, I = V/R gives a straight line through the origin with constant gradient = 1/R (A).",
+      markScheme: [
+        {
+          code: "A1",
+          criterion:
+            "Identifies straight line through the origin with constant gradient = 1/R (A).",
+          marks: 1,
+        },
+      ],
+      totalMarks: 1,
+    };
+
+    const ohmicExec = verifyCandidateWithGate(ohmicIvMcq);
+    expect({
+      valid: ohmicExec.evaluation.valid,
+      issues: ohmicExec.evaluation.issues,
+    }).toEqual({ valid: true, issues: [] });
+
+    // Verify optional questionStyle propagates into distillation-trace metadata ONLY when set
+    const bankItemWithStyle: SixthPhysicsBankItem = {
+      schemaVersion: SIXTHPHYSICS_BANK_ITEM_SCHEMA_VERSION,
+      id: ohmicIvMcq.id,
+      familyGroupKey: `${ohmicIvMcq.conceptId}::${ohmicIvMcq.templateArchetype}`,
+      syllabi: ohmicIvMcq.syllabi,
+      format: "mcq",
+      questionStyle: "qualitative",
+      difficulty: ohmicIvMcq.difficulty,
+      visualFamily: "graphs",
+      stem: ohmicIvMcq.stem,
+      svgMarkup: ohmicExec.effectiveSvgMarkup,
+      options: ohmicIvMcq.options as SixthPhysicsBankItem["options"],
+      correctOptionIndex: ohmicExec.correctOptionIndex,
+      workedSolution: ohmicIvMcq.workedSolution,
+      markScheme: ohmicIvMcq.markScheme,
+      totalMarks: 1,
+      verifiedQuantities: ohmicExec.solveOutput!.quantities,
+      provenance: {
+        domain: "graphs",
+        conceptId: ohmicIvMcq.conceptId,
+        templateArchetype: ohmicIvMcq.templateArchetype,
+        familyGroupKey: `${ohmicIvMcq.conceptId}::${ohmicIvMcq.templateArchetype}`,
+        seed: ohmicIvMcq.seed,
+        shardId: "ncuk-v3-qual-exam",
+        generatorModel: "gemini-4-carbon-high",
+        solverId: ohmicExec.solveOutput!.solverId,
+        stemFingerprint: ohmicExec.evaluation.stemFingerprint,
+        svgFingerprint: ohmicExec.evaluation.svgFingerprint,
+        split: "train",
+        createdAt: "2026-11-20T18:00:00.000Z",
+      },
+    };
+    const traceWithStyle = buildQwenDistillationTrace({
+      candidate: ohmicIvMcq,
+      bankItem: bankItemWithStyle,
+      split: "train",
+    });
+    expect(traceWithStyle.metadata.questionStyle).toBe("qualitative");
+
+    const { questionStyle: _dropCandStyle, ...candWithoutStyle } = ohmicIvMcq;
+    const { questionStyle: _dropItemStyle, ...itemWithoutStyle } =
+      bankItemWithStyle;
+    void _dropCandStyle;
+    void _dropItemStyle;
+    const traceWithoutStyle = buildQwenDistillationTrace({
+      candidate: candWithoutStyle,
+      bankItem: itemWithoutStyle,
+      split: "train",
+    });
+    expect("questionStyle" in traceWithoutStyle.metadata).toBe(false);
+
+    // Diode knee voltage prose numeral (0.6 V knee) also passes cleanly
+    const diodeMcq: CandidateQuestionInput = {
+      ...ohmicIvMcq,
+      id: "sp-v3-ncuk-qual-iv-002",
+      targetQuantityKey: "diodeFeature",
+      hiddenQuantities: ["diodeFeature"],
+      options: [
+        {
+          label: "A",
+          text: "Zero current in reverse bias and a sharp rise in forward current above threshold near the 0.6 V knee",
+          isCorrect: true,
+        },
+        {
+          label: "B",
+          text: "Symmetric straight line passing through the origin",
+          isCorrect: false,
+          distractorRationale: "Describes an ohmic resistor, not a diode.",
+        },
+        {
+          label: "C",
+          text: "Constant current independent of applied potential difference",
+          isCorrect: false,
+          distractorRationale: "Confuses a diode with an ideal current source.",
+        },
+        {
+          label: "D",
+          text: "Decreasing current as forward potential difference increases",
+          isCorrect: false,
+          distractorRationale: "Contradicts forward-bias conduction.",
+        },
+      ],
+      workedSolution:
+        "A semiconductor diode exhibits a sharp rise in forward current above threshold (~0.6 V) and negligible reverse-bias current (A).",
+      markScheme: [
+        {
+          code: "A1",
+          criterion:
+            "States sharp rise in forward current above threshold near 0.6 V (A).",
+          marks: 1,
+        },
+      ],
+    };
+    expect(verifyCandidateWithGate(diodeMcq).evaluation.valid).toBe(true);
+
+    // Anti-bypass: bare numeric option ("987654 units") is STILL rejected even with a matching string key
+    const bareNumericBypass: CandidateQuestionInput = {
+      ...ohmicIvMcq,
+      id: "sp-v3-ncuk-qual-bypass-bare",
+      targetQuantityKey: "bareTag",
+      hiddenQuantities: ["bareTag"],
+      options: ohmicIvMcq.options!.map((o) =>
+        o.isCorrect ? { ...o, text: "987654 units" } : o,
+      ),
+      workedSolution: "Bypass attempt: 987654 units.",
+      markScheme: [{ code: "A1", criterion: "987654 units.", marks: 1 }],
+    };
+    const bareBypassRes = verifyCandidateWithGate(bareNumericBypass);
+    expect(bareBypassRes.evaluation.valid).toBe(false);
+    expect(
+      bareBypassRes.evaluation.issues.some(
+        (i) => i.code === "ground-truth-mismatch",
+      ),
+    ).toBe(true);
+
+    // Anti-bypass: short (< 3 char) string truth ("ok") cannot unlock incidental numerals
+    const shortKeyBypass: CandidateQuestionInput = {
+      ...ohmicIvMcq,
+      id: "sp-v3-ncuk-qual-bypass-short",
+      targetQuantityKey: "shortTag",
+      hiddenQuantities: ["shortTag"],
+      options: ohmicIvMcq.options!.map((o) =>
+        o.isCorrect
+          ? { ...o, text: "Answer is ok and equals 42.5 V across load" }
+          : o,
+      ),
+      workedSolution: "Answer is ok and equals 42.5 V.",
+      markScheme: [{ code: "A1", criterion: "States ok (A).", marks: 1 }],
+    };
+    expect(verifyCandidateWithGate(shortKeyBypass).evaluation.valid).toBe(
+      false,
+    );
+  });
+
+  it("NCUK v3 10-mark 5-part IFYPH005 structured item: mixes quantitative + 'Show clearly that' + auxiliary qualitative B1 subparts with prose numerals, while rejecting bypasses & >4m unkeyed parts", () => {
+    registerVisualModule("circuits", {
+      validate: () => ({ valid: true, issues: [] }),
+      solve: () => ({
+        internalResistanceOhm: 1.25,
+        emfV: 6.02,
+        wireResistivityOhmM: 4.8e-7,
+      }),
+      render: () =>
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 220"><rect x="40" y="40" width="280" height="140"/></svg>',
+    });
+
+    const ncuk10MarkExam: CandidateQuestionInput = {
+      id: "sp-v3-ncuk-ac4-internal-r-10m-001",
+      conceptId: "emf-internal-resistance",
+      templateArchetype: "experimental-internal-resistance-and-wire-eval-10m",
+      seed: 70_000_012,
+      syllabi: [
+        {
+          syllabus: "ncuk",
+          level: "IFY-S1",
+          topicId: "ncuk-ac4",
+          subtopicId: "ncuk-ac4-3",
+        },
+      ],
+      format: "structured",
+      questionStyle: "mixed-exam",
+      difficulty: "higher",
+      domain: "circuits",
+      scenarioSpec: {
+        kind: "ncuk-internal-r-experiment-10m",
+        i1A: 0.4,
+        v1V: 5.52,
+        i2A: 1.6,
+        v2V: 4.02,
+        wireLengthM: 0.5,
+        wireAreaM2: 6.0e-7,
+        wireVoltageV: 0.4,
+        wireCurrentA: 1.0,
+      },
+      hiddenQuantities: [
+        "internalResistanceOhm",
+        "emfV",
+        "wireResistivityOhmM",
+      ],
+      requiredGivens: [
+        { name: "i1A", value: 0.4, unit: "A", source: "stem" },
+        { name: "v1V", value: 5.52, unit: "V", source: "stem" },
+        { name: "i2A", value: 1.6, unit: "A", source: "stem" },
+        { name: "v2V", value: 4.02, unit: "V", source: "stem" },
+      ],
+      stem: "A student investigates a DC cell of unknown emf ε and internal resistance r using a variable resistor, switch, ammeter, and high-resistance voltmeter. Two steady pairs of readings are (0.40 A, 5.52 V) and (1.60 A, 4.02 V). A 0.50 m sample of the connecting wire (cross-sectional area 6.0 × 10⁻⁷ m²) drops 0.40 V when carrying 1.0 A.",
+      parts: [
+        {
+          partId: "a-i",
+          prompt:
+            "Describe the experimental procedure used to obtain a reliable set of current and terminal potential difference readings.",
+          marks: 2,
+          targetMode: "qualitative",
+          expectedAnswer:
+            "Adjust the variable resistor across its range to record 5 to 6 pairs of ammeter current and voltmeter p.d. readings, opening the switch between readings to avoid heating or discharging the cell.",
+          workingSteps: [
+            "Vary resistance in steps and record 5 to 6 paired readings of I and V in a results table.",
+            "Close the switch only briefly during each measurement so the cell temperature and emf remain constant.",
+          ],
+        },
+        {
+          partId: "a-ii",
+          prompt:
+            "Describe the shape of the V against I graph and state how ε and r are obtained from it.",
+          marks: 2,
+          targetMode: "qualitative",
+          expectedAnswer:
+            "A straight line with negative gradient equal to -r and y-intercept equal to the cell emf ε at I = 0.",
+          workingSteps: [
+            "From V = ε − Ir, plotting V on the y-axis against I on the x-axis yields a straight line of negative gradient.",
+            "The y-intercept at I = 0 equals ε and the magnitude of the gradient equals r.",
+          ],
+        },
+        {
+          partId: "a-iii",
+          prompt:
+            "Using the two readings, calculate r and show clearly that the cell emf is approximately 6.0 V.",
+          marks: 3,
+          dependsOnPartIds: ["a-ii"],
+          targetQuantityKey: "emfV",
+          expectedAnswer: "r = 1.25 Ω; ε = 6.02 V (≈ 6.0 V to 2 s.f.)",
+          workingSteps: [
+            "r = −ΔV / ΔI = (5.52 − 4.02) / (1.60 − 0.40) = 1.50 / 1.20 = 1.25 Ω.",
+            "ε = V + Ir = 5.52 + 0.40 × 1.25 = 6.02 V (rounds to 6.0 V).",
+          ],
+        },
+        {
+          partId: "b-i",
+          prompt: "Calculate the resistivity ρ of the connecting wire.",
+          marks: 2,
+          targetQuantityKey: "wireResistivityOhmM",
+          expectedAnswer: "4.80 × 10⁻⁷ Ω m",
+          workingSteps: [
+            "R = V / I = 0.40 / 1.0 = 0.40 Ω.",
+            "ρ = RA / L = (0.40 × 6.0 × 10⁻⁷) / 0.50 = 4.80 × 10⁻⁷ Ω m.",
+          ],
+        },
+        {
+          partId: "b-ii",
+          prompt:
+            "State and explain whether using 2.25 m of connecting wire significantly affects the measured emf intercept.",
+          marks: 1,
+          dependsOnPartIds: ["b-i"],
+          targetMode: "qualitative",
+          expectedAnswer:
+            "No significant effect on the measured emf because at the I = 0 intercept no current flows through the 2.25 m leads, so the p.d. dropped across the connecting wire is zero.",
+          workingSteps: [
+            "At I = 0, wire voltage drop I R_wire = 0 regardless of the 2.25 m length, leaving the y-intercept ε unchanged.",
+          ],
+        },
+      ],
+      workedSolution:
+        "(a-i) Adjust the variable resistor for 5 to 6 pairs of (I, V) readings, opening the switch between measurements. (a-ii) Straight line of negative gradient (-r) and y-intercept ε. (a-iii) r = 1.50 / 1.20 = 1.25 Ω and ε = 5.52 + 0.40 × 1.25 = 6.02 V (≈ 6.0 V). (b-i) ρ = RA / L = 4.80 × 10⁻⁷ Ω m. (b-ii) At I = 0, zero current flows so the 2.25 m leads drop zero p.d. and do not alter ε.",
+      markScheme: [
+        {
+          code: "B1",
+          partId: "a-i",
+          criterion:
+            "Adjusts variable resistor to take 5 to 6 paired readings of I and V.",
+          marks: 1,
+        },
+        {
+          code: "B1",
+          partId: "a-i",
+          criterion:
+            "Opens switch between readings to prevent heating/discharge.",
+          marks: 1,
+        },
+        {
+          code: "B1",
+          partId: "a-ii",
+          criterion: "Straight line with negative gradient equal to -r.",
+          marks: 1,
+        },
+        {
+          code: "B1",
+          partId: "a-ii",
+          criterion: "y-intercept at I = 0 gives emf ε.",
+          marks: 1,
+        },
+        {
+          code: "M1",
+          partId: "a-iii",
+          criterion: "Computes r = (5.52 − 4.02) / (1.60 − 0.40) = 1.25 Ω.",
+          marks: 1,
+        },
+        {
+          code: "A1",
+          partId: "a-iii",
+          criterion: "Substitutes into ε = V + Ir = 5.52 + 0.40 × 1.25.",
+          marks: 1,
+        },
+        {
+          code: "A1",
+          partId: "a-iii",
+          criterion: "Shows clearly ε = 6.02 V (≈ 6.0 V).",
+          marks: 1,
+        },
+        {
+          code: "M1",
+          partId: "b-i",
+          criterion: "Applies R = V/I and ρ = RA/L.",
+          marks: 1,
+        },
+        {
+          code: "A1",
+          partId: "b-i",
+          criterion: "Obtains ρ = 4.80 × 10⁻⁷ Ω m.",
+          marks: 1,
+        },
+        {
+          code: "B1",
+          partId: "b-ii",
+          criterion:
+            "Explains that at I = 0 zero p.d. is dropped across the 2.25 m leads, so emf is unaffected.",
+          marks: 1,
+        },
+      ],
+      totalMarks: 10,
+    };
+
+    const exec = verifyCandidateWithGate(ncuk10MarkExam);
+    expect({
+      valid: exec.evaluation.valid,
+      issues: exec.evaluation.issues,
+    }).toEqual({ valid: true, issues: [] });
+
+    // Anti-bypass: attempting to sneak bare numeric answer into targetMode: "qualitative" subpart is REJECTED
+    const sneakNumericQualPart: CandidateQuestionInput = {
+      ...ncuk10MarkExam,
+      id: "sp-v3-ncuk-bypass-bare-qual-part",
+      parts: ncuk10MarkExam.parts!.map((p) =>
+        p.partId === "b-ii"
+          ? {
+              ...p,
+              expectedAnswer: "42.0 kg m s⁻²",
+              workingSteps: ["= 42.0 kg m s⁻²"],
+            }
+          : p,
+      ),
+    };
+    const sneakRes = verifyCandidateWithGate(sneakNumericQualPart);
+    expect(sneakRes.evaluation.valid).toBe(false);
+    expect(
+      sneakRes.evaluation.issues.some(
+        (i) => i.code === "ground-truth-mismatch",
+      ),
+    ).toBe(true);
+
+    // Unkeyed auxiliary qualitative subpart exceeding 4 marks is REJECTED
+    const oversizedAuxQual: CandidateQuestionInput = {
+      ...ncuk10MarkExam,
+      id: "sp-v3-ncuk-oversized-aux-qual",
+      totalMarks: 13,
+      parts: ncuk10MarkExam.parts!.map((p) =>
+        p.partId === "a-i" ? { ...p, marks: 5 } : p,
+      ),
+      markScheme: [
+        ...ncuk10MarkExam.markScheme,
+        {
+          code: "B1",
+          partId: "a-i",
+          criterion: "Extra procedural check 1.",
+          marks: 1,
+        },
+        {
+          code: "B1",
+          partId: "a-i",
+          criterion: "Extra procedural check 2.",
+          marks: 1,
+        },
+        {
+          code: "B1",
+          partId: "a-i",
+          criterion: "Extra procedural check 3.",
+          marks: 1,
+        },
+      ],
+    };
+    const oversizedRes = verifyCandidateWithGate(oversizedAuxQual);
+    expect(oversizedRes.evaluation.valid).toBe(false);
+    expect(
+      oversizedRes.evaluation.issues.some(
+        (i) => i.code === "ground-truth-mismatch",
+      ),
+    ).toBe(true);
+  });
+
+  it("NCUK v3 numeric-checker: supports T/K = θ/°C + 273.2 tolerance and preserves atomic-scale numbers down to 1e-35 in stem fingerprints", () => {
+    const celsiusMentions = extractNumbersFromPhysicsText(
+      "Gas heated from 0 °C to 27 °C inside a sealed cylinder.",
+    );
+    expect(celsiusMentions).toHaveLength(2);
+    expect(celsiusMentions[0].alternateConvertedValues).toEqual(
+      expect.arrayContaining([273.15, 273.2, 273]),
+    );
+    expect(celsiusMentions[1].alternateConvertedValues).toEqual(
+      expect.arrayContaining([300.15, 300.2, 300]),
+    );
+
+    // Verify thermal candidate using NCUK T = θ + 273.2 passes gate requiredGivens natively
+    registerVisualModule("thermal", {
+      validate: () => ({ valid: true, issues: [] }),
+      solve: () => ({
+        finalPressurePa: 1.2e5,
+      }),
+      render: () =>
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 180"><rect x="20" y="20" width="260" height="140"/></svg>',
+    });
+
+    const ncukKelvinCand: CandidateQuestionInput = {
+      id: "sp-v3-ncuk-kelvin-273-2",
+      conceptId: "ideal-gas-kinetic-theory",
+      templateArchetype: "ncuk-pressure-law-kelvin",
+      seed: 72_000_273,
+      syllabi: [
+        {
+          syllabus: "ncuk",
+          level: "IFY-S1",
+          topicId: "ncuk-ac3",
+          subtopicId: "ncuk-ac3-4",
+        },
+      ],
+      format: "mcq",
+      difficulty: "foundation",
+      domain: "thermal",
+      scenarioSpec: {
+        kind: "pressure-law",
+        initialTempK: 300.2,
+        finalTempK: 360.2,
+        initialPressurePa: 1.0e5,
+      },
+      hiddenQuantities: ["finalPressurePa"],
+      requiredGivens: [
+        { name: "initialTempK", value: 300.2, unit: "K", source: "stem" },
+        { name: "finalTempK", value: 360.2, unit: "K", source: "stem" },
+        { name: "initialPressurePa", value: 1.0e5, unit: "Pa", source: "stem" },
+      ],
+      targetQuantityKey: "finalPressurePa",
+      stem: "A fixed mass of ideal gas in a rigid vessel at 1.00 × 10⁵ Pa is heated from 27 °C to 87 °C (take T/K = θ/°C + 273.2). What is the final pressure?",
+      options: [
+        { label: "A", text: "1.20 × 10⁵ Pa", isCorrect: true },
+        {
+          label: "B",
+          text: "3.22 × 10⁵ Pa",
+          isCorrect: false,
+          distractorRationale: "Uses Celsius ratio 87 / 27 instead of kelvin.",
+        },
+        {
+          label: "C",
+          text: "8.33 × 10⁴ Pa",
+          isCorrect: false,
+          distractorRationale: "Inverts temperature ratio.",
+        },
+        {
+          label: "D",
+          text: "2.40 × 10⁵ Pa",
+          isCorrect: false,
+          distractorRationale: "Doubles pressure erroneously.",
+        },
+      ],
+      workedSolution:
+        "T₁ = 27 + 273.2 = 300.2 K, T₂ = 87 + 273.2 = 360.2 K. p₂ = 1.00 × 10⁵ × (360.2 / 300.2) = 1.20 × 10⁵ Pa (A).",
+      markScheme: [
+        {
+          code: "A1",
+          criterion: "Converts via +273.2 and obtains 1.20 × 10⁵ Pa (A).",
+          marks: 1,
+        },
+      ],
+      totalMarks: 1,
+    };
+    expect(verifyCandidateWithGate(ncukKelvinCand).evaluation.valid).toBe(true);
+
+    // Stem fingerprint must NOT zero-clamp elementary charge (1.60e-19 C) or electron/proton masses (9.11e-31 / 1.67e-27 kg)
+    const fpElectron = computeStemFingerprint(
+      "A particle of charge 1.60 × 10⁻¹⁹ C and mass 9.11 × 10⁻³¹ kg accelerates across 500 V.",
+    );
+    const fpProton = computeStemFingerprint(
+      "A particle of charge 1.60 × 10⁻¹⁹ C and mass 1.67 × 10⁻²⁷ kg accelerates across 500 V.",
+    );
+    const fpAlpha = computeStemFingerprint(
+      "A particle of charge 3.20 × 10⁻¹⁹ C and mass 6.64 × 10⁻²⁷ kg accelerates across 500 V.",
+    );
+    expect(fpElectron).not.toBe(fpProton);
+    expect(fpProton).not.toBe(fpAlpha);
   });
 });

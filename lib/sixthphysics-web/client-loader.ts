@@ -1,3 +1,4 @@
+import { resolveEffectiveNcukLevels } from "./ncuk-levels";
 import {
   SEED_FALLBACK_CHUNK_BY_ID,
   SEED_FALLBACK_ITEMS,
@@ -340,8 +341,14 @@ export function filterIndexRows(
     }
 
     const tagMatchesHierarchy = matchingTags.some((tag) => {
-      if (targetLevel && normalizeLevelToken(tag.level) !== targetLevel) {
-        return false;
+      if (targetLevel) {
+        const levelMatches =
+          criteria.syllabus === "ncuk"
+            ? resolveEffectiveNcukLevels(tag).has(targetLevel)
+            : normalizeLevelToken(tag.level) === targetLevel;
+        if (!levelMatches) {
+          return false;
+        }
       }
       if (hasTopicFilter && tag.topicId !== criteria.topicId) {
         return false;
